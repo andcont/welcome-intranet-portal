@@ -1,20 +1,7 @@
 
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import LoginForm from "@/components/LoginForm";
+import RegisterForm from "@/components/RegisterForm";
 
-const Login = () => {
-  const navigate = useNavigate();
-
-  // Verificar se o usuário já está logado
-  useEffect(() => {
-    const user = localStorage.getItem("andcont_user");
-    if (user) {
-      // Usuário já logado, redireciona direto para a intranet
-      window.location.href = "https://intranetandcont.vercel.app/";
-    }
-  }, [navigate]);
-
+const Register = () => {
   return (
     <div className="min-h-screen flex bg-gradient-andcont">
       {/* Lado esquerdo - Banner colorido */}
@@ -25,14 +12,14 @@ const Login = () => {
             alt="AndCont Banner" 
             className="w-full h-auto mb-12" 
           />
-          <h1 className="text-4xl font-bold mb-4">Contabilidade no terceiro setor é com a AndCont!</h1>
+          <h1 className="text-4xl font-bold mb-4">Faça parte da nossa equipe!</h1>
           <p className="text-xl">
-            Conectamos pessoas e números. Acesse nossa intranet para ver todas as ferramentas disponíveis.
+            Cadastre-se para ter acesso à nossa intranet e conheça todas as ferramentas disponíveis.
           </p>
         </div>
       </div>
 
-      {/* Lado direito - Formulário de Login */}
+      {/* Lado direito - Formulário de Cadastro */}
       <div className="flex-1 flex justify-center items-center p-8">
         <div className="w-full max-w-md">
           {/* Logo para dispositivos móveis */}
@@ -43,11 +30,11 @@ const Login = () => {
               className="w-full max-w-xs mx-auto" 
             />
           </div>
-          <LoginForm />
+          <RegisterForm />
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

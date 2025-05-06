@@ -19,10 +19,11 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-andcont">
+      <div className="text-center text-white">
+        <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
         <h1 className="text-4xl font-bold mb-4">Redirecionando...</h1>
-        <p className="text-xl text-gray-600">Aguarde enquanto o redirecionamos.</p>
+        <p className="text-xl">Aguarde enquanto o redirecionamos.</p>
       </div>
     </div>
   );
