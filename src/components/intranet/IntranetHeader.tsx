@@ -12,12 +12,12 @@ interface IntranetHeaderProps {
 
 const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
   return (
-    <header className="border-b border-white/20 bg-black/10 backdrop-blur-sm">
+    <header className="border-b border-white/20 bg-black/25 backdrop-blur-lg">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
+              src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
               alt="AndCont Logo" 
               className="h-10 mr-4" 
             />

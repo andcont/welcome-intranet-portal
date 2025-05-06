@@ -73,7 +73,7 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6">
+        <div className="bg-black/30 backdrop-blur-xl rounded-lg shadow-xl border border-white/20 p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
             {currentUser.role === 'admin' && (
@@ -90,7 +90,7 @@ const Intranet = () => {
             <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-black/20">
+              <TabsList className="w-full mb-6 bg-black/40">
                 <TabsTrigger value="announcements" className="text-white flex-1">
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>

@@ -1,11 +1,11 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { X } from "lucide-react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface AdminPostFormProps {
@@ -18,6 +18,8 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
   const [content, setContent] = useState("");
   const [url, setUrl] = useState("");
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [image, setImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const getCurrentUser = () => {
     const userStr = localStorage.getItem("andcont_user");
@@ -28,6 +30,19 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
       return user.name || "Administrador";
     } catch {
       return "Administrador";
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      
+      reader.readAsDataURL(file);
     }
   };
   
@@ -56,6 +71,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
           id,
           title,
           content,
+          image: image, // Adicionamos o campo de imagem aqui
           createdAt: now.toISOString(),
           createdBy: currentUser
         });
@@ -64,17 +80,14 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         break;
         
       case "links":
-        if (!url.trim()) {
-          toast.error("Por favor, informe a URL do link");
-          return;
-        }
-        
-        // Validar URL
-        try {
-          new URL(url);
-        } catch {
-          toast.error("Por favor, informe uma URL válida");
-          return;
+        // Validar URL apenas se for fornecida
+        if (url.trim()) {
+          try {
+            new URL(url);
+          } catch {
+            toast.error("Por favor, informe uma URL válida");
+            return;
+          }
         }
         
         // Salvar link
@@ -82,8 +95,9 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         links.push({
           id,
           title,
-          url,
+          url: url.trim(), // URL é agora opcional
           description: content,
+          image: image, // Adicionamos o campo de imagem aqui
           createdAt: now.toISOString(),
           createdBy: currentUser
         });
@@ -108,6 +122,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
           id,
           title,
           description: content,
+          image: image, // Adicionamos o campo de imagem aqui
           date: date.toISOString().split('T')[0],
           createdAt: now.toISOString(),
           createdBy: currentUser
@@ -128,6 +143,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
       type: `create_${activeCategory.slice(0, -1)}`,
       itemId: id,
       itemTitle: title,
+      hasImage: !!image,
       timestamp: now.toISOString()
     });
     localStorage.setItem('andcont_activities', JSON.stringify(activities));
@@ -136,8 +152,15 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
     onClose();
   };
 
+  const removeImage = () => {
+    setImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
-    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+    <div className="bg-black/40 backdrop-blur-xl rounded-lg p-6 border border-white/20">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-white">
           {activeCategory === 'announcements' && 'Novo Comunicado'}
@@ -162,19 +185,19 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Informe o título"
-            className="bg-black/20 border-white/20 text-white placeholder:text-white/50"
+            className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
           />
         </div>
         
         {activeCategory === 'links' && (
           <div>
-            <Label htmlFor="url" className="text-white">URL</Label>
+            <Label htmlFor="url" className="text-white">URL (opcional)</Label>
             <Input 
               id="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://exemplo.com"
-              className="bg-black/20 border-white/20 text-white placeholder:text-white/50"
+              className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
             />
           </div>
         )}
@@ -182,7 +205,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         {activeCategory === 'calendar' && (
           <div>
             <Label htmlFor="date" className="text-white block mb-2">Data</Label>
-            <div className="bg-black/20 rounded-md p-3 border border-white/20">
+            <div className="bg-black/30 rounded-md p-3 border border-white/20">
               <Calendar
                 mode="single"
                 selected={date}
@@ -204,8 +227,52 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Informe o conteúdo"
             rows={5}
-            className="bg-black/20 border-white/20 text-white placeholder:text-white/50"
+            className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
           />
+        </div>
+
+        {/* Campo para upload de imagem */}
+        <div>
+          <Label htmlFor="image" className="text-white block mb-2">Imagem (opcional)</Label>
+          
+          {image ? (
+            <div className="relative mb-4 border border-white/20 rounded-md overflow-hidden">
+              <img 
+                src={image} 
+                alt="Preview" 
+                className="w-full h-auto max-h-48 object-contain"
+              />
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                className="absolute top-2 right-2 bg-black/50"
+                onClick={removeImage}
+              >
+                <X size={16} />
+              </Button>
+            </div>
+          ) : (
+            <div className="border border-dashed border-white/30 rounded-md p-6 text-center bg-black/10">
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                id="image" 
+                accept="image/*" 
+                onChange={handleImageChange}
+                className="hidden" 
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-black/20 border-white/20 hover:bg-black/30 text-white"
+              >
+                <ImageIcon size={16} className="mr-2" />
+                Selecionar Imagem
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="flex justify-end gap-4 pt-2">

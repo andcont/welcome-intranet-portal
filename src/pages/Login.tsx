@@ -21,7 +21,7 @@ const Login = () => {
       <div className="flex-1 hidden lg:flex flex-col justify-center items-center text-white p-8">
         <div className="max-w-lg">
           <img 
-            src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
+            src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
             alt="AndCont Banner" 
             className="w-full h-auto mb-12" 
           />
@@ -38,7 +38,7 @@ const Login = () => {
           {/* Logo para dispositivos móveis */}
           <div className="lg:hidden mb-8">
             <img 
-              src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
+              src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
               alt="AndCont Logo" 
               className="w-full max-w-xs mx-auto" 
             />

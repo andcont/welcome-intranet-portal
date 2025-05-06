@@ -9,6 +9,7 @@ interface CalendarEvent {
   id: string;
   title: string;
   description: string;
+  image?: string | null;
   date: string;
   createdAt: string;
   createdBy: string;
@@ -84,12 +85,12 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 bg-white/5 p-6 rounded-lg border border-white/10">
+      <div className="md:w-1/2 bg-black/20 backdrop-blur-lg p-6 rounded-lg border border-white/10">
         <Calendar
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
-          className="bg-white/5 rounded-md text-white"
+          className="bg-black/10 rounded-md text-white"
           modifiers={{
             event: eventDates
           }}
@@ -104,7 +105,7 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
       </div>
       
       <div className="md:w-1/2">
-        <div className="bg-white/5 p-6 rounded-lg border border-white/10 h-full">
+        <div className="bg-black/20 backdrop-blur-lg p-6 rounded-lg border border-white/10 h-full">
           <h3 className="text-xl font-bold text-white mb-4">
             Eventos: {selectedDate ? formatDate(selectedDate.toISOString()) : ''}
           </h3>
@@ -121,7 +122,7 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
               {filteredEvents.map(event => (
                 <div 
                   key={event.id} 
-                  className="bg-white/5 rounded-lg p-4 border border-white/10"
+                  className="bg-black/10 backdrop-blur-lg rounded-lg p-4 border border-white/10"
                 >
                   <div className="flex justify-between items-start">
                     <h4 className="font-medium text-white">{event.title}</h4>
@@ -137,6 +138,16 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
                       </Button>
                     )}
                   </div>
+                  
+                  {event.image && (
+                    <div className="mt-3 mb-3">
+                      <img 
+                        src={event.image} 
+                        alt={event.title} 
+                        className="w-full h-auto max-h-32 object-contain rounded-md border border-white/10"
+                      />
+                    </div>
+                  )}
                   
                   <p className="mt-2 text-white/80 text-sm">
                     {event.description}

@@ -7,8 +7,9 @@ import { toast } from "sonner";
 interface LinkItem {
   id: string;
   title: string;
-  url: string;
+  url?: string;
   description: string;
+  image?: string | null;
   createdAt: string;
   createdBy: string;
 }
@@ -66,7 +67,7 @@ const LinksList = ({ isAdmin }: LinksListProps) => {
           {links.map(link => (
             <div 
               key={link.id} 
-              className="bg-white/5 rounded-lg p-6 border border-white/10 hover:border-white/20 transition-all flex flex-col h-full"
+              className="bg-black/20 backdrop-blur-lg rounded-lg p-6 border border-white/10 hover:border-white/20 transition-all flex flex-col h-full"
             >
               <div className="flex justify-between items-start">
                 <h3 className="text-xl font-bold text-white">{link.title}</h3>
@@ -83,20 +84,32 @@ const LinksList = ({ isAdmin }: LinksListProps) => {
                 )}
               </div>
               
+              {link.image && (
+                <div className="mt-3 mb-3">
+                  <img 
+                    src={link.image} 
+                    alt={link.title} 
+                    className="w-full h-auto max-h-40 object-contain rounded-md border border-white/10"
+                  />
+                </div>
+              )}
+              
               <div className="mt-2 text-white/80 flex-grow">
                 {link.description}
               </div>
               
               <div className="mt-4 flex justify-between items-center">
                 <span className="text-sm text-white/50">Por: {link.createdBy}</span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => window.open(link.url, '_blank')}
-                  className="bg-white/10 hover:bg-white/20 text-white border-white/30"
-                >
-                  <ExternalLink size={14} className="mr-2" /> Acessar
-                </Button>
+                {link.url && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => window.open(link.url, '_blank')}
+                    className="bg-white/10 hover:bg-white/20 text-white border-white/30"
+                  >
+                    <ExternalLink size={14} className="mr-2" /> Acessar
+                  </Button>
+                )}
               </div>
             </div>
           ))}

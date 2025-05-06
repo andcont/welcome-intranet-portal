@@ -8,6 +8,7 @@ interface Announcement {
   id: string;
   title: string;
   content: string;
+  image?: string | null;
   createdAt: string;
   createdBy: string;
 }
@@ -73,7 +74,7 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
         announcements.map(announcement => (
           <div 
             key={announcement.id} 
-            className="bg-white/5 rounded-lg p-6 border border-white/10 hover:border-white/20 transition-all"
+            className="bg-black/20 backdrop-blur-lg rounded-lg p-6 border border-white/10 hover:border-white/20 transition-all"
           >
             <div className="flex justify-between items-start">
               <h3 className="text-xl font-bold text-white">{announcement.title}</h3>
@@ -89,6 +90,16 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
                 </Button>
               )}
             </div>
+            
+            {announcement.image && (
+              <div className="mt-4 mb-4">
+                <img 
+                  src={announcement.image} 
+                  alt={announcement.title} 
+                  className="w-full h-auto max-h-64 object-contain rounded-md border border-white/10"
+                />
+              </div>
+            )}
             
             <div className="mt-2 text-white/80 whitespace-pre-wrap">
               {announcement.content}
