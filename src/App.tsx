@@ -11,7 +11,7 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import Intranet from "./pages/Intranet";
 
-// Initialize the query client outside of the component
+// Initialize the query client outside of the component to avoid re-creation on render
 const queryClient = new QueryClient();
 
 // Componente para verificar autenticação
