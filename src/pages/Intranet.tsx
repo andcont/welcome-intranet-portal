@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LogOut, Calendar, Link as LinkIcon, Bell, Plus } from "lucide-react";
+import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import IntranetHeader from "@/components/intranet/IntranetHeader";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
@@ -28,6 +28,13 @@ const Intranet = () => {
     try {
       const user = JSON.parse(userStr);
       setCurrentUser(user);
+      
+      // Check if we should open the content form from Admin page redirection
+      const shouldOpenForm = localStorage.getItem("andcont_open_content_form");
+      if (shouldOpenForm === "true" && user.role === 'admin') {
+        setShowPostForm(true);
+        localStorage.removeItem("andcont_open_content_form");
+      }
       
       // Registrar atividade de acesso à intranet
       const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
@@ -60,6 +67,10 @@ const Intranet = () => {
     setShowPostForm(false);
   };
 
+  const goToAdmin = () => {
+    navigate("/admin");
+  };
+
   if (!currentUser) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-andcont">
@@ -73,24 +84,36 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="bg-black/30 backdrop-blur-xl rounded-lg shadow-xl border border-white/20 p-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-white/15 backdrop-blur-xl rounded-lg shadow-xl border border-white/20 p-6">
+          <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
-            {currentUser.role === 'admin' && (
-              <Button 
-                onClick={handleAddContent}
-                className="bg-white/20 hover:bg-white/30 text-white"
-              >
-                <Plus size={16} className="mr-2" /> Adicionar conteúdo
-              </Button>
-            )}
+            
+            <div className="flex space-x-2 mt-2 sm:mt-0">
+              {currentUser.role === 'admin' && (
+                <>
+                  <Button 
+                    onClick={goToAdmin}
+                    variant="outline"
+                    className="bg-white/15 hover:bg-white/25 text-white border-white/30"
+                  >
+                    <LayoutDashboard size={16} className="mr-2" /> Admin
+                  </Button>
+                  <Button 
+                    onClick={handleAddContent}
+                    className="bg-gradient-to-r from-andcont-blue to-andcont-purple hover:opacity-90"
+                  >
+                    <Plus size={16} className="mr-2" /> Adicionar
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
 
           {showPostForm && currentUser.role === 'admin' ? (
             <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-black/40">
+              <TabsList className="w-full mb-6 bg-black/15">
                 <TabsTrigger value="announcements" className="text-white flex-1">
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>

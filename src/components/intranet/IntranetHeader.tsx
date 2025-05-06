@@ -12,7 +12,7 @@ interface IntranetHeaderProps {
 
 const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
   return (
-    <header className="border-b border-white/20 bg-black/25 backdrop-blur-lg">
+    <header className="border-b border-white/30 bg-white/10 backdrop-blur-lg">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -28,7 +28,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
             <div className="mr-4 text-white flex items-center">
               <User className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">{currentUser.name}</span>
-              <span className="ml-2 bg-white/20 text-white text-xs px-2 py-1 rounded-full">
+              <span className="ml-2 bg-white/30 text-white text-xs px-2 py-1 rounded-full">
                 {currentUser.role === 'admin' ? 'Admin' : 'Usuário'}
               </span>
             </div>
@@ -37,7 +37,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
               onClick={onLogout} 
               variant="outline" 
               size="sm"
-              className="bg-white/10 hover:bg-white/20 text-white border-white/30"
+              className="bg-white/15 hover:bg-white/25 text-white border-white/30"
             >
               <LogOut className="mr-2 h-4 w-4" /> 
               <span className="hidden sm:inline">Sair</span>
