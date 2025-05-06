@@ -10,8 +10,8 @@ const Index = () => {
     const user = localStorage.getItem("andcont_user");
     
     if (user) {
-      // Usuário logado, redireciona para a intranet
-      window.location.href = "https://intranetandcont.vercel.app/";
+      // Usuário logado, redireciona para a intranet interna
+      navigate("/");
     } else {
       // Usuário não logado, redireciona para a página de login
       navigate("/login");

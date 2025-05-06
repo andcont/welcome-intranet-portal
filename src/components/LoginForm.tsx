@@ -66,8 +66,8 @@ const LoginForm = () => {
 
         toast.success("Login realizado com sucesso!");
         
-        // Redirecionar para a intranet da AndCont
-        window.location.href = "https://intranetandcont.vercel.app/";
+        // Redirecionar para a intranet interna
+        navigate("/");
       } else {
         toast.error("Credenciais inválidas. Verifique seu email e senha.");
       }

@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import Index from "./pages/Index";
+import Intranet from "./pages/Intranet";
 
 // Initialize the query client outside of the component
 const queryClient = new QueryClient();
@@ -45,7 +45,11 @@ function App() {
                 <Admin />
               </RequireAuth>
             } />
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={
+              <RequireAuth>
+                <Intranet />
+              </RequireAuth>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>

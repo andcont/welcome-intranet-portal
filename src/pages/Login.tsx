@@ -10,8 +10,8 @@ const Login = () => {
   useEffect(() => {
     const user = localStorage.getItem("andcont_user");
     if (user) {
-      // Usuário já logado, redireciona direto para a intranet
-      window.location.href = "https://intranetandcont.vercel.app/";
+      // Usuário já logado, redireciona direto para a intranet interna
+      navigate("/");
     }
   }, [navigate]);
 
