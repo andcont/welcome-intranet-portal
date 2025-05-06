@@ -1,11 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Verificar se o usuário está logado
+    const user = localStorage.getItem("andcont_user");
+    
+    if (user) {
+      // Usuário logado, redireciona para a intranet
+      window.location.href = "https://intranetandcont.vercel.app/";
+    } else {
+      // Usuário não logado, redireciona para a página de login
+      navigate("/login");
+    }
+  }, [navigate]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+        <h1 className="text-4xl font-bold mb-4">Redirecionando...</h1>
+        <p className="text-xl text-gray-600">Aguarde enquanto o redirecionamos.</p>
       </div>
     </div>
   );

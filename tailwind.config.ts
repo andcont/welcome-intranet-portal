@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				andcont: {
+					blue: '#00b4d8',
+					green: '#7ae582',
+					orange: '#ff914d',
+					purple: '#b425eb',
+					pink: '#ff66c4',
+					red: '#ff5a5f',
+					yellow: '#ffcf40'
 				}
+			},
+			backgroundImage: {
+				'gradient-andcont': 'linear-gradient(135deg, #00b4d8, #7ae582, #ff914d, #b425eb, #ff66c4)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
