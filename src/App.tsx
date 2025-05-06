@@ -9,7 +9,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
+// Initialize the query client outside of the component
 const queryClient = new QueryClient();
 
 // Componente para verificar autenticação
@@ -28,41 +30,28 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-const RedirectToIntranet = () => {
-  useEffect(() => {
-    window.location.href = "https://intranetandcont.vercel.app/";
-  }, []);
-
-  return <div className="h-screen flex items-center justify-center">Redirecionando para a intranet...</div>;
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={
-            <RequireAuth>
-              <Admin />
-            </RequireAuth>
-          } />
-          <Route
-            path="/"
-            element={
+function App() {
+  return (
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={
               <RequireAuth>
-                <RedirectToIntranet />
+                <Admin />
               </RequireAuth>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+            } />
+            <Route path="/" element={<Index />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+}
 
 export default App;
