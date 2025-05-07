@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash, AlertCircle } from "lucide-react";
+import { Trash, AlertCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 interface Announcement {
@@ -15,10 +15,12 @@ interface Announcement {
 
 interface AnnouncementsListProps {
   isAdmin: boolean;
+  onSelectPost: (id: string) => void;
 }
 
-const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
+const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     // Carregar anúncios do localStorage
@@ -39,12 +41,33 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
       localStorage.setItem('andcont_announcements', JSON.stringify(initialAnnouncements));
       setAnnouncements(initialAnnouncements);
     }
+
+    // Load comment counts
+    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
+    const counts: Record<string, number> = {};
+    
+    allComments.forEach((comment: any) => {
+      if (comment.postType === 'announcement') {
+        counts[comment.postId] = (counts[comment.postId] || 0) + 1;
+      }
+    });
+    
+    setCommentCounts(counts);
   }, []);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent click
     const updatedAnnouncements = announcements.filter(item => item.id !== id);
     setAnnouncements(updatedAnnouncements);
     localStorage.setItem('andcont_announcements', JSON.stringify(updatedAnnouncements));
+    
+    // Also remove associated comments
+    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
+    const filteredComments = allComments.filter(
+      (comment: any) => !(comment.postId === id && comment.postType === 'announcement')
+    );
+    localStorage.setItem('andcont_comments', JSON.stringify(filteredComments));
+    
     toast.success("Comunicado removido com sucesso!");
   };
 
@@ -74,7 +97,8 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
         announcements.map(announcement => (
           <div 
             key={announcement.id} 
-            className="bg-black/20 backdrop-blur-lg rounded-lg p-6 border border-white/10 hover:border-white/20 transition-all"
+            className="bg-white/25 backdrop-blur-lg rounded-lg p-6 border border-white/30 hover:bg-white/30 transition-all cursor-pointer"
+            onClick={() => onSelectPost(announcement.id)}
           >
             <div className="flex justify-between items-start">
               <h3 className="text-xl font-bold text-white">{announcement.title}</h3>
@@ -83,7 +107,7 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => handleDelete(announcement.id)}
+                  onClick={(e) => handleDelete(announcement.id, e)}
                   className="text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <Trash size={16} />
@@ -101,13 +125,20 @@ const AnnouncementsList = ({ isAdmin }: AnnouncementsListProps) => {
               </div>
             )}
             
-            <div className="mt-2 text-white/80 whitespace-pre-wrap">
+            <div className="mt-2 text-white/80 whitespace-pre-wrap line-clamp-3">
               {announcement.content}
             </div>
             
-            <div className="mt-4 text-sm text-white/50 flex items-center justify-between">
-              <span>Por: {announcement.createdBy}</span>
-              <span>{formatDate(announcement.createdAt)}</span>
+            <div className="mt-4 flex items-center justify-between text-sm text-white/50">
+              <div className="flex items-center">
+                <MessageSquare size={16} className="mr-1" /> 
+                {commentCounts[announcement.id] || 0} comentários
+              </div>
+              <div className="flex items-center">
+                <span>Por: {announcement.createdBy}</span>
+                <span className="mx-2">•</span>
+                <span>{formatDate(announcement.createdAt)}</span>
+              </div>
             </div>
           </div>
         ))

@@ -12,12 +12,12 @@ interface IntranetHeaderProps {
 
 const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
   return (
-    <header className="border-b border-white/30 bg-white/10 backdrop-blur-lg">
+    <header className="border-b border-white/20 bg-white/20 backdrop-blur-lg">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
+              src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
               alt="AndCont Logo" 
               className="h-10 mr-4" 
             />
@@ -37,7 +37,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
               onClick={onLogout} 
               variant="outline" 
               size="sm"
-              className="bg-white/15 hover:bg-white/25 text-white border-white/30"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               <LogOut className="mr-2 h-4 w-4" /> 
               <span className="hidden sm:inline">Sair</span>

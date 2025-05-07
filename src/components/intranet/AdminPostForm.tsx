@@ -71,7 +71,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
           id,
           title,
           content,
-          image: image, // Adicionamos o campo de imagem aqui
+          image: image,
           createdAt: now.toISOString(),
           createdBy: currentUser
         });
@@ -95,9 +95,9 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         links.push({
           id,
           title,
-          url: url.trim(), // URL é agora opcional
+          url: url.trim(),
           description: content,
-          image: image, // Adicionamos o campo de imagem aqui
+          image: image,
           createdAt: now.toISOString(),
           createdBy: currentUser
         });
@@ -122,13 +122,33 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
           id,
           title,
           description: content,
-          image: image, // Adicionamos o campo de imagem aqui
+          image: image,
           date: date.toISOString().split('T')[0],
           createdAt: now.toISOString(),
           createdBy: currentUser
         });
         localStorage.setItem('andcont_events', JSON.stringify(events));
         toast.success("Evento adicionado com sucesso!");
+        break;
+
+      case "feed":
+        if (!content.trim()) {
+          toast.error("Por favor, informe o conteúdo do post");
+          return;
+        }
+        
+        // Salvar post no feed
+        const feed = JSON.parse(localStorage.getItem('andcont_feed') || '[]');
+        feed.push({
+          id,
+          title,
+          content,
+          image: image,
+          createdAt: now.toISOString(),
+          createdBy: currentUser
+        });
+        localStorage.setItem('andcont_feed', JSON.stringify(feed));
+        toast.success("Post publicado com sucesso!");
         break;
     }
     
@@ -140,7 +160,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
       userId: user.id || 'unknown',
       userName: user.name || 'Administrador',
       userEmail: user.email || 'admin',
-      type: `create_${activeCategory.slice(0, -1)}`,
+      type: `create_${activeCategory === 'feed' ? 'post' : activeCategory.slice(0, -1)}`,
       itemId: id,
       itemTitle: title,
       hasImage: !!image,
@@ -160,12 +180,13 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
   };
 
   return (
-    <div className="bg-black/40 backdrop-blur-xl rounded-lg p-6 border border-white/20">
+    <div className="bg-white/25 backdrop-blur-xl rounded-lg p-6 border border-white/30">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-white">
           {activeCategory === 'announcements' && 'Novo Comunicado'}
           {activeCategory === 'links' && 'Novo Link'}
           {activeCategory === 'calendar' && 'Novo Evento'}
+          {activeCategory === 'feed' && 'Novo Post'}
         </h3>
         <Button 
           variant="ghost" 
@@ -185,7 +206,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Informe o título"
-            className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
+            className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
           />
         </div>
         
@@ -197,7 +218,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://exemplo.com"
-              className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
+              className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
             />
           </div>
         )}
@@ -205,7 +226,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         {activeCategory === 'calendar' && (
           <div>
             <Label htmlFor="date" className="text-white block mb-2">Data</Label>
-            <div className="bg-black/30 rounded-md p-3 border border-white/20">
+            <div className="bg-black/20 rounded-md p-3 border border-white/30">
               <Calendar
                 mode="single"
                 selected={date}
@@ -219,15 +240,16 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
         <div>
           <Label htmlFor="content" className="text-white">
             {activeCategory === 'announcements' ? 'Conteúdo' : 
-             activeCategory === 'links' ? 'Descrição' : 'Descrição do evento'}
+             activeCategory === 'links' ? 'Descrição' : 
+             activeCategory === 'feed' ? 'Conteúdo do post' : 'Descrição do evento'}
           </Label>
           <Textarea 
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Informe o conteúdo"
+            placeholder={activeCategory === 'feed' ? "O que está acontecendo?" : "Informe o conteúdo"}
             rows={5}
-            className="bg-black/30 border-white/20 text-white placeholder:text-white/50"
+            className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
           />
         </div>
 
@@ -236,7 +258,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
           <Label htmlFor="image" className="text-white block mb-2">Imagem (opcional)</Label>
           
           {image ? (
-            <div className="relative mb-4 border border-white/20 rounded-md overflow-hidden">
+            <div className="relative mb-4 border border-white/30 rounded-md overflow-hidden">
               <img 
                 src={image} 
                 alt="Preview" 
@@ -266,7 +288,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
                 type="button"
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-black/20 border-white/20 hover:bg-black/30 text-white"
+                className="bg-black/20 border-white/30 hover:bg-black/30 text-white"
               >
                 <ImageIcon size={16} className="mr-2" />
                 Selecionar Imagem

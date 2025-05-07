@@ -3,19 +3,22 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, LayoutDashboard } from "lucide-react";
+import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, LayoutDashboard, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import IntranetHeader from "@/components/intranet/IntranetHeader";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
 import CalendarView from "@/components/intranet/CalendarView";
 import AdminPostForm from "@/components/intranet/AdminPostForm";
+import FeedList from "@/components/intranet/FeedList";
+import PostDetail from "@/components/intranet/PostDetail";
 
 const Intranet = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [showPostForm, setShowPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("announcements");
+  const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' } | null>(null);
 
   useEffect(() => {
     // Verificar usuário
@@ -71,6 +74,14 @@ const Intranet = () => {
     navigate("/admin");
   };
 
+  const handleSelectPost = (id: string, type: 'announcement' | 'link' | 'event' | 'feed') => {
+    setSelectedPost({ id, type });
+  };
+
+  const handleClosePostDetail = () => {
+    setSelectedPost(null);
+  };
+
   if (!currentUser) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-andcont">
@@ -84,7 +95,7 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="bg-white/15 backdrop-blur-xl rounded-lg shadow-xl border border-white/20 p-6">
+        <div className="bg-white/25 backdrop-blur-xl rounded-lg shadow-xl border border-white/30 p-6">
           <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
             
@@ -94,7 +105,7 @@ const Intranet = () => {
                   <Button 
                     onClick={goToAdmin}
                     variant="outline"
-                    className="bg-white/15 hover:bg-white/25 text-white border-white/30"
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
                   >
                     <LayoutDashboard size={16} className="mr-2" /> Admin
                   </Button>
@@ -111,6 +122,12 @@ const Intranet = () => {
 
           {showPostForm && currentUser.role === 'admin' ? (
             <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
+          ) : selectedPost ? (
+            <PostDetail 
+              postId={selectedPost.id} 
+              postType={selectedPost.type} 
+              onClose={handleClosePostDetail} 
+            />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full mb-6 bg-black/15">
@@ -123,18 +140,37 @@ const Intranet = () => {
                 <TabsTrigger value="calendar" className="text-white flex-1">
                   <Calendar className="mr-2 h-4 w-4" /> Calendário
                 </TabsTrigger>
+                <TabsTrigger value="feed" className="text-white flex-1">
+                  <MessageSquare className="mr-2 h-4 w-4" /> Feed
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="announcements">
-                <AnnouncementsList isAdmin={currentUser.role === 'admin'} />
+                <AnnouncementsList 
+                  isAdmin={currentUser.role === 'admin'} 
+                  onSelectPost={(id) => handleSelectPost(id, 'announcement')}
+                />
               </TabsContent>
               
               <TabsContent value="links">
-                <LinksList isAdmin={currentUser.role === 'admin'} />
+                <LinksList 
+                  isAdmin={currentUser.role === 'admin'} 
+                  onSelectPost={(id) => handleSelectPost(id, 'link')}
+                />
               </TabsContent>
               
               <TabsContent value="calendar">
-                <CalendarView isAdmin={currentUser.role === 'admin'} />
+                <CalendarView 
+                  isAdmin={currentUser.role === 'admin'} 
+                  onSelectPost={(id) => handleSelectPost(id, 'event')}
+                />
+              </TabsContent>
+              
+              <TabsContent value="feed">
+                <FeedList 
+                  isAdmin={currentUser.role === 'admin'} 
+                  onSelectPost={(id) => handleSelectPost(id, 'feed')}
+                />
               </TabsContent>
             </Tabs>
           )}
