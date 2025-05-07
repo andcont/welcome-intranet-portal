@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,9 +16,10 @@ interface CalendarEvent {
 
 interface CalendarViewProps {
   isAdmin: boolean;
+  onSelectPost: (id: string) => void;
 }
 
-const CalendarView = ({ isAdmin }: CalendarViewProps) => {
+const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
@@ -123,6 +123,8 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
                 <div 
                   key={event.id} 
                   className="bg-black/10 backdrop-blur-lg rounded-lg p-4 border border-white/10"
+                  onClick={() => onSelectPost(event.id)}
+                  role="button"
                 >
                   <div className="flex justify-between items-start">
                     <h4 className="font-medium text-white">{event.title}</h4>
@@ -131,7 +133,10 @@ const CalendarView = ({ isAdmin }: CalendarViewProps) => {
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        onClick={() => handleDelete(event.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(event.id);
+                        }}
                         className="text-white/70 hover:text-white hover:bg-white/10"
                       >
                         <Trash size={14} />
