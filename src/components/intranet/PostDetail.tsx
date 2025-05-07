@@ -3,8 +3,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/ui/avatar";
-import { X, MessageSquare, User, Send } from "lucide-react";
+import { X, MessageSquare, User, Send, Edit, Trash, Image } from "lucide-react";
 import { toast } from "sonner";
+import PostReactions from "./PostReactions";
+import ImageViewer from "./ImageViewer";
+import EditPostForm from "./EditPostForm";
 
 interface PostDetailProps {
   postId: string;
@@ -39,8 +42,11 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   
-  useEffect(() => {
+  const loadPost = () => {
     // Load post data
     let storageKey = "";
     switch(postType) {
@@ -72,6 +78,21 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
     );
     setComments(postComments);
     setLoading(false);
+  };
+  
+  useEffect(() => {
+    loadPost();
+    
+    // Load user data
+    const userStr = localStorage.getItem("andcont_user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setCurrentUser(user);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
   }, [postId, postType]);
   
   const getCurrentUser = () => {
@@ -116,6 +137,64 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
     toast.success("Comentário adicionado com sucesso!");
   };
   
+  const handleDeletePost = () => {
+    if (!confirm("Tem certeza que deseja excluir esta publicação?")) {
+      return;
+    }
+    
+    // Get storage key based on post type
+    let storageKey = "";
+    switch(postType) {
+      case 'announcement':
+        storageKey = 'andcont_announcements';
+        break;
+      case 'link':
+        storageKey = 'andcont_links';
+        break;
+      case 'event':
+        storageKey = 'andcont_events';
+        break;
+      case 'feed':
+        storageKey = 'andcont_feed';
+        break;
+    }
+    
+    // Delete the post
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const updatedItems = items.filter((item: Post) => item.id !== postId);
+    localStorage.setItem(storageKey, JSON.stringify(updatedItems));
+    
+    // Delete associated comments
+    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
+    const updatedComments = allComments.filter(
+      (comment: Comment) => !(comment.postId === postId && comment.postType === postType)
+    );
+    localStorage.setItem('andcont_comments', JSON.stringify(updatedComments));
+    
+    // Delete associated reactions
+    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
+    const updatedReactions = allReactions.filter(
+      (reaction: any) => !(reaction.postId === postId && reaction.postType === postType)
+    );
+    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
+    
+    // Log activity
+    const user = JSON.parse(localStorage.getItem('andcont_user') || '{}');
+    const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
+    activities.push({
+      id: Date.now().toString(),
+      userId: user.id || 'unknown',
+      userName: user.name || 'Usuário',
+      userEmail: user.email || '',
+      type: `delete_${postType}`,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('andcont_activities', JSON.stringify(activities));
+    
+    toast.success("Publicação excluída com sucesso!");
+    onClose();
+  };
+  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -125,17 +204,29 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       minute: '2-digit'
     });
   };
+
+  const canEditOrDelete = () => {
+    if (!currentUser || !post) return false;
+    
+    // Admin can edit/delete anything
+    if (currentUser.role === 'admin') return true;
+    
+    // Regular users can only edit/delete their own feed posts
+    if (postType === 'feed' && post.createdBy === currentUser.name) return true;
+    
+    return false;
+  };
   
   if (loading || !post) {
     return (
-      <div className="bg-white/25 backdrop-blur-xl rounded-lg p-6 border border-white/30">
+      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-lg">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-white">Carregando...</h3>
+          <h3 className="text-xl font-bold text-gray-800">Carregando...</h3>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={onClose}
-            className="text-white/70 hover:text-white hover:bg-white/10"
+            className="text-gray-500"
           >
             <X size={18} />
           </Button>
@@ -143,34 +234,85 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       </div>
     );
   }
+
+  if (showEditForm) {
+    return (
+      <EditPostForm 
+        postId={postId} 
+        postType={postType} 
+        onClose={() => setShowEditForm(false)}
+        onUpdate={loadPost}
+      />
+    );
+  }
   
   return (
-    <div className="bg-white/25 backdrop-blur-xl rounded-lg p-6 border border-white/30">
+    <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-lg">
+      {showImageViewer && post.image && (
+        <ImageViewer 
+          src={post.image} 
+          alt={post.title} 
+          onClose={() => setShowImageViewer(false)}
+        />
+      )}
+      
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-white">{post.title}</h3>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={onClose}
-          className="text-white/70 hover:text-white hover:bg-white/10"
-        >
-          <X size={18} />
-        </Button>
+        <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
+        <div className="flex items-center gap-2">
+          {canEditOrDelete() && (
+            <>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowEditForm(true)}
+                className="text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <Edit size={16} />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleDeletePost}
+                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+              >
+                <Trash size={16} />
+              </Button>
+            </>
+          )}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClose}
+            className="text-gray-500"
+          >
+            <X size={18} />
+          </Button>
+        </div>
       </div>
       
       {/* Post content */}
       <div className="mb-8">
         {post.image && (
           <div className="mb-4">
-            <img 
-              src={post.image} 
-              alt={post.title} 
-              className="w-full h-auto max-h-80 object-contain rounded-md border border-white/20"
-            />
+            <div 
+              className="relative cursor-zoom-in group"
+              onClick={() => setShowImageViewer(true)}
+            >
+              <img 
+                src={post.image} 
+                alt={post.title} 
+                className="w-full h-auto max-h-80 object-contain rounded-md border border-gray-200"
+              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/30 rounded-md transition-opacity">
+                <div className="bg-white/80 p-2 rounded-full">
+                  <Image size={24} className="text-gray-800" />
+                </div>
+              </div>
+            </div>
           </div>
         )}
         
-        <div className="text-white/90 whitespace-pre-wrap">
+        <div className="text-gray-700 whitespace-pre-wrap">
           {post.content || post.description}
         </div>
         
@@ -180,7 +322,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               href={post.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-300 hover:underline flex items-center"
+              className="text-blue-600 hover:underline flex items-center"
             >
               Acessar link
             </a>
@@ -188,20 +330,24 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         )}
         
         {post.date && (
-          <div className="mt-2 text-white/80">
+          <div className="mt-2 text-gray-600">
             <span>Data: {new Date(post.date).toLocaleDateString('pt-BR')}</span>
           </div>
         )}
         
-        <div className="mt-4 text-sm text-white/60 flex items-center justify-between">
+        <div className="mt-4 text-sm text-gray-500 flex items-center justify-between">
           <span>Por: {post.createdBy}</span>
           <span>{formatDate(post.createdAt)}</span>
+        </div>
+        
+        <div className="mt-4 flex items-center gap-4">
+          <PostReactions postId={postId} postType={postType} />
         </div>
       </div>
       
       {/* Comments section */}
-      <div className="pt-6 border-t border-white/20">
-        <h4 className="flex items-center text-lg font-bold text-white mb-4">
+      <div className="pt-6 border-t border-gray-200">
+        <h4 className="flex items-center text-lg font-bold text-gray-800 mb-4">
           <MessageSquare className="mr-2 h-5 w-5" /> 
           Comentários ({comments.length})
         </h4>
@@ -209,24 +355,24 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         {comments.length > 0 ? (
           <div className="space-y-4 mb-6">
             {comments.map(comment => (
-              <div key={comment.id} className="bg-black/10 rounded-lg p-4 border border-white/10">
+              <div key={comment.id} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
                 <div className="flex items-start">
-                  <Avatar className="h-8 w-8 mr-3 bg-white/20 text-white border border-white/30">
+                  <Avatar className="h-8 w-8 mr-3 bg-blue-100 text-blue-600">
                     <User className="h-4 w-4" />
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center">
-                        <span className="font-medium text-white">{comment.createdBy}</span>
+                        <span className="font-medium text-gray-800">{comment.createdBy}</span>
                         {comment.createdByRole === 'admin' && (
-                          <span className="ml-2 bg-white/30 text-white text-xs px-2 py-0.5 rounded-full">
+                          <span className="ml-2 bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
                             Admin
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-white/60">{formatDate(comment.createdAt)}</span>
+                      <span className="text-xs text-gray-500">{formatDate(comment.createdAt)}</span>
                     </div>
-                    <p className="text-white/90">{comment.content}</p>
+                    <p className="text-gray-700">{comment.content}</p>
                   </div>
                 </div>
               </div>
@@ -234,13 +380,13 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-white/70">Seja o primeiro a comentar!</p>
+            <p className="text-gray-500">Seja o primeiro a comentar!</p>
           </div>
         )}
         
         {/* Add comment */}
         <div className="flex space-x-3 mt-4">
-          <Avatar className="h-8 w-8 bg-white/20 text-white border border-white/30">
+          <Avatar className="h-8 w-8 bg-blue-100 text-blue-600">
             <User className="h-4 w-4" />
           </Avatar>
           <div className="flex-1">
@@ -249,13 +395,13 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Adicione um comentário..."
               rows={3}
-              className="bg-black/20 border-white/20 text-white placeholder:text-white/50 mb-2 resize-none"
+              className="border-gray-300 placeholder:text-gray-400 mb-2 resize-none"
             />
             <div className="flex justify-end">
               <Button 
                 onClick={handleSubmitComment}
                 size="sm"
-                className="bg-gradient-andcont hover:opacity-90 transition-opacity"
+                className="bg-blue-600 hover:bg-blue-700"
               >
                 <Send className="mr-2 h-4 w-4" /> Comentar
               </Button>

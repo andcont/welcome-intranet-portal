@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash, AlertCircle, MessageSquare } from "lucide-react";
+import { Trash, AlertCircle, MessageSquare, Heart } from "lucide-react";
 import { toast } from "sonner";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 interface Announcement {
   id: string;
@@ -21,6 +22,7 @@ interface AnnouncementsListProps {
 const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     // Carregar anúncios do localStorage
@@ -53,10 +55,27 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
     });
     
     setCommentCounts(counts);
+    
+    // Load reaction counts
+    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
+    const reactionCounts: Record<string, number> = {};
+    
+    allReactions.forEach((reaction: any) => {
+      if (reaction.postType === 'announcement') {
+        reactionCounts[reaction.postId] = (reactionCounts[reaction.postId] || 0) + 1;
+      }
+    });
+    
+    setReactionCounts(reactionCounts);
   }, []);
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the parent click
+    
+    if (!confirm("Tem certeza que deseja excluir este comunicado?")) {
+      return;
+    }
+    
     const updatedAnnouncements = announcements.filter(item => item.id !== id);
     setAnnouncements(updatedAnnouncements);
     localStorage.setItem('andcont_announcements', JSON.stringify(updatedAnnouncements));
@@ -67,6 +86,13 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
       (comment: any) => !(comment.postId === id && comment.postType === 'announcement')
     );
     localStorage.setItem('andcont_comments', JSON.stringify(filteredComments));
+    
+    // Also remove associated reactions
+    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
+    const filteredReactions = allReactions.filter(
+      (reaction: any) => !(reaction.postId === id && reaction.postType === 'announcement')
+    );
+    localStorage.setItem('andcont_reactions', JSON.stringify(filteredReactions));
     
     toast.success("Comunicado removido com sucesso!");
   };
@@ -84,10 +110,10 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
   return (
     <div className="space-y-6">
       {announcements.length === 0 ? (
-        <div className="text-center py-12">
-          <AlertCircle className="mx-auto h-12 w-12 text-white/60 mb-4" />
-          <h3 className="text-xl font-medium text-white">Nenhum comunicado disponível</h3>
-          <p className="text-white/70 mt-2">
+        <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+          <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-xl font-medium text-gray-800">Nenhum comunicado disponível</h3>
+          <p className="text-gray-500 mt-2">
             {isAdmin 
               ? "Clique em 'Adicionar conteúdo' para criar um novo comunicado." 
               : "Não há comunicados para exibir no momento."}
@@ -95,52 +121,61 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
         </div>
       ) : (
         announcements.map(announcement => (
-          <div 
+          <Card 
             key={announcement.id} 
-            className="bg-white/25 backdrop-blur-lg rounded-lg p-6 border border-white/30 hover:bg-white/30 transition-all cursor-pointer"
+            className="border-gray-200 hover:border-gray-300 transition-all hover:shadow-md cursor-pointer"
             onClick={() => onSelectPost(announcement.id)}
           >
-            <div className="flex justify-between items-start">
-              <h3 className="text-xl font-bold text-white">{announcement.title}</h3>
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <h3 className="text-xl font-bold text-gray-800">{announcement.title}</h3>
+                
+                {isAdmin && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={(e) => handleDelete(announcement.id, e)}
+                    className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <Trash size={16} />
+                  </Button>
+                )}
+              </div>
               
-              {isAdmin && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={(e) => handleDelete(announcement.id, e)}
-                  className="text-white/70 hover:text-white hover:bg-white/10"
-                >
-                  <Trash size={16} />
-                </Button>
+              {announcement.image && (
+                <div className="mt-4 mb-4">
+                  <img 
+                    src={announcement.image} 
+                    alt={announcement.title} 
+                    className="w-full h-auto max-h-64 object-contain rounded-md border border-gray-200"
+                  />
+                </div>
               )}
-            </div>
-            
-            {announcement.image && (
-              <div className="mt-4 mb-4">
-                <img 
-                  src={announcement.image} 
-                  alt={announcement.title} 
-                  className="w-full h-auto max-h-64 object-contain rounded-md border border-white/10"
-                />
+              
+              <div className="mt-2 text-gray-600 whitespace-pre-wrap line-clamp-3">
+                {announcement.content}
               </div>
-            )}
+            </CardContent>
             
-            <div className="mt-2 text-white/80 whitespace-pre-wrap line-clamp-3">
-              {announcement.content}
-            </div>
-            
-            <div className="mt-4 flex items-center justify-between text-sm text-white/50">
-              <div className="flex items-center">
-                <MessageSquare size={16} className="mr-1" /> 
-                {commentCounts[announcement.id] || 0} comentários
+            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4 pt-4">
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Heart size={16} className={`mr-1 ${reactionCounts[announcement.id] ? 'fill-red-500 text-red-500' : ''}`} /> 
+                  {reactionCounts[announcement.id] || 0}
+                </div>
+                <div className="flex items-center">
+                  <MessageSquare size={16} className="mr-1" /> 
+                  {commentCounts[announcement.id] || 0}
+                </div>
               </div>
-              <div className="flex items-center">
+              
+              <div className="text-sm text-gray-500 flex items-center">
                 <span>Por: {announcement.createdBy}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(announcement.createdAt)}</span>
               </div>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         ))
       )}
     </div>
