@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import Intranet from "./pages/Intranet";
+import Profile from "./pages/Profile";
 
 // Initialize the query client outside of the component to avoid re-creation on render
 const queryClient = new QueryClient();
@@ -43,6 +44,11 @@ function App() {
             <Route path="/admin" element={
               <RequireAuth>
                 <Admin />
+              </RequireAuth>
+            } />
+            <Route path="/profile" element={
+              <RequireAuth>
+                <Profile />
               </RequireAuth>
             } />
             <Route path="/" element={
