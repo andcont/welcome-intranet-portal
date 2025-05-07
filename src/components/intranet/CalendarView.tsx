@@ -26,12 +26,12 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
-    // Carregar eventos do localStorage
+    // Load events from localStorage
     const storedEvents = localStorage.getItem('andcont_events');
     if (storedEvents) {
       setEvents(JSON.parse(storedEvents));
     } else {
-      // Dados iniciais de exemplo
+      // Example initial data
       const today = new Date();
       const initialEvents = [
         {
@@ -51,7 +51,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   useEffect(() => {
     if (!selectedDate) return;
     
-    // Filtrar eventos pela data selecionada
+    // Filter events by the selected date
     const dateString = selectedDate.toISOString().split('T')[0];
     const filtered = events.filter(event => event.date === dateString);
     setFilteredEvents(filtered);
@@ -62,7 +62,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     setEvents(updatedEvents);
     localStorage.setItem('andcont_events', JSON.stringify(updatedEvents));
     
-    // Atualizar eventos filtrados
+    // Update filtered events
     if (selectedDate) {
       const dateString = selectedDate.toISOString().split('T')[0];
       const filtered = updatedEvents.filter(event => event.date === dateString);
@@ -82,7 +82,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   // Days with events for highlighting in the calendar
   const eventDays = Object.keys(eventDateMap).map(dateStr => new Date(dateStr));
   
-  // Formatador de datas
+  // Date formatter
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -96,30 +96,26 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     event: eventDays
   };
   
-  const modifiersStyles = {
-    event: { 
-      fontWeight: "bold",
-      backgroundColor: "#4299e1", // Blue color for events
-      color: "white",
-      borderRadius: "50%"
-    }
+  // Define a modifier styles function to apply the "day_with_events" class
+  const modifierClassNames = {
+    event: "day_with_events"
   };
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 bg-white p-6 rounded-lg border border-gray-200 shadow-lg">
+      <div className="md:w-1/2 bg-gradient-to-br from-white to-blue-50 p-6 rounded-lg border border-gray-200 shadow-lg">
         <Calendar
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
           className="rounded-md"
           modifiers={modifiers}
-          modifiersStyles={modifiersStyles}
+          modifiersClassNames={modifierClassNames}
         />
       </div>
       
       <div className="md:w-1/2">
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg h-full">
+        <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-lg border border-gray-200 shadow-lg h-full">
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Eventos: {selectedDate ? formatDate(selectedDate.toISOString()) : ''}
           </h3>
@@ -136,7 +132,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
               {filteredEvents.map(event => (
                 <div 
                   key={event.id} 
-                  className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => onSelectPost(event.id)}
                   role="button"
                 >

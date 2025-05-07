@@ -1,13 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Heart, ThumbsUp, Star, Circle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Reaction {
   postId: string;
   postType: string;
   userId: string;
-  type: "like";
+  type: "like" | "love" | "star" | "wow" | "sad";
   timestamp: string;
 }
 
@@ -16,9 +18,18 @@ interface PostReactionsProps {
   postType: 'announcement' | 'link' | 'event' | 'feed';
 }
 
+const REACTION_TYPES = [
+  { type: "like", emoji: "👍", label: "Curtir", icon: ThumbsUp },
+  { type: "love", emoji: "❤️", label: "Amei", icon: Heart },
+  { type: "star", emoji: "⭐", label: "Incrível", icon: Star },
+  { type: "wow", emoji: "😮", label: "Uau", icon: Circle },
+  { type: "sad", emoji: "😢", label: "Triste", icon: Circle }
+];
+
 const PostReactions = ({ postId, postType }: PostReactionsProps) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
-  const [hasReacted, setHasReacted] = useState(false);
+  const [userReaction, setUserReaction] = useState<string | null>(null);
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
   
   const getCurrentUser = (): string => {
     const userStr = localStorage.getItem("andcont_user");
@@ -41,59 +52,174 @@ const PostReactions = ({ postId, postType }: PostReactionsProps) => {
     
     setReactions(postReactions);
     
+    // Calculate counts for each reaction type
+    const counts: Record<string, number> = {};
+    postReactions.forEach((reaction: Reaction) => {
+      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
+    });
+    setReactionCounts(counts);
+    
+    // Check if current user has already reacted
     const userId = getCurrentUser();
-    const userHasReacted = postReactions.some(
+    const userReaction = postReactions.find(
       (reaction: Reaction) => reaction.userId === userId
     );
-    setHasReacted(userHasReacted);
+    
+    if (userReaction) {
+      setUserReaction(userReaction.type);
+    } else {
+      setUserReaction(null);
+    }
   }, [postId, postType]);
   
-  const toggleReaction = () => {
+  const addReaction = (reactionType: string) => {
     const userId = getCurrentUser();
     if (!userId) return;
     
     const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
     
-    if (hasReacted) {
-      // Remove reaction
-      const updatedReactions = allReactions.filter(
-        (reaction: Reaction) => !(reaction.postId === postId && reaction.postType === postType && reaction.userId === userId)
-      );
-      localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
-      
-      // Update local state
-      setReactions(reactions.filter(reaction => reaction.userId !== userId));
-      setHasReacted(false);
+    // Remove existing reaction by this user for this post if any
+    const filteredReactions = allReactions.filter(
+      (reaction: Reaction) => !(reaction.postId === postId && reaction.postType === postType && reaction.userId === userId)
+    );
+    
+    // Add new reaction
+    const newReaction = {
+      postId,
+      postType,
+      userId,
+      type: reactionType,
+      timestamp: new Date().toISOString()
+    };
+    
+    const updatedReactions = [...filteredReactions, newReaction];
+    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
+    
+    // Update local state
+    const postReactions = updatedReactions.filter(
+      (reaction: Reaction) => reaction.postId === postId && reaction.postType === postType
+    );
+    
+    setReactions(postReactions);
+    
+    // Recalculate counts
+    const counts: Record<string, number> = {};
+    postReactions.forEach((reaction: Reaction) => {
+      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
+    });
+    setReactionCounts(counts);
+    
+    // Update user's reaction
+    setUserReaction(reactionType);
+  };
+  
+  const removeReaction = () => {
+    const userId = getCurrentUser();
+    if (!userId) return;
+    
+    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
+    
+    // Remove existing reaction by this user for this post
+    const updatedReactions = allReactions.filter(
+      (reaction: Reaction) => !(reaction.postId === postId && reaction.postType === postType && reaction.userId === userId)
+    );
+    
+    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
+    
+    // Update local state
+    const postReactions = updatedReactions.filter(
+      (reaction: Reaction) => reaction.postId === postId && reaction.postType === postType
+    );
+    
+    setReactions(postReactions);
+    
+    // Recalculate counts
+    const counts: Record<string, number> = {};
+    postReactions.forEach((reaction: Reaction) => {
+      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
+    });
+    setReactionCounts(counts);
+    
+    // Clear user's reaction
+    setUserReaction(null);
+  };
+  
+  const handleReaction = (reactionType: string) => {
+    if (userReaction === reactionType) {
+      removeReaction();
     } else {
-      // Add reaction
-      const newReaction: Reaction = {
-        postId,
-        postType,
-        userId,
-        type: "like",
-        timestamp: new Date().toISOString()
-      };
-      
-      allReactions.push(newReaction);
-      localStorage.setItem('andcont_reactions', JSON.stringify(allReactions));
-      
-      // Update local state
-      setReactions([...reactions, newReaction]);
-      setHasReacted(true);
+      addReaction(reactionType);
     }
   };
   
+  // Get total reaction count
+  const totalReactions = Object.values(reactionCounts).reduce((sum, count) => sum + count, 0);
+  
+  // Find most common reaction to display
+  const mostCommonReaction = Object.entries(reactionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "like";
+  const reactionEmoji = REACTION_TYPES.find(r => r.type === mostCommonReaction)?.emoji || "👍";
+  
   return (
     <div className="flex items-center gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        className={`flex items-center gap-1 ${hasReacted ? 'text-red-500' : 'text-white/70'} hover:text-red-500 hover:bg-white/10`}
-        onClick={toggleReaction}
-      >
-        <Heart size={16} className={hasReacted ? "fill-red-500" : ""} />
-        <span>{reactions.length}</span>
-      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`flex items-center gap-1 ${userReaction ? 'text-blue-500' : 'text-gray-500'} hover:bg-blue-50`}
+          >
+            <span className="text-lg">{reactionEmoji}</span>
+            <span>{totalReactions}</span>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="p-0" align="start">
+          <div className="flex p-1 bg-gradient-to-r from-blue-50 to-purple-50 rounded-md">
+            {REACTION_TYPES.map((reaction) => (
+              <TooltipProvider key={reaction.type}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`text-lg p-2 mx-1 hover:bg-blue-100 rounded-full ${
+                        userReaction === reaction.type ? 'bg-blue-100' : ''
+                      }`}
+                      onClick={() => handleReaction(reaction.type)}
+                    >
+                      <span className="text-xl">{reaction.emoji}</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{reaction.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      
+      {Object.entries(reactionCounts).map(([type, count]) => {
+        if (count > 0) {
+          const reactionInfo = REACTION_TYPES.find(r => r.type === type);
+          return (
+            <TooltipProvider key={type}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center px-2 py-1 bg-gray-100 rounded-full text-xs">
+                    <span className="mr-1">{reactionInfo?.emoji}</span>
+                    <span>{count}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{reactionInfo?.label || type}: {count}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        }
+        return null;
+      })}
     </div>
   );
 };

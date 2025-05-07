@@ -25,12 +25,12 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    // Carregar anúncios do localStorage
+    // Load announcements from localStorage
     const storedAnnouncements = localStorage.getItem('andcont_announcements');
     if (storedAnnouncements) {
       setAnnouncements(JSON.parse(storedAnnouncements));
     } else {
-      // Dados iniciais de exemplo
+      // Sample initial data
       const initialAnnouncements = [
         {
           id: '1',
@@ -110,7 +110,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
   return (
     <div className="space-y-6">
       {announcements.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="text-center py-12 bg-gradient-to-br from-white to-blue-50 rounded-lg border border-gray-200">
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
           <h3 className="text-xl font-medium text-gray-800">Nenhum comunicado disponível</h3>
           <p className="text-gray-500 mt-2">
@@ -123,7 +123,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
         announcements.map(announcement => (
           <Card 
             key={announcement.id} 
-            className="border-gray-200 hover:border-gray-300 transition-all hover:shadow-md cursor-pointer"
+            className="bg-gradient-to-br from-white to-blue-50 border-gray-200 hover:border-blue-300 hover:from-white hover:to-purple-50 transition-all hover:shadow-md cursor-pointer"
             onClick={() => onSelectPost(announcement.id)}
           >
             <CardContent className="p-6">
@@ -157,7 +157,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
               </div>
             </CardContent>
             
-            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4 pt-4">
+            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4 pt-4 bg-gradient-to-r from-white/50 to-blue-50/50">
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <div className="flex items-center">
                   <Heart size={16} className={`mr-1 ${reactionCounts[announcement.id] ? 'fill-red-500 text-red-500' : ''}`} /> 
