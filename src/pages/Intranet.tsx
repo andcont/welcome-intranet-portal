@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, LayoutDashboard, MessageSquare, User } from "lucide-react";
+import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
 import CalendarView from "@/components/intranet/CalendarView";
@@ -94,6 +93,23 @@ const Intranet = () => {
     setSelectedPost(null);
   };
 
+  const getTabClasses = (tab: string) => {
+    let baseClasses = "text-white data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
+    
+    switch(tab) {
+      case 'announcements':
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-purple/50 to-andcont-pink/50`;
+      case 'links':
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-blue/50 to-andcont-green/50`;
+      case 'calendar':
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-orange/50 to-andcont-yellow/50`;
+      case 'feed':
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-green/50 to-andcont-blue/50`;
+      default:
+        return baseClasses;
+    }
+  }
+
   if (!currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-andcont">
@@ -107,7 +123,7 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 backdrop-blur-xl bg-white/10 border border-white/30 rounded-lg">
           <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
             
@@ -115,7 +131,7 @@ const Intranet = () => {
               {activeTab === 'feed' && (
                 <Button 
                   onClick={handleAddUserPost}
-                  className="btn-primary"
+                  className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Nova Publicação
                 </Button>
@@ -124,7 +140,7 @@ const Intranet = () => {
               {currentUser.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
-                  className="btn-primary"
+                  className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
@@ -144,17 +160,17 @@ const Intranet = () => {
             />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-white/20 backdrop-blur-md rounded-full p-1">
-                <TabsTrigger value="announcements" className="text-white data-[state=active]:bg-white/40 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-full flex-1">
+              <TabsList className="w-full mb-6 bg-white/10 backdrop-blur-xl rounded-full p-1">
+                <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>
-                <TabsTrigger value="links" className="text-white data-[state=active]:bg-white/40 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-full flex-1">
+                <TabsTrigger value="links" className={getTabClasses('links')}>
                   <LinkIcon className="mr-2 h-4 w-4" /> Links Úteis
                 </TabsTrigger>
-                <TabsTrigger value="calendar" className="text-white data-[state=active]:bg-white/40 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-full flex-1">
+                <TabsTrigger value="calendar" className={getTabClasses('calendar')}>
                   <Calendar className="mr-2 h-4 w-4" /> Calendário
                 </TabsTrigger>
-                <TabsTrigger value="feed" className="text-white data-[state=active]:bg-white/40 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-full flex-1">
+                <TabsTrigger value="feed" className={getTabClasses('feed')}>
                   <MessageSquare className="mr-2 h-4 w-4" /> Feed
                 </TabsTrigger>
               </TabsList>

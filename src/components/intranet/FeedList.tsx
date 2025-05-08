@@ -122,10 +122,10 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
   return (
     <div className="space-y-6">
       {posts.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-          <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-xl font-medium text-gray-800">Nenhum post disponível</h3>
-          <p className="text-gray-500 mt-2">
+        <div className="text-center py-12 bg-gradient-to-br from-andcont-green/30 to-andcont-blue/30 backdrop-blur-lg rounded-lg border border-white/20">
+          <AlertCircle className="mx-auto h-12 w-12 text-white/80 mb-4" />
+          <h3 className="text-xl font-medium text-white">Nenhum post disponível</h3>
+          <p className="text-white/80 mt-2">
             {isAdmin 
               ? "Clique em 'Adicionar conteúdo' para criar um novo post." 
               : "Não há posts para exibir no momento."}
@@ -135,12 +135,12 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
         posts.map(post => (
           <Card 
             key={post.id} 
-            className="border-gray-200 hover:border-gray-300 transition-all hover:shadow-md cursor-pointer"
+            className="bg-gradient-to-br from-andcont-green/30 to-andcont-blue/30 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all hover:shadow-md cursor-pointer text-white"
             onClick={() => onSelectPost(post.id, 'feed')}
           >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
+                <h3 className="text-xl font-bold text-white">{post.title}</h3>
                 
                 {canEditOrDelete(post) && (
                   <div className="flex items-center">
@@ -158,7 +158,7 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                           }
                         }, 100);
                       }}
-                      className="text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                      className="text-white/70 hover:text-blue-300 hover:bg-white/10"
                     >
                       <Edit size={16} />
                     </Button>
@@ -169,7 +169,7 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                         e.stopPropagation();
                         handleDelete(post.id);
                       }}
-                      className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                      className="text-white/70 hover:text-red-300 hover:bg-white/10"
                     >
                       <Trash size={16} />
                     </Button>
@@ -182,20 +182,20 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                   <img 
                     src={post.image} 
                     alt={post.title} 
-                    className="w-full h-auto max-h-64 object-contain rounded-md border border-gray-200"
+                    className="w-full h-auto max-h-64 object-contain rounded-md border border-white/20"
                   />
                 </div>
               )}
               
-              <div className="mt-2 text-gray-600 whitespace-pre-wrap line-clamp-3">
+              <div className="mt-2 text-white/90 whitespace-pre-wrap line-clamp-3">
                 {post.content}
               </div>
             </CardContent>
             
-            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4 pt-4">
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-white/20 mt-4 pt-4 bg-gradient-to-r from-white/5 to-white/10">
+              <div className="flex items-center gap-4 text-sm text-white/90">
                 <div className="flex items-center">
-                  <Heart size={16} className={`mr-1 ${reactionCounts[post.id] ? 'fill-red-500 text-red-500' : ''}`} /> 
+                  <Heart size={16} className={`mr-1 ${reactionCounts[post.id] ? 'fill-red-300 text-red-300' : ''}`} /> 
                   {reactionCounts[post.id] || 0}
                 </div>
                 <div className="flex items-center">
@@ -204,7 +204,7 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                 </div>
               </div>
               
-              <div className="text-sm text-gray-500 flex items-center">
+              <div className="text-sm text-white/80 flex items-center">
                 <span>Por: {post.createdBy}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(post.createdAt)}</span>

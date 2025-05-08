@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,7 +106,7 @@
   }
 
   .glass-card {
-    @apply bg-white/30 backdrop-blur-xl border border-white/40 rounded-lg shadow-lg;
+    @apply bg-white/10 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg text-white;
   }
 }
 
@@ -115,7 +116,7 @@
   }
   
   .btn-secondary {
-    @apply bg-white/30 hover:bg-white/40 text-white border border-white/40 backdrop-blur-md transition-colors;
+    @apply bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md transition-colors;
   }
   
   .card-hover {
@@ -123,12 +124,12 @@
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-white/30 border border-white/40 shadow-lg;
+    @apply backdrop-blur-xl bg-white/10 border border-white/30 shadow-lg text-white;
   }
 
   /* Gradient components */
   .card-gradient {
-    @apply bg-white/60 backdrop-blur-lg border border-white/50 shadow-lg hover:bg-white/70 transition-all duration-300;
+    @apply bg-white/20 backdrop-blur-xl border border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300 text-white;
   }
   
   .header-gradient {
@@ -136,7 +137,7 @@
   }
   
   .tab-gradient {
-    @apply bg-gradient-to-r from-white/70 to-white/50 backdrop-blur-lg;
+    @apply bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-xl;
   }
   
   .button-gradient {
@@ -145,15 +146,32 @@
   
   /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-lg border border-white/50 bg-white/60 backdrop-blur-lg shadow-md hover:shadow-lg transition-all;
+    @apply rounded-lg border border-white/30 bg-white/20 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
   }
   
   .modern-input {
-    @apply bg-white/70 border border-white/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-md;
+    @apply bg-white/20 border border-white/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white/50 focus:border-transparent backdrop-blur-xl text-white;
   }
   
   .modern-button {
     @apply px-4 py-2 rounded-lg font-medium;
+  }
+
+  /* Tab-specific gradients */
+  .tab-announcements {
+    @apply bg-gradient-to-br from-andcont-purple/30 to-andcont-pink/30;
+  }
+  
+  .tab-links {
+    @apply bg-gradient-to-br from-andcont-blue/30 to-andcont-green/30;
+  }
+  
+  .tab-calendar {
+    @apply bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30;
+  }
+  
+  .tab-feed {
+    @apply bg-gradient-to-br from-andcont-green/30 to-andcont-blue/30;
   }
 }
 
@@ -163,16 +181,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Add animations */
@@ -202,4 +220,15 @@
 
 .section-title {
   @apply text-2xl font-bold text-white mb-6 border-l-4 border-white pl-3;
+}
+
+/* Calendar day with event styling */
+.rdp-day_selected, 
+.rdp-day_selected:focus-visible, 
+.rdp-day_selected:hover {
+  @apply bg-andcont-blue/70 text-white;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  @apply bg-white/20 text-white;
 }

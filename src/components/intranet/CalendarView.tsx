@@ -98,18 +98,22 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 glass-card p-6">
+      <div className="md:w-1/2 bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30 backdrop-blur-xl p-6 border border-white/30 rounded-lg">
         <Calendar
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
-          className="rounded-md"
+          className="text-white"
           modifiers={modifiers}
+          modifiersClassNames={{
+            event: "text-andcont-yellow border border-andcont-yellow bg-andcont-orange/30",
+            today: "text-white border-andcont-orange bg-andcont-orange/30"
+          }}
         />
       </div>
       
       <div className="md:w-1/2">
-        <div className="glass-card p-6 h-full">
+        <div className="bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30 backdrop-blur-xl p-6 border border-white/30 rounded-lg h-full">
           <h3 className="text-xl font-bold text-white mb-4">
             Eventos: {selectedDate ? formatDate(selectedDate.toISOString()) : ''}
           </h3>
@@ -126,7 +130,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
               {filteredEvents.map(event => (
                 <div 
                   key={event.id} 
-                  className="glass-morphism rounded-lg p-4 hover:bg-white/70 transition-all cursor-pointer"
+                  className="bg-white/10 backdrop-blur-xl rounded-lg p-4 hover:bg-white/20 transition-all cursor-pointer border border-white/20"
                   onClick={() => onSelectPost(event.id)}
                   role="button"
                 >
@@ -141,7 +145,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                           e.stopPropagation();
                           handleDelete(event.id);
                         }}
-                        className="text-white/70 hover:text-red-600 hover:bg-white/30"
+                        className="text-white/70 hover:text-red-300 hover:bg-white/10"
                       >
                         <Trash size={14} />
                       </Button>
@@ -153,7 +157,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                       <img 
                         src={event.image} 
                         alt={event.title} 
-                        className="w-full h-auto max-h-32 object-contain rounded-md border border-white/30"
+                        className="w-full h-auto max-h-32 object-contain rounded-md border border-white/20"
                       />
                     </div>
                   )}

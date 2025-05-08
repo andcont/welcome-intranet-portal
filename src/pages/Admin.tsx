@@ -77,7 +77,7 @@ const Admin = () => {
             <Button 
               onClick={handleCreateContent} 
               variant="default" 
-              className="btn-primary"
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md"
             >
               <Plus className="mr-2 h-4 w-4" /> Novo Conteúdo
             </Button>
@@ -92,9 +92,9 @@ const Admin = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card className="glass-card text-white">
+          <Card className="bg-gradient-to-br from-andcont-blue/30 to-andcont-purple/30 backdrop-blur-xl border border-white/30 text-white">
             <CardHeader className="pb-2">
-              <CardTitle>Usuários Ativos</CardTitle>
+              <CardTitle className="text-white">Usuários Ativos</CardTitle>
               <CardDescription className="text-white/70">Total de usuários cadastrados</CardDescription>
             </CardHeader>
             <CardContent>
@@ -105,9 +105,9 @@ const Admin = () => {
             </CardContent>
           </Card>
           
-          <Card className="glass-card text-white">
+          <Card className="bg-gradient-to-br from-andcont-purple/30 to-andcont-pink/30 backdrop-blur-xl border border-white/30 text-white">
             <CardHeader className="pb-2">
-              <CardTitle>Publicações</CardTitle>
+              <CardTitle className="text-white">Publicações</CardTitle>
               <CardDescription className="text-white/70">Total de conteúdos publicados</CardDescription>
             </CardHeader>
             <CardContent>
@@ -122,9 +122,9 @@ const Admin = () => {
             </CardContent>
           </Card>
           
-          <Card className="glass-card text-white">
+          <Card className="bg-gradient-to-br from-andcont-green/30 to-andcont-blue/30 backdrop-blur-xl border border-white/30 text-white">
             <CardHeader className="pb-2">
-              <CardTitle>Atividades</CardTitle>
+              <CardTitle className="text-white">Atividades</CardTitle>
               <CardDescription className="text-white/70">Logs de atividades recentes</CardDescription>
             </CardHeader>
             <CardContent>
@@ -136,11 +136,11 @@ const Admin = () => {
           </Card>
         </div>
 
-        <div className="glass-card p-6">
+        <div className="backdrop-blur-xl bg-white/10 border border-white/30 rounded-lg p-6">
           <Tabs defaultValue="users" className="w-full">
-            <TabsList className="w-full mb-6 bg-white/20 backdrop-blur-md">
-              <TabsTrigger value="users" className="text-white flex-1 data-[state=active]:bg-white/30">Usuários</TabsTrigger>
-              <TabsTrigger value="activities" className="text-white flex-1 data-[state=active]:bg-white/30">Atividades</TabsTrigger>
+            <TabsList className="w-full mb-6 bg-white/10 backdrop-blur-md rounded-full">
+              <TabsTrigger value="users" className="text-white flex-1 data-[state=active]:bg-white/20">Usuários</TabsTrigger>
+              <TabsTrigger value="activities" className="text-white flex-1 data-[state=active]:bg-white/20">Atividades</TabsTrigger>
             </TabsList>
             <TabsContent value="users">
               <UsersList />
