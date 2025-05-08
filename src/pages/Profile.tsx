@@ -102,14 +102,14 @@ const Profile = () => {
 
   if (!currentUser) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-andcont-blue to-andcont-purple">
+      <div className="h-screen flex items-center justify-center bg-gradient-andcont">
         <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-andcont-blue to-andcont-purple p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-andcont p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <Button 
           variant="ghost" 
@@ -119,10 +119,10 @@ const Profile = () => {
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Intranet
         </Button>
         
-        <Card className="bg-white/60 backdrop-blur-lg border-white/30 shadow-xl">
+        <Card className="glass-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">Seu Perfil</CardTitle>
-            <CardDescription>Edite suas informações pessoais</CardDescription>
+            <CardTitle className="text-2xl text-white">Seu Perfil</CardTitle>
+            <CardDescription className="text-white/80">Edite suas informações pessoais</CardDescription>
           </CardHeader>
           
           <CardContent className="space-y-6">
@@ -156,20 +156,21 @@ const Profile = () => {
               </div>
               
               <div className="text-center mb-4">
-                <p className="text-lg font-medium">{currentUser.email}</p>
-                <span className="inline-block px-3 py-1 mt-1 bg-andcont-purple/20 text-andcont-purple rounded-full text-sm font-medium">
+                <p className="text-lg font-medium text-white">{currentUser.email}</p>
+                <span className="inline-block px-3 py-1 mt-1 bg-white/20 text-white rounded-full text-sm font-medium">
                   {currentUser.role === 'admin' ? 'Administrador' : 'Usuário'}
                 </span>
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="name">Nome</Label>
+              <Label htmlFor="name" className="text-white">Nome</Label>
               <Input 
                 id="name" 
                 placeholder="Seu nome" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
+                className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
               />
             </div>
             
@@ -183,7 +184,7 @@ const Profile = () => {
               
               <Button 
                 onClick={handleUpdateProfile}
-                className="bg-gradient-to-r from-andcont-blue to-andcont-purple hover:opacity-90"
+                className="btn-primary"
               >
                 Salvar Alterações
               </Button>

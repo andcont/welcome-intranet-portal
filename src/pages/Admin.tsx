@@ -77,7 +77,7 @@ const Admin = () => {
             <Button 
               onClick={handleCreateContent} 
               variant="default" 
-              className="bg-gradient-to-r from-andcont-blue to-andcont-purple hover:opacity-90"
+              className="btn-primary"
             >
               <Plus className="mr-2 h-4 w-4" /> Novo Conteúdo
             </Button>
@@ -92,7 +92,7 @@ const Admin = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card className="bg-white/15 backdrop-blur-lg border-white/20 text-white">
+          <Card className="glass-card text-white">
             <CardHeader className="pb-2">
               <CardTitle>Usuários Ativos</CardTitle>
               <CardDescription className="text-white/70">Total de usuários cadastrados</CardDescription>
@@ -105,7 +105,7 @@ const Admin = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-white/15 backdrop-blur-lg border-white/20 text-white">
+          <Card className="glass-card text-white">
             <CardHeader className="pb-2">
               <CardTitle>Publicações</CardTitle>
               <CardDescription className="text-white/70">Total de conteúdos publicados</CardDescription>
@@ -122,7 +122,7 @@ const Admin = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-white/15 backdrop-blur-lg border-white/20 text-white">
+          <Card className="glass-card text-white">
             <CardHeader className="pb-2">
               <CardTitle>Atividades</CardTitle>
               <CardDescription className="text-white/70">Logs de atividades recentes</CardDescription>
@@ -136,11 +136,11 @@ const Admin = () => {
           </Card>
         </div>
 
-        <div className="bg-white/15 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-6">
+        <div className="glass-card p-6">
           <Tabs defaultValue="users" className="w-full">
-            <TabsList className="w-full mb-6 bg-black/15">
-              <TabsTrigger value="users" className="text-white flex-1">Usuários</TabsTrigger>
-              <TabsTrigger value="activities" className="text-white flex-1">Atividades</TabsTrigger>
+            <TabsList className="w-full mb-6 bg-white/20 backdrop-blur-md">
+              <TabsTrigger value="users" className="text-white flex-1 data-[state=active]:bg-white/30">Usuários</TabsTrigger>
+              <TabsTrigger value="activities" className="text-white flex-1 data-[state=active]:bg-white/30">Atividades</TabsTrigger>
             </TabsList>
             <TabsContent value="users">
               <UsersList />
