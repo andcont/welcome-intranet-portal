@@ -71,7 +71,7 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {links.length === 0 ? (
-        <div className="col-span-full text-center py-12 bg-gradient-to-br from-andcont-blue/30 to-andcont-green/30 backdrop-blur-lg rounded-lg border border-white/20">
+        <div className="col-span-full text-center py-12 bg-black/40 backdrop-blur-xl rounded-lg border border-white/20 shadow-lg">
           <AlertCircle className="mx-auto h-12 w-12 text-white/80 mb-4" />
           <h3 className="text-xl font-medium text-white">Nenhum link disponível</h3>
           <p className="text-white/80">
@@ -84,7 +84,7 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
         links.map(link => (
           <div 
             key={link.id} 
-            className="bg-gradient-to-br from-andcont-blue/30 to-andcont-green/30 backdrop-blur-xl border border-white/30 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:border-white/50 cursor-pointer flex flex-col h-full"
+            className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:border-white/40 cursor-pointer flex flex-col h-full"
             onClick={() => onSelectPost(link.id)}
           >
             {link.image && (
@@ -129,7 +129,7 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
               </div>
             </div>
             
-            <div className="p-4 border-t border-white/20 bg-white/5">
+            <div className="p-4 border-t border-white/20 bg-black/30">
               <a 
                 href={link.url}
                 onClick={(e) => openExternalLink(e, link.url)}

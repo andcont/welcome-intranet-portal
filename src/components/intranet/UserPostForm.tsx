@@ -82,14 +82,14 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
   };
   
   return (
-    <div className="bg-white/40 backdrop-blur-xl rounded-lg p-6 border border-white/30">
+    <div className="bg-black/40 backdrop-blur-xl rounded-lg p-6 border border-white/20 shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-gray-800">Nova Publicação</h3>
+        <h3 className="text-xl font-bold text-white">Nova Publicação</h3>
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onClose}
-          className="text-gray-600 hover:text-gray-800 hover:bg-white/30"
+          className="text-white/70 hover:text-white hover:bg-white/10"
         >
           <X size={18} />
         </Button>
@@ -97,33 +97,33 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="title" className="text-gray-800">Título</Label>
+          <Label htmlFor="title" className="text-white">Título</Label>
           <Input 
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Informe o título"
-            className="bg-white/50 border-white/30 text-gray-800 placeholder:text-gray-500"
+            className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
           />
         </div>
         
         <div>
-          <Label htmlFor="content" className="text-gray-800">Conteúdo</Label>
+          <Label htmlFor="content" className="text-white">Conteúdo</Label>
           <Textarea 
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="O que você está pensando?"
             rows={5}
-            className="bg-white/50 border-white/30 text-gray-800 placeholder:text-gray-500 resize-none"
+            className="bg-black/20 border-white/30 text-white placeholder:text-white/50 resize-none"
           />
         </div>
         
         <div>
-          <Label className="text-gray-800 block mb-2">Imagem (opcional)</Label>
+          <Label className="text-white block mb-2">Imagem (opcional)</Label>
           
           {image ? (
-            <div className="relative mb-4 border border-white/30 rounded-md overflow-hidden">
+            <div className="relative mb-4 border border-white/20 rounded-md overflow-hidden">
               <img 
                 src={image} 
                 alt="Preview" 
@@ -140,7 +140,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
               </Button>
             </div>
           ) : (
-            <div className="border border-dashed border-white/30 rounded-md p-6 text-center bg-white/30">
+            <div className="border border-dashed border-white/20 rounded-md p-6 text-center bg-black/10">
               <input 
                 type="file" 
                 id="image" 
@@ -152,7 +152,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById('image')?.click()}
-                className="bg-white/30 border-white/30 hover:bg-white/50 text-gray-800"
+                className="bg-black/20 border-white/30 hover:bg-black/30 text-white"
               >
                 <ImageIcon size={16} className="mr-2" />
                 Selecionar Imagem
@@ -166,7 +166,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
             type="button" 
             variant="outline" 
             onClick={onClose}
-            className="border-gray-300 text-gray-800"
+            className="bg-black/20 border-white/30 hover:bg-black/30 text-white"
           >
             Cancelar
           </Button>

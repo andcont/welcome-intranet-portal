@@ -10,13 +10,13 @@ interface UrlFieldProps {
 const UrlField = ({ url, onChange }: UrlFieldProps) => {
   return (
     <div>
-      <Label htmlFor="url" className="text-gray-800">URL (opcional)</Label>
+      <Label htmlFor="url" className="text-white">URL (opcional)</Label>
       <Input 
         id="url"
         value={url}
         onChange={(e) => onChange(e.target.value)}
         placeholder="https://exemplo.com"
-        className="bg-white/50 border-white/30 text-gray-800 placeholder:text-gray-500"
+        className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
       />
     </div>
   );
