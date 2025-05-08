@@ -74,7 +74,7 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
         <div className="col-span-full text-center py-12 bg-gradient-to-br from-andcont-blue/30 to-andcont-green/30 backdrop-blur-lg rounded-lg border border-white/20">
           <AlertCircle className="mx-auto h-12 w-12 text-white/80 mb-4" />
           <h3 className="text-xl font-medium text-white">Nenhum link disponível</h3>
-          <p className="text-white/80 mt-2">
+          <p className="text-white/80">
             {isAdmin 
               ? "Clique em 'Adicionar conteúdo' para criar um novo link." 
               : "Não há links para exibir no momento."}

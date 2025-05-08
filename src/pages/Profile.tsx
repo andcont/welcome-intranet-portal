@@ -109,7 +109,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-andcont p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-andcont-blue via-andcont-purple to-andcont-pink p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <Button 
           variant="ghost" 
@@ -119,7 +119,7 @@ const Profile = () => {
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Intranet
         </Button>
         
-        <Card className="glass-card">
+        <Card className="bg-black/30 backdrop-blur-xl border border-white/30 rounded-lg shadow-xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-2xl text-white">Seu Perfil</CardTitle>
             <CardDescription className="text-white/80">Edite suas informações pessoais</CardDescription>
@@ -157,7 +157,7 @@ const Profile = () => {
               
               <div className="text-center mb-4">
                 <p className="text-lg font-medium text-white">{currentUser.email}</p>
-                <span className="inline-block px-3 py-1 mt-1 bg-white/20 text-white rounded-full text-sm font-medium">
+                <span className="inline-block px-3 py-1 mt-1 bg-black/20 text-white rounded-full text-sm font-medium">
                   {currentUser.role === 'admin' ? 'Administrador' : 'Usuário'}
                 </span>
               </div>
@@ -170,7 +170,7 @@ const Profile = () => {
                 placeholder="Seu nome" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
+                className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
               />
             </div>
             
@@ -178,13 +178,14 @@ const Profile = () => {
               <Button 
                 variant="destructive" 
                 onClick={handleLogout}
+                className="bg-red-600/70 hover:bg-red-700/70"
               >
                 <LogOut className="mr-2 h-4 w-4" /> Sair
               </Button>
               
               <Button 
                 onClick={handleUpdateProfile}
-                className="btn-primary"
+                className="bg-andcont-blue/80 hover:bg-andcont-blue text-white"
               >
                 Salvar Alterações
               </Button>

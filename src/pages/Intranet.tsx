@@ -110,6 +110,22 @@ const Intranet = () => {
     }
   }
 
+  // Get appropriate background gradient class based on active tab
+  const getBackgroundClass = () => {
+    switch(activeTab) {
+      case 'announcements':
+        return "bg-gradient-to-br from-andcont-purple via-andcont-pink to-andcont-blue";
+      case 'links':
+        return "bg-gradient-to-br from-andcont-blue via-andcont-green to-andcont-purple";
+      case 'calendar':
+        return "bg-gradient-to-br from-andcont-orange via-andcont-yellow to-andcont-green";
+      case 'feed':
+        return "bg-gradient-to-br from-andcont-green via-andcont-blue to-andcont-orange";
+      default:
+        return "bg-gradient-to-br from-andcont-blue via-andcont-purple to-andcont-pink";
+    }
+  };
+
   if (!currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-andcont">
@@ -119,11 +135,11 @@ const Intranet = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-andcont">
+    <div className={`min-h-screen ${getBackgroundClass()} transition-colors duration-700`}>
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="glass-card p-6 backdrop-blur-xl bg-white/10 border border-white/30 rounded-lg">
+        <div className="glass-card p-6 backdrop-blur-xl bg-black/30 border border-white/30 rounded-lg shadow-xl">
           <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
             
@@ -131,7 +147,7 @@ const Intranet = () => {
               {activeTab === 'feed' && (
                 <Button 
                   onClick={handleAddUserPost}
-                  className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md"
+                  className="bg-black/30 hover:bg-black/40 text-white border border-white/30 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Nova Publicação
                 </Button>
@@ -140,7 +156,7 @@ const Intranet = () => {
               {currentUser.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
-                  className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md"
+                  className="bg-black/30 hover:bg-black/40 text-white border border-white/30 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
@@ -160,7 +176,7 @@ const Intranet = () => {
             />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-white/10 backdrop-blur-xl rounded-full p-1">
+              <TabsList className="w-full mb-6 bg-black/20 backdrop-blur-xl rounded-full p-1">
                 <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>
