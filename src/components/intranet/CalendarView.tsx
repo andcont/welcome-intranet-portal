@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -97,7 +98,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 bg-gradient-to-br from-white to-blue-50 p-6 rounded-lg border border-gray-200 shadow-lg">
+      <div className="md:w-1/2 glass-card p-6">
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -108,15 +109,15 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
       </div>
       
       <div className="md:w-1/2">
-        <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-lg border border-gray-200 shadow-lg h-full">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="glass-card p-6 h-full">
+          <h3 className="text-xl font-bold text-white mb-4">
             Eventos: {selectedDate ? formatDate(selectedDate.toISOString()) : ''}
           </h3>
           
           {filteredEvents.length === 0 ? (
             <div className="text-center py-8">
-              <AlertCircle className="mx-auto h-8 w-8 text-gray-400 mb-3" />
-              <p className="text-gray-500">
+              <AlertCircle className="mx-auto h-8 w-8 text-white/60 mb-3" />
+              <p className="text-white/80">
                 Nenhum evento para esta data
               </p>
             </div>
@@ -125,12 +126,12 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
               {filteredEvents.map(event => (
                 <div 
                   key={event.id} 
-                  className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                  className="glass-morphism rounded-lg p-4 hover:bg-white/70 transition-all cursor-pointer"
                   onClick={() => onSelectPost(event.id)}
                   role="button"
                 >
                   <div className="flex justify-between items-start">
-                    <h4 className="font-medium text-gray-800">{event.title}</h4>
+                    <h4 className="font-medium text-white">{event.title}</h4>
                     
                     {isAdmin && (
                       <Button 
@@ -140,7 +141,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                           e.stopPropagation();
                           handleDelete(event.id);
                         }}
-                        className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                        className="text-white/70 hover:text-red-600 hover:bg-white/30"
                       >
                         <Trash size={14} />
                       </Button>
@@ -152,16 +153,16 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                       <img 
                         src={event.image} 
                         alt={event.title} 
-                        className="w-full h-auto max-h-32 object-contain rounded-md border border-gray-200"
+                        className="w-full h-auto max-h-32 object-contain rounded-md border border-white/30"
                       />
                     </div>
                   )}
                   
-                  <p className="mt-2 text-gray-600 text-sm">
+                  <p className="mt-2 text-white/90 text-sm">
                     {event.description}
                   </p>
                   
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-white/70">
                     Por: {event.createdBy}
                   </div>
                 </div>

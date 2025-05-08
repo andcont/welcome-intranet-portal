@@ -74,7 +74,7 @@ export default {
 				}
 			},
 			backgroundImage: {
-				'gradient-andcont': 'linear-gradient(135deg, #00b4d8, #7ae582, #ff914d, #b425eb, #ff66c4)',
+				'gradient-andcont': 'linear-gradient(135deg, #00b4d8, #b425eb, #ff66c4)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
