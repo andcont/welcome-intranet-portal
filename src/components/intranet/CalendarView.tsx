@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -72,6 +71,15 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     toast.success("Evento removido com sucesso!");
   };
 
+  // Date formatter
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+  
   // Create a map of dates with events for highlighting
   const eventDateMap = events.reduce((acc: Record<string, number>, event) => {
     const date = event.date;
@@ -82,23 +90,9 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   // Days with events for highlighting in the calendar
   const eventDays = Object.keys(eventDateMap).map(dateStr => new Date(dateStr));
   
-  // Date formatter
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-  
-  // Custom modifiers for the calendar
+  // Custom modifiers for the calendar - needs to follow react-day-picker format
   const modifiers = {
     event: eventDays
-  };
-  
-  // Define a modifier styles function to apply the "day_with_events" class
-  const modifierClassNames = {
-    event: "day_with_events"
   };
 
   return (
@@ -110,7 +104,6 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
           onSelect={setSelectedDate}
           className="rounded-md"
           modifiers={modifiers}
-          modifiersClassNames={modifierClassNames}
         />
       </div>
       
