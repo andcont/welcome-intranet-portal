@@ -1,0 +1,38 @@
+
+@layer components {
+  .bg-gradient-andcont {
+    @apply bg-gradient-to-br from-andcont-blue via-andcont-purple to-andcont-pink;
+  }
+
+  .glass-card {
+    @apply bg-black/15 backdrop-blur-xl border border-white/20 rounded-lg shadow-lg text-white;
+  }
+  
+  /* Tab-specific gradients */
+  .tab-announcements {
+    @apply bg-gradient-to-br from-andcont-purple/40 to-andcont-pink/40;
+  }
+  
+  .tab-links {
+    @apply bg-gradient-to-br from-andcont-blue/40 to-andcont-green/40;
+  }
+  
+  .tab-calendar {
+    @apply bg-gradient-to-br from-andcont-orange/40 to-andcont-yellow/40;
+  }
+  
+  .tab-feed {
+    @apply bg-gradient-to-br from-andcont-green/40 to-andcont-blue/40;
+  }
+  
+  /* Calendar day with event styling */
+  .rdp-day_selected, 
+  .rdp-day_selected:focus-visible, 
+  .rdp-day_selected:hover {
+    @apply bg-andcont-blue/70 text-white;
+  }
+  
+  .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+    @apply bg-white/20 text-white;
+  }
+}
