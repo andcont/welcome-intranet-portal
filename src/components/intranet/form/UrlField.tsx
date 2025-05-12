@@ -16,7 +16,7 @@ const UrlField = ({ url, onChange }: UrlFieldProps) => {
         value={url}
         onChange={(e) => onChange(e.target.value)}
         placeholder="https://exemplo.com"
-        className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
+        className="bg-black/15 border-white/30 text-white placeholder:text-white/50"
       />
     </div>
   );

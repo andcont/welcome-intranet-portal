@@ -11,7 +11,7 @@ const EventDateField = ({ date, onChange }: EventDateFieldProps) => {
   return (
     <div>
       <Label htmlFor="date" className="text-white block mb-2">Data</Label>
-      <div className="bg-black/20 rounded-md p-3 border border-white/30">
+      <div className="bg-black/15 rounded-md p-3 border border-white/30">
         <Calendar
           mode="single"
           selected={date}

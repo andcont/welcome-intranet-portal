@@ -12,7 +12,7 @@ const FormActions = ({ onCancel }: FormActionsProps) => {
         type="button" 
         variant="outline" 
         onClick={onCancel}
-        className="bg-black/20 hover:bg-black/30 text-white border-white/30"
+        className="bg-black/15 hover:bg-black/25 text-white border-white/30"
       >
         Cancelar
       </Button>

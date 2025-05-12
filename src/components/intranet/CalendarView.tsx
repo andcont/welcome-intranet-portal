@@ -88,8 +88,13 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     return acc;
   }, {});
 
-  // Days with events for highlighting in the calendar
-  const eventDays = Object.keys(eventDateMap).map(dateStr => new Date(dateStr));
+  // Days with events for highlighting in the calendar - FIX: Correctly parse date strings to Date objects
+  const eventDays = Object.keys(eventDateMap).map(dateStr => {
+    // Ensure we properly create Date objects from ISO date strings (YYYY-MM-DD)
+    const [year, month, day] = dateStr.split('-').map(Number);
+    // Create date with adjusted month (0-based index)
+    return new Date(year, month - 1, day);
+  });
   
   // Custom modifiers for the calendar - needs to follow react-day-picker format
   const modifiers = {
@@ -130,7 +135,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
               {filteredEvents.map(event => (
                 <div 
                   key={event.id} 
-                  className="bg-white/10 backdrop-blur-xl rounded-lg p-4 hover:bg-white/20 transition-all cursor-pointer border border-white/20"
+                  className="bg-black/15 backdrop-blur-xl rounded-lg p-4 hover:bg-black/20 transition-all cursor-pointer border border-white/20"
                   onClick={() => onSelectPost(event.id)}
                   role="button"
                 >
