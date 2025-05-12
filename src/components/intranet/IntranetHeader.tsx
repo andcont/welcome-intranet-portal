@@ -1,5 +1,5 @@
 
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,10 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
     navigate("/profile");
   };
   
+  const goToAdmin = () => {
+    navigate("/admin");
+  };
+  
   return (
     <header className="border-b border-white/40 bg-white/40 backdrop-blur-lg">
       <div className="container mx-auto px-4 py-4">
@@ -30,28 +34,40 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
               alt="AndCont Logo" 
               className="h-10 mr-4" 
             />
-            <h1 className="text-2xl font-bold text-white hidden sm:block">Intranet AndCont</h1>
+            <h1 className="text-2xl font-bold text-gray-800 hidden sm:block">Intranet AndCont</h1>
           </div>
           
           <div className="flex items-center space-x-3">
-            <div onClick={goToProfile} className="flex items-center cursor-pointer hover:bg-white/30 rounded-full py-1 px-3 transition-colors">
+            {currentUser.role === 'admin' && (
+              <Button 
+                onClick={goToAdmin} 
+                variant="outline" 
+                size="sm"
+                className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 border-blue-200/50"
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" /> 
+                <span className="hidden sm:inline">Área Admin</span>
+              </Button>
+            )}
+            
+            <div onClick={goToProfile} className="flex items-center cursor-pointer hover:bg-white/50 rounded-full py-1 px-3 transition-colors">
               <Avatar className="h-8 w-8 mr-2 border border-white/50">
                 {currentUser.profilePic ? (
                   <AvatarImage src={currentUser.profilePic} alt={currentUser.name} />
                 ) : (
-                  <AvatarFallback className="bg-andcont-purple/60 text-white">
+                  <AvatarFallback className="bg-blue-500/60 text-white">
                     {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
                   </AvatarFallback>
                 )}
               </Avatar>
-              <span className="text-white font-medium hidden sm:block">{currentUser.name}</span>
+              <span className="text-gray-800 font-medium hidden sm:block">{currentUser.name}</span>
             </div>
             
             <Button 
               onClick={onLogout} 
               variant="outline" 
               size="sm"
-              className="bg-white/30 hover:bg-white/50 text-white border-white/50"
+              className="bg-white/30 hover:bg-white/50 text-gray-700 border-white/50"
             >
               <LogOut className="mr-2 h-4 w-4" /> 
               <span className="hidden sm:inline">Sair</span>

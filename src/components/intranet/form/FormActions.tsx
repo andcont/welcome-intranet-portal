@@ -12,13 +12,13 @@ const FormActions = ({ onCancel }: FormActionsProps) => {
         type="button" 
         variant="outline" 
         onClick={onCancel}
-        className="bg-black/15 hover:bg-black/25 text-white border-white/30"
+        className="bg-white/50 hover:bg-white/60 text-gray-700 border-gray-200/50"
       >
         Cancelar
       </Button>
       <Button 
         type="submit"
-        className="bg-gradient-to-r from-andcont-blue to-andcont-purple hover:opacity-90 text-white"
+        className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90 text-white shadow-sm"
       >
         Publicar
       </Button>

@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LogOut, Calendar, Link as LinkIcon, Bell, Plus, MessageSquare } from "lucide-react";
+import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
@@ -76,14 +77,6 @@ const Intranet = () => {
     setShowUserPostForm(false);
   };
 
-  const goToAdmin = () => {
-    navigate("/admin");
-  };
-
-  const goToProfile = () => {
-    navigate("/profile");
-  };
-
   const handleSelectPost = (id: string, type: 'announcement' | 'link' | 'event' | 'feed') => {
     setSelectedPost({ id, type });
   };
@@ -93,17 +86,17 @@ const Intranet = () => {
   };
 
   const getTabClasses = (tab: string) => {
-    let baseClasses = "text-gray-800 data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
+    let baseClasses = "text-gray-700 data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
     
     switch(tab) {
       case 'announcements':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-purple/40 to-andcont-pink/40`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-blue-200/80 to-indigo-200/80`;
       case 'links':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-blue/40 to-andcont-green/40`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-indigo-200/80 to-blue-200/80`;
       case 'calendar':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-orange/40 to-andcont-yellow/40`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-purple-200/80 to-indigo-200/80`;
       case 'feed':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-green/40 to-andcont-blue/40`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-blue-200/80 to-purple-200/80`;
       default:
         return baseClasses;
     }
@@ -113,22 +106,22 @@ const Intranet = () => {
   const getBackgroundClass = () => {
     switch(activeTab) {
       case 'announcements':
-        return "bg-gradient-to-br from-andcont-purple via-andcont-pink to-andcont-blue";
+        return "bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100";
       case 'links':
-        return "bg-gradient-to-br from-andcont-blue via-andcont-green to-andcont-purple";
+        return "bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100";
       case 'calendar':
-        return "bg-gradient-to-br from-andcont-orange via-andcont-yellow to-andcont-green";
+        return "bg-gradient-to-br from-purple-100 via-indigo-100 to-blue-100";
       case 'feed':
-        return "bg-gradient-to-br from-andcont-green via-andcont-blue to-andcont-orange";
+        return "bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-100";
       default:
-        return "bg-gradient-to-br from-andcont-blue via-andcont-purple to-andcont-pink";
+        return "bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100";
     }
   };
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-andcont">
-        <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -138,7 +131,7 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="backdrop-blur-xl bg-white/30 border border-white/40 rounded-lg shadow-xl p-6">
+        <div className="backdrop-blur-xl bg-white/60 border border-white/40 rounded-lg shadow-xl p-6">
           <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Portal AndCont</h2>
             
@@ -146,7 +139,7 @@ const Intranet = () => {
               {activeTab === 'feed' && (
                 <Button 
                   onClick={handleAddUserPost}
-                  className="bg-white/30 hover:bg-white/40 text-gray-800 border border-white/40 backdrop-blur-md"
+                  className="bg-white/70 hover:bg-white/80 text-gray-800 border border-white/40 shadow-sm"
                 >
                   <Plus size={16} className="mr-2" /> Nova Publicação
                 </Button>
@@ -155,7 +148,7 @@ const Intranet = () => {
               {currentUser.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
-                  className="bg-white/30 hover:bg-white/40 text-gray-800 border border-white/40 backdrop-blur-md"
+                  className="bg-white/70 hover:bg-white/80 text-gray-800 border border-white/40 shadow-sm"
                 >
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
@@ -175,7 +168,7 @@ const Intranet = () => {
             />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-white/30 backdrop-blur-xl rounded-full p-1">
+              <TabsList className="w-full mb-6 bg-white/60 backdrop-blur-xl rounded-full p-1">
                 <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>

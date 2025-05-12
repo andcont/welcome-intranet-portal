@@ -20,14 +20,14 @@ const FormHeader = ({ activeCategory, onClose }: FormHeaderProps) => {
 
   return (
     <div className="flex justify-between items-center mb-6">
-      <h3 className="text-xl font-bold text-white">
+      <h3 className="text-xl font-bold text-gray-800">
         {getTitle()}
       </h3>
       <Button 
         variant="ghost" 
         size="sm" 
         onClick={onClose}
-        className="text-white/70 hover:text-white hover:bg-white/10"
+        className="text-gray-600 hover:text-gray-800 hover:bg-white/30"
       >
         <X size={18} />
       </Button>
