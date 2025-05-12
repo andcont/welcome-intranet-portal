@@ -1,11 +1,11 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-andcont-blue to-andcont-purple text-white hover:opacity-90 transition-opacity;
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 transition-opacity;
   }
   
   .btn-secondary {
-    @apply bg-white/20 hover:bg-white/30 text-white border border-white/40 backdrop-blur-md transition-colors;
+    @apply bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-zinc-700 backdrop-blur-md transition-colors;
   }
   
   .card-hover {
@@ -13,33 +13,33 @@
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-white/15 border border-white/30 shadow-lg text-white;
+    @apply backdrop-blur-xl bg-zinc-800/30 border border-zinc-700/50 shadow-lg text-white;
   }
 
   /* Improved Gradient components */
   .card-gradient {
-    @apply bg-white/15 backdrop-blur-xl border border-white/30 shadow-lg hover:bg-white/25 transition-all duration-300 text-white;
+    @apply bg-zinc-800/50 backdrop-blur-xl border border-zinc-700/50 shadow-lg hover:bg-zinc-800/70 transition-all duration-300 text-white;
   }
   
   .header-gradient {
-    @apply bg-gradient-to-r from-andcont-blue via-andcont-purple to-andcont-pink;
+    @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-500;
   }
   
   .tab-gradient {
-    @apply bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl;
+    @apply bg-gradient-to-r from-zinc-800/70 to-zinc-900/70 backdrop-blur-xl;
   }
   
   .button-gradient {
-    @apply bg-gradient-to-r from-andcont-blue to-andcont-purple hover:from-andcont-blue/90 hover:to-andcont-purple/90;
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700;
   }
   
   /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-lg border border-white/30 bg-white/15 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
+    @apply rounded-lg border border-zinc-700/50 bg-zinc-800/30 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
   }
   
   .modern-input {
-    @apply bg-white/15 border border-white/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white/50 focus:border-transparent backdrop-blur-xl text-white;
+    @apply bg-zinc-800/50 border border-zinc-700/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-transparent backdrop-blur-xl text-white;
   }
   
   .modern-button {
@@ -48,16 +48,16 @@
   
   /* Improved form input styling to ensure text is visible */
   .form-input, input, textarea {
-    @apply text-gray-800;
+    @apply text-white bg-zinc-800/70 border-zinc-700/50;
   }
   
   /* Post styling for better visibility */
   .post-content {
-    @apply bg-white/50 backdrop-blur-md rounded-lg border border-white/40 p-4 text-gray-800;
+    @apply bg-zinc-800/70 backdrop-blur-md rounded-lg border border-zinc-700/50 p-4 text-gray-100;
   }
   
   /* Comment styling for better visibility */
   .comment-input {
-    @apply bg-white/60 text-gray-800 border-gray-300 placeholder:text-gray-500;
+    @apply bg-zinc-800/70 text-white border-zinc-700/50 placeholder:text-gray-400;
   }
 }
