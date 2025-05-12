@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -94,17 +93,17 @@ const Intranet = () => {
   };
 
   const getTabClasses = (tab: string) => {
-    let baseClasses = "text-white data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
+    let baseClasses = "text-gray-800 data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
     
     switch(tab) {
       case 'announcements':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-purple/50 to-andcont-pink/50`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-purple/40 to-andcont-pink/40`;
       case 'links':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-blue/50 to-andcont-green/50`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-blue/40 to-andcont-green/40`;
       case 'calendar':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-orange/50 to-andcont-yellow/50`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-orange/40 to-andcont-yellow/40`;
       case 'feed':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-green/50 to-andcont-blue/50`;
+        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-andcont-green/40 to-andcont-blue/40`;
       default:
         return baseClasses;
     }
@@ -139,15 +138,15 @@ const Intranet = () => {
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="glass-card p-6 backdrop-blur-xl bg-black/30 border border-white/30 rounded-lg shadow-xl">
+        <div className="backdrop-blur-xl bg-white/30 border border-white/40 rounded-lg shadow-xl p-6">
           <div className="flex flex-wrap justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Portal AndCont</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Portal AndCont</h2>
             
             <div className="flex space-x-2 mt-2 sm:mt-0">
               {activeTab === 'feed' && (
                 <Button 
                   onClick={handleAddUserPost}
-                  className="bg-black/30 hover:bg-black/40 text-white border border-white/30 backdrop-blur-md"
+                  className="bg-white/30 hover:bg-white/40 text-gray-800 border border-white/40 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Nova Publicação
                 </Button>
@@ -156,7 +155,7 @@ const Intranet = () => {
               {currentUser.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
-                  className="bg-black/30 hover:bg-black/40 text-white border border-white/30 backdrop-blur-md"
+                  className="bg-white/30 hover:bg-white/40 text-gray-800 border border-white/40 backdrop-blur-md"
                 >
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
@@ -176,7 +175,7 @@ const Intranet = () => {
             />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-black/20 backdrop-blur-xl rounded-full p-1">
+              <TabsList className="w-full mb-6 bg-white/30 backdrop-blur-xl rounded-full p-1">
                 <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>

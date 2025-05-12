@@ -5,24 +5,24 @@
   }
 
   .glass-card {
-    @apply bg-black/15 backdrop-blur-xl border border-white/20 rounded-lg shadow-lg text-white;
+    @apply bg-white/20 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg text-gray-800;
   }
   
-  /* Tab-specific gradients */
+  /* Tab-specific gradients with lighter backgrounds */
   .tab-announcements {
-    @apply bg-gradient-to-br from-andcont-purple/40 to-andcont-pink/40;
+    @apply bg-gradient-to-br from-andcont-purple/30 to-andcont-pink/30;
   }
   
   .tab-links {
-    @apply bg-gradient-to-br from-andcont-blue/40 to-andcont-green/40;
+    @apply bg-gradient-to-br from-andcont-blue/30 to-andcont-green/30;
   }
   
   .tab-calendar {
-    @apply bg-gradient-to-br from-andcont-orange/40 to-andcont-yellow/40;
+    @apply bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30;
   }
   
   .tab-feed {
-    @apply bg-gradient-to-br from-andcont-green/40 to-andcont-blue/40;
+    @apply bg-gradient-to-br from-andcont-green/30 to-andcont-blue/30;
   }
   
   /* Calendar day with event styling */
@@ -33,6 +33,11 @@
   }
   
   .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    @apply bg-white/20 text-white;
+    @apply bg-white/30 text-white;
+  }
+  
+  /* Improved container for posts and content */
+  .content-container {
+    @apply bg-white/30 backdrop-blur-xl rounded-lg border border-white/40 p-5 shadow-md;
   }
 }

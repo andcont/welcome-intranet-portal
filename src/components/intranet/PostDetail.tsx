@@ -297,7 +297,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   }
   
   return (
-    <div className="bg-gradient-to-br from-white to-blue-50 rounded-lg p-6 border border-gray-200 shadow-lg">
+    <div className="bg-gradient-to-br from-white/80 to-blue-50/80 rounded-lg p-6 border border-gray-200 shadow-lg">
       {showImageViewer && post.image && (
         <ImageViewer 
           src={post.image} 
@@ -340,7 +340,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         </div>
       </div>
       
-      {/* Post content */}
+      {/* Post content with improved visibility */}
       <div className="mb-8">
         {post.image && (
           <div className="mb-4">
@@ -362,7 +362,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         )}
         
-        <div className="text-gray-700 whitespace-pre-wrap">
+        <div className="text-gray-700 whitespace-pre-wrap bg-white/50 p-4 rounded-lg border border-gray-100">
           {post.content || post.description}
         </div>
         
@@ -395,7 +395,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         </div>
       </div>
       
-      {/* Comments section with edit functionality */}
+      {/* Comments section with improved visibility */}
       <div className="pt-6 border-t border-gray-200">
         <h4 className="flex items-center text-lg font-bold text-gray-800 mb-4">
           <MessageSquare className="mr-2 h-5 w-5" /> 
@@ -405,7 +405,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         {comments.length > 0 ? (
           <div className="space-y-4 mb-6">
             {comments.map(comment => (
-              <div key={comment.id} className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-100">
+              <div key={comment.id} className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-100 shadow-sm">
                 <div className="flex items-start">
                   <Avatar className="h-8 w-8 mr-3 bg-blue-100 text-blue-600">
                     <User className="h-4 w-4" />
@@ -451,13 +451,14 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
                           value={editCommentContent}
                           onChange={(e) => setEditCommentContent(e.target.value)}
                           rows={3}
-                          className="border-gray-300 placeholder:text-gray-400 mb-2 resize-none"
+                          className="border-gray-300 bg-white text-gray-700 placeholder:text-gray-400 mb-2 resize-none"
                         />
                         <div className="flex justify-end space-x-2">
                           <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={handleCancelEditComment}
+                            className="text-gray-700"
                           >
                             Cancelar
                           </Button>
@@ -471,7 +472,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-700">{comment.content}</p>
+                      <p className="text-gray-700 bg-white/50 p-2 rounded">{comment.content}</p>
                     )}
                   </div>
                 </div>
@@ -484,7 +485,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         )}
         
-        {/* Add comment form */}
+        {/* Add comment form with improved visibility */}
         <div className="flex space-x-3 mt-4">
           <Avatar className="h-8 w-8 bg-blue-100 text-blue-600">
             <User className="h-4 w-4" />
@@ -495,7 +496,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Adicione um comentário..."
               rows={3}
-              className="border-gray-300 placeholder:text-gray-400 mb-2 resize-none"
+              className="border-gray-300 bg-white text-gray-700 placeholder:text-gray-500 mb-2 resize-none"
             />
             <div className="flex justify-end">
               <Button 

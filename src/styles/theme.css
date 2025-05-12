@@ -46,6 +46,11 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Glass effect variables */
+    --glass-background: 0 0% 100% / 10%;
+    --glass-border: 0 0% 100% / 25%;
+    --glass-blur: 12px;
   }
 
   .dark {
@@ -84,5 +89,10 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Glass effect variables for dark mode */
+    --glass-background: 0 0% 100% / 5%;
+    --glass-border: 0 0% 100% / 15%;
+    --glass-blur: 12px;
   }
 }

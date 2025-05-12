@@ -5,7 +5,7 @@
   }
   
   .btn-secondary {
-    @apply bg-black/15 hover:bg-black/25 text-white border border-white/30 backdrop-blur-md transition-colors;
+    @apply bg-white/20 hover:bg-white/30 text-white border border-white/40 backdrop-blur-md transition-colors;
   }
   
   .card-hover {
@@ -13,12 +13,12 @@
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-black/15 border border-white/20 shadow-lg text-white;
+    @apply backdrop-blur-xl bg-white/15 border border-white/30 shadow-lg text-white;
   }
 
-  /* Gradient components */
+  /* Improved Gradient components */
   .card-gradient {
-    @apply bg-black/15 backdrop-blur-xl border border-white/20 shadow-lg hover:bg-black/25 transition-all duration-300 text-white;
+    @apply bg-white/15 backdrop-blur-xl border border-white/30 shadow-lg hover:bg-white/25 transition-all duration-300 text-white;
   }
   
   .header-gradient {
@@ -26,7 +26,7 @@
   }
   
   .tab-gradient {
-    @apply bg-gradient-to-r from-black/15 to-black/10 backdrop-blur-xl;
+    @apply bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl;
   }
   
   .button-gradient {
@@ -35,14 +35,29 @@
   
   /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-lg border border-white/20 bg-black/15 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
+    @apply rounded-lg border border-white/30 bg-white/15 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
   }
   
   .modern-input {
-    @apply bg-black/15 border border-white/20 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white/50 focus:border-transparent backdrop-blur-xl text-white;
+    @apply bg-white/15 border border-white/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white/50 focus:border-transparent backdrop-blur-xl text-white;
   }
   
   .modern-button {
     @apply px-4 py-2 rounded-lg font-medium;
+  }
+  
+  /* Improved form input styling to ensure text is visible */
+  .form-input, input, textarea {
+    @apply text-gray-800;
+  }
+  
+  /* Post styling for better visibility */
+  .post-content {
+    @apply bg-white/50 backdrop-blur-md rounded-lg border border-white/40 p-4 text-gray-800;
+  }
+  
+  /* Comment styling for better visibility */
+  .comment-input {
+    @apply bg-white/60 text-gray-800 border-gray-300 placeholder:text-gray-500;
   }
 }
