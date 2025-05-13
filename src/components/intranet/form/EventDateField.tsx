@@ -1,6 +1,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface EventDateFieldProps {
   date: Date | undefined;
@@ -8,15 +9,20 @@ interface EventDateFieldProps {
 }
 
 const EventDateField = ({ date, onChange }: EventDateFieldProps) => {
+  const { selectedGradient } = useTheme();
+  
   return (
     <div>
       <Label htmlFor="date" className="text-white block mb-2">Data</Label>
-      <div className="bg-black/15 rounded-md p-3 border border-white/30">
+      <div className={`bg-gradient-to-br ${selectedGradient.calendarColor} bg-opacity-30 rounded-md p-3 border border-white/30`}>
         <Calendar
           mode="single"
           selected={date}
           onSelect={onChange}
           className="bg-transparent text-white mx-auto"
+          modifiersClassNames={{
+            today: "text-white border border-white/50 bg-primary/50"
+          }}
         />
       </div>
     </div>

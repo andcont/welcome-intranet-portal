@@ -13,6 +13,7 @@ import FeedList from "@/components/intranet/FeedList";
 import PostDetail from "@/components/intranet/PostDetail";
 import UserPostForm from "@/components/intranet/UserPostForm";
 import IntranetHeader from "@/components/intranet/IntranetHeader";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Intranet = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const Intranet = () => {
   const [showUserPostForm, setShowUserPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("announcements");
   const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' } | null>(null);
+  const { selectedGradient } = useTheme();
 
   useEffect(() => {
     // Verificar usuário
@@ -106,7 +108,7 @@ const Intranet = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A]">
+      <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center text-white">
           <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
           <h1 className="text-2xl font-bold mb-2">Carregando...</h1>
@@ -116,10 +118,10 @@ const Intranet = () => {
   }
 
   return (
-    <div className="site-background bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A] min-h-screen">
+    <div className="site-background w-full min-h-screen">
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="intranet-container">
         <div className="glass-card p-6 animate-fade-in">
           <div className="flex flex-wrap justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gradient">Portal AndCont</h2>

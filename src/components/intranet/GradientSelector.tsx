@@ -18,14 +18,16 @@ const GradientSelector = () => {
           variant="ghost"
           size="sm"
           className="flex items-center gap-1 bg-black/40 border border-[#7B68EE]/30 hover:bg-black/60"
+          title="Alterar tema do site"
         >
-          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#7B68EE] to-[#D946EF]"></div>
+          <div className={`w-4 h-4 rounded-full ${selectedGradient.value.replace('/30', '')}`}></div>
           <Palette size={16} className="ml-1" />
+          <span className="ml-1 hidden sm:inline">Tema</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 p-3 bg-black/80 backdrop-blur-xl border border-[#7B68EE]/30">
         <div className="space-y-2">
-          <h4 className="font-bold text-sm text-gradient mb-2">Selecionar Tema</h4>
+          <h4 className="font-bold text-sm text-gradient mb-2">Selecionar Tema do Site</h4>
           <div className="grid grid-cols-4 gap-2">
             {gradientOptions.map((gradient) => (
               <button
@@ -45,7 +47,8 @@ const GradientSelector = () => {
             ))}
           </div>
           <div className="mt-2 pt-2 border-t border-[#7B68EE]/30">
-            <p className="text-xs text-gray-300">Tema selecionado: {selectedGradient.name}</p>
+            <p className="text-xs text-gray-300">Tema atual: {selectedGradient.name}</p>
+            <p className="text-xs text-gray-400 mt-1">O tema será aplicado em todo o site</p>
           </div>
         </div>
       </PopoverContent>

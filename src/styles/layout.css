@@ -8,9 +8,9 @@
     @apply bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 rounded-lg shadow-lg text-white;
   }
   
-  /* Enhanced gradient background for the entire site */
+  /* Enhanced gradient background for the entire site - full width and height */
   .site-background {
-    @apply bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A] min-h-screen;
+    @apply min-h-screen w-full;
   }
   
   /* Improved tab-specific gradients with animated transitions */
@@ -35,11 +35,11 @@
     @apply bg-gradient-to-r from-[#7B68EE]/60 to-[#D946EF]/60 border-[#D946EF]/70 shadow-[0_0_10px_rgba(217,70,239,0.3)];
   }
   
-  /* Calendar day with event styling */
+  /* Calendar day with event styling - this will now inherit from the theme */
   .rdp-day_selected, 
   .rdp-day_selected:focus-visible, 
   .rdp-day_selected:hover {
-    @apply bg-[#9B5DE5]/70 text-white;
+    @apply bg-primary/70 text-white;
   }
   
   .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
@@ -53,7 +53,7 @@
   
   /* Enhanced header styling */
   .intranet-header {
-    @apply border-b border-[#7B68EE]/50 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md;
+    @apply border-b border-[#7B68EE]/50 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md w-full;
   }
   
   /* Enhanced tab list container */
@@ -69,5 +69,10 @@
   /* Active tab trigger styling */
   .tab-trigger-active {
     @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white shadow-md;
+  }
+
+  /* Full width container for intranet page */
+  .intranet-container {
+    @apply w-full max-w-none px-4 sm:px-6 lg:px-8 py-6;
   }
 }

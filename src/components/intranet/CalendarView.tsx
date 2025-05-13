@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Trash, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface CalendarEvent {
   id: string;
@@ -24,6 +25,7 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
+  const { selectedGradient } = useTheme();
 
   useEffect(() => {
     // Load events from localStorage
@@ -88,37 +90,41 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     return acc;
   }, {});
 
-  // Days with events for highlighting in the calendar - FIX: Correctly parse date strings to Date objects
+  // Days with events for highlighting in the calendar
   const eventDays = Object.keys(eventDateMap).map(dateStr => {
-    // Ensure we properly create Date objects from ISO date strings (YYYY-MM-DD)
     const [year, month, day] = dateStr.split('-').map(Number);
-    // Create date with adjusted month (0-based index)
     return new Date(year, month - 1, day);
   });
   
-  // Custom modifiers for the calendar - needs to follow react-day-picker format
+  // Custom modifiers for the calendar
   const modifiers = {
     event: eventDays
   };
+  
+  // Dynamic calendar style based on selected theme
+  const calendarContainerClass = `bg-gradient-to-br ${selectedGradient.calendarColor} backdrop-blur-xl p-6 border border-white/30 rounded-lg`;
+  const calendarEventListClass = `bg-gradient-to-br ${selectedGradient.calendarColor} backdrop-blur-xl p-6 border border-white/30 rounded-lg h-full`;
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30 backdrop-blur-xl p-6 border border-white/30 rounded-lg">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          className="text-white"
-          modifiers={modifiers}
-          modifiersClassNames={{
-            event: "text-andcont-yellow border border-andcont-yellow bg-andcont-orange/30",
-            today: "text-white border-andcont-orange bg-andcont-orange/30"
-          }}
-        />
+      <div className="md:w-1/2">
+        <div className={calendarContainerClass}>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            className="text-white"
+            modifiers={modifiers}
+            modifiersClassNames={{
+              event: `text-white border border-white/50 bg-primary/30`,
+              today: `text-white border border-white/50 bg-primary/50`
+            }}
+          />
+        </div>
       </div>
       
       <div className="md:w-1/2">
-        <div className="bg-gradient-to-br from-andcont-orange/30 to-andcont-yellow/30 backdrop-blur-xl p-6 border border-white/30 rounded-lg h-full">
+        <div className={calendarEventListClass}>
           <h3 className="text-xl font-bold text-white mb-4">
             Eventos: {selectedDate ? formatDate(selectedDate.toISOString()) : ''}
           </h3>
