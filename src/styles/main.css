@@ -4,3 +4,36 @@
 @import './components.css';
 @import './layout.css';
 @import './animations.css';
+
+/* Gradient classes for theme customization */
+.gradient-default {
+  @apply bg-gradient-to-br from-[#7B68EE]/30 to-[#D946EF]/30;
+}
+
+.gradient-blue {
+  @apply bg-gradient-to-br from-[#0EA5E9]/30 to-[#3B82F6]/30;
+}
+
+.gradient-green {
+  @apply bg-gradient-to-br from-[#10B981]/30 to-[#34D399]/30;
+}
+
+.gradient-orange {
+  @apply bg-gradient-to-br from-[#F97316]/30 to-[#FB923C]/30;
+}
+
+.gradient-teal {
+  @apply bg-gradient-to-br from-[#14B8A6]/30 to-[#2DD4BF]/30;
+}
+
+.gradient-purple {
+  @apply bg-gradient-to-br from-[#8B5CF6]/30 to-[#A78BFA]/30;
+}
+
+.gradient-pink {
+  @apply bg-gradient-to-br from-[#EC4899]/30 to-[#F472B6]/30;
+}
+
+.gradient-midnight {
+  @apply bg-gradient-to-br from-[#1E293B]/30 to-[#334155]/30;
+}

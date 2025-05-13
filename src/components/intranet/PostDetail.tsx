@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import PostReactions from "./PostReactions";
 import ImageViewer from "./ImageViewer";
 import EditPostForm from "./EditPostForm";
+import { useTheme } from "@/contexts/ThemeContext";
+import GradientSelector from "./GradientSelector";
 
 interface PostDetailProps {
   postId: string;
@@ -37,6 +39,7 @@ interface Post {
 }
 
 const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
+  const { selectedGradient } = useTheme();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -269,14 +272,14 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   
   if (loading || !post) {
     return (
-      <div className="bg-gradient-to-br from-white to-blue-50 rounded-lg p-6 border border-gray-200 shadow-lg">
+      <div className="bg-black/40 backdrop-blur-xl rounded-lg p-6 border border-[#7B68EE]/30 shadow-lg">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gray-800">Carregando...</h3>
+          <h3 className="text-xl font-bold text-gradient">Carregando...</h3>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={onClose}
-            className="text-gray-500"
+            className="text-gray-300"
           >
             <X size={18} />
           </Button>
@@ -297,7 +300,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   }
   
   return (
-    <div className="bg-gradient-to-br from-white/80 to-blue-50/80 rounded-lg p-6 border border-gray-200 shadow-lg">
+    <div className={`${selectedGradient.value} backdrop-blur-xl rounded-lg p-6 border border-[#7B68EE]/30 shadow-lg`}>
       {showImageViewer && post.image && (
         <ImageViewer 
           src={post.image} 
@@ -307,15 +310,17 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       )}
       
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
+        <h3 className="text-xl font-bold text-gradient">{post.title}</h3>
         <div className="flex items-center gap-2">
+          <GradientSelector />
+          
           {canEditOrDelete() && (
             <>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShowEditForm(true)}
-                className="text-gray-500 hover:text-blue-600 hover:bg-blue-50 edit-button"
+                className="text-gray-300 hover:text-blue-400 hover:bg-black/40 edit-button"
               >
                 <Edit size={16} />
               </Button>
@@ -323,7 +328,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleDeletePost}
-                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                className="text-gray-300 hover:text-red-400 hover:bg-black/40"
               >
                 <Trash size={16} />
               </Button>
@@ -333,7 +338,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
             variant="ghost" 
             size="sm" 
             onClick={onClose}
-            className="text-gray-500"
+            className="text-gray-300 hover:bg-black/40"
           >
             <X size={18} />
           </Button>
@@ -351,18 +356,18 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               <img 
                 src={post.image} 
                 alt={post.title} 
-                className="w-full h-auto max-h-80 object-contain rounded-md border border-gray-200"
+                className="w-full h-auto max-h-80 object-contain rounded-md border border-[#7B68EE]/30"
               />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/30 rounded-md transition-opacity">
-                <div className="bg-white/80 p-2 rounded-full">
-                  <Image size={24} className="text-gray-800" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-md transition-opacity">
+                <div className="bg-black/60 p-2 rounded-full">
+                  <Image size={24} className="text-white" />
                 </div>
               </div>
             </div>
           </div>
         )}
         
-        <div className="text-gray-700 whitespace-pre-wrap bg-white/50 p-4 rounded-lg border border-gray-100">
+        <div className="text-white whitespace-pre-wrap bg-black/50 p-4 rounded-lg border border-[#7B68EE]/30">
           {post.content || post.description}
         </div>
         
@@ -372,7 +377,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               href={post.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline flex items-center"
+              className="text-blue-400 hover:text-blue-300 hover:underline flex items-center"
             >
               Acessar link
             </a>
@@ -380,12 +385,12 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         )}
         
         {post.date && (
-          <div className="mt-2 text-gray-600">
+          <div className="mt-2 text-gray-300">
             <span>Data: {new Date(post.date).toLocaleDateString('pt-BR')}</span>
           </div>
         )}
         
-        <div className="mt-4 text-sm text-gray-500 flex items-center justify-between">
+        <div className="mt-4 text-sm text-gray-300 flex items-center justify-between">
           <span>Por: {post.createdBy}</span>
           <span>{formatDate(post.createdAt)}</span>
         </div>
@@ -396,8 +401,8 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       </div>
       
       {/* Comments section with improved visibility */}
-      <div className="pt-6 border-t border-gray-200">
-        <h4 className="flex items-center text-lg font-bold text-gray-800 mb-4">
+      <div className="pt-6 border-t border-[#7B68EE]/30">
+        <h4 className="flex items-center text-lg font-bold text-gradient mb-4">
           <MessageSquare className="mr-2 h-5 w-5" /> 
           Comentários ({comments.length})
         </h4>
@@ -405,30 +410,30 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
         {comments.length > 0 ? (
           <div className="space-y-4 mb-6">
             {comments.map(comment => (
-              <div key={comment.id} className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-100 shadow-sm">
+              <div key={comment.id} className="bg-black/40 backdrop-blur-sm rounded-lg p-4 border border-[#7B68EE]/20 shadow-sm">
                 <div className="flex items-start">
-                  <Avatar className="h-8 w-8 mr-3 bg-blue-100 text-blue-600">
+                  <Avatar className="h-8 w-8 mr-3 bg-[#7B68EE]/30 text-white">
                     <User className="h-4 w-4" />
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center">
-                        <span className="font-medium text-gray-800">{comment.createdBy}</span>
+                        <span className="font-medium text-white">{comment.createdBy}</span>
                         {comment.createdByRole === 'admin' && (
-                          <span className="ml-2 bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
+                          <span className="ml-2 bg-[#7B68EE]/30 text-white text-xs px-2 py-0.5 rounded-full">
                             Admin
                           </span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <span className="text-xs text-gray-500 mr-2">{formatDate(comment.createdAt)}</span>
+                        <span className="text-xs text-gray-400 mr-2">{formatDate(comment.createdAt)}</span>
                         {isCommentOwner(comment) && (
                           <div className="flex space-x-1">
                             <Button 
                               variant="ghost" 
                               size="sm" 
                               onClick={() => handleEditComment(comment)}
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-blue-500"
+                              className="h-6 w-6 p-0 text-gray-400 hover:text-blue-400"
                             >
                               <Edit size={14} />
                             </Button>
@@ -436,7 +441,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
                               variant="ghost" 
                               size="sm" 
                               onClick={() => handleDeleteComment(comment.id)}
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-400"
                             >
                               <Trash size={14} />
                             </Button>
@@ -451,28 +456,28 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
                           value={editCommentContent}
                           onChange={(e) => setEditCommentContent(e.target.value)}
                           rows={3}
-                          className="border-gray-300 bg-white text-gray-700 placeholder:text-gray-400 mb-2 resize-none"
+                          className="border-[#7B68EE]/30 bg-black/30 text-white placeholder:text-gray-400 mb-2 resize-none"
                         />
                         <div className="flex justify-end space-x-2">
                           <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={handleCancelEditComment}
-                            className="text-gray-700"
+                            className="text-gray-300 border-[#7B68EE]/30"
                           >
                             Cancelar
                           </Button>
                           <Button 
                             size="sm" 
                             onClick={() => handleSaveComment(comment.id)}
-                            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                            className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white"
                           >
                             <Save className="mr-1 h-4 w-4" /> Salvar
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-700 bg-white/50 p-2 rounded">{comment.content}</p>
+                      <p className="text-gray-100 bg-black/30 p-2 rounded">{comment.content}</p>
                     )}
                   </div>
                 </div>
@@ -481,13 +486,13 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500">Seja o primeiro a comentar!</p>
+            <p className="text-gray-400">Seja o primeiro a comentar!</p>
           </div>
         )}
         
         {/* Add comment form with improved visibility */}
         <div className="flex space-x-3 mt-4">
-          <Avatar className="h-8 w-8 bg-blue-100 text-blue-600">
+          <Avatar className="h-8 w-8 bg-[#7B68EE]/30 text-white">
             <User className="h-4 w-4" />
           </Avatar>
           <div className="flex-1">
@@ -496,13 +501,13 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Adicione um comentário..."
               rows={3}
-              className="border-gray-300 bg-white text-gray-700 placeholder:text-gray-500 mb-2 resize-none"
+              className="border-[#7B68EE]/30 bg-black/30 text-white placeholder:text-gray-400 mb-2 resize-none"
             />
             <div className="flex justify-end">
               <Button 
                 onClick={handleSubmitComment}
                 size="sm"
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white"
               >
                 <Send className="mr-2 h-4 w-4" /> Comentar
               </Button>
