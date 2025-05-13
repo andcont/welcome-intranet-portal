@@ -11,7 +11,7 @@ const Index = () => {
     
     if (user) {
       // Usuário logado, redireciona para a intranet interna
-      navigate("/");
+      navigate("/intranet");
     } else {
       // Usuário não logado, redireciona para a página de login
       navigate("/login");

@@ -16,7 +16,8 @@ import IntranetHeader from "@/components/intranet/IntranetHeader";
 
 const Intranet = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<any>({ name: "", role: "user" });
+  const [isLoading, setIsLoading] = useState(true);
   const [showPostForm, setShowPostForm] = useState(false);
   const [showUserPostForm, setShowUserPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("announcements");
@@ -32,7 +33,16 @@ const Intranet = () => {
     
     try {
       const user = JSON.parse(userStr);
-      setCurrentUser(user);
+      if (!user || typeof user !== 'object') {
+        throw new Error("Invalid user data");
+      }
+      
+      setCurrentUser({
+        name: user.name || "Usuário",
+        role: user.role || "user",
+        id: user.id || "",
+        email: user.email || ""
+      });
       
       // Check if we should open the content form from Admin page redirection
       const shouldOpenForm = localStorage.getItem("andcont_open_content_form");
@@ -45,16 +55,20 @@ const Intranet = () => {
       const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
       activities.push({
         id: Date.now().toString(),
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
+        userId: user.id || "unknown",
+        userName: user.name || "Usuário",
+        userEmail: user.email || "",
         type: 'intranet_access',
         timestamp: new Date().toISOString()
       });
       localStorage.setItem('andcont_activities', JSON.stringify(activities));
+      
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
       navigate("/login");
+      return;
+    } finally {
+      setIsLoading(false);
     }
   }, [navigate]);
 
@@ -90,6 +104,17 @@ const Intranet = () => {
     return `tab-trigger ${isActive ? 'tab-trigger-active' : ''} flex items-center px-4 py-2.5`;
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A]">
+        <div className="text-center text-white">
+          <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h1 className="text-2xl font-bold mb-2">Carregando...</h1>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="site-background bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A] min-h-screen">
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
@@ -109,7 +134,7 @@ const Intranet = () => {
                 </Button>
               )}
               
-              {currentUser.role === 'admin' && activeTab !== 'feed' && (
+              {currentUser?.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
                   className="btn-primary"
@@ -120,7 +145,7 @@ const Intranet = () => {
             </div>
           </div>
 
-          {(showPostForm && currentUser.role === 'admin') ? (
+          {(showPostForm && currentUser?.role === 'admin') ? (
             <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
           ) : showUserPostForm ? (
             <UserPostForm onClose={handleCloseForm} />
@@ -149,28 +174,28 @@ const Intranet = () => {
               
               <TabsContent value="announcements" className={`tab-announcements p-6 fade-in`}>
                 <AnnouncementsList 
-                  isAdmin={currentUser.role === 'admin'} 
+                  isAdmin={currentUser?.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'announcement')}
                 />
               </TabsContent>
               
               <TabsContent value="links" className={`tab-links p-6 fade-in`}>
                 <LinksList 
-                  isAdmin={currentUser.role === 'admin'} 
+                  isAdmin={currentUser?.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'link')}
                 />
               </TabsContent>
               
               <TabsContent value="calendar" className={`tab-calendar p-6 fade-in`}>
                 <CalendarView 
-                  isAdmin={currentUser.role === 'admin'} 
+                  isAdmin={currentUser?.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'event')}
                 />
               </TabsContent>
               
               <TabsContent value="feed" className={`tab-feed p-6 fade-in`}>
                 <FeedList 
-                  isAdmin={currentUser.role === 'admin'} 
+                  isAdmin={currentUser?.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'feed')}
                 />
               </TabsContent>

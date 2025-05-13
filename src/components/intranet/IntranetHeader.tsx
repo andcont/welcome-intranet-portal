@@ -16,6 +16,11 @@ interface IntranetHeaderProps {
 const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
   const navigate = useNavigate();
   
+  // Ensure we have valid values even if currentUser has issues
+  const userName = currentUser?.name || "Usuário";
+  const userRole = currentUser?.role || "user";
+  const userProfilePic = currentUser?.profilePic;
+  
   const goToProfile = () => {
     navigate("/profile");
   };
@@ -40,7 +45,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
           </div>
           
           <div className="flex items-center space-x-3">
-            {currentUser.role === 'admin' && (
+            {userRole === 'admin' && (
               <Button 
                 onClick={goToAdmin} 
                 variant="outline" 
@@ -57,15 +62,15 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
               className="flex items-center cursor-pointer hover:bg-black/50 rounded-full py-1 px-3 transition-colors animate-fade-in"
             >
               <Avatar className="h-8 w-8 mr-2 border border-[#7B68EE]/50">
-                {currentUser.profilePic ? (
-                  <AvatarImage src={currentUser.profilePic} alt={currentUser.name} />
+                {userProfilePic ? (
+                  <AvatarImage src={userProfilePic} alt={userName} />
                 ) : (
                   <AvatarFallback className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white">
-                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
+                    {userName ? userName.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
                   </AvatarFallback>
                 )}
               </Avatar>
-              <span className="text-white font-medium hidden sm:block">{currentUser.name}</span>
+              <span className="text-white font-medium hidden sm:block">{userName}</span>
             </div>
             
             <Button 

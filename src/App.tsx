@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -14,17 +14,15 @@ import "./App.css";
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/intranet" element={<Intranet />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/intranet" element={<Intranet />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       <Toaster position="top-center" expand={false} richColors />
     </ThemeProvider>
   );
