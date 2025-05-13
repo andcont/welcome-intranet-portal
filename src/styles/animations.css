@@ -53,4 +53,25 @@
       background-position: 0% 50%;
     }
   }
+  
+  /* Tab transition animations */
+  .tab-transition {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Glow effect for interactive elements */
+  .glow-on-hover:hover {
+    box-shadow: 0 0 15px rgba(123, 104, 238, 0.6);
+  }
+  
+  /* Subtle hover effect for cards */
+  .card-hover-effect {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(217, 70, 239, 0.5);
+  }
 }

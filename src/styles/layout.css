@@ -8,21 +8,31 @@
     @apply bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 rounded-lg shadow-lg text-white;
   }
   
-  /* Tab-specific gradients with theme backgrounds */
+  /* Enhanced gradient background for the entire site */
+  .site-background {
+    @apply bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A] min-h-screen;
+  }
+  
+  /* Improved tab-specific gradients with animated transitions */
   .tab-announcements {
-    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
+    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
   }
   
   .tab-links {
-    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
+    @apply bg-gradient-to-br from-[#D946EF]/20 to-[#7B68EE]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
   }
   
   .tab-calendar {
-    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
+    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#9B5DE5]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
   }
   
   .tab-feed {
-    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
+    @apply bg-gradient-to-br from-[#9B5DE5]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+  }
+  
+  /* Active tab styling with stronger gradient and glow effect */
+  .tab-active {
+    @apply bg-gradient-to-r from-[#7B68EE]/60 to-[#D946EF]/60 border-[#D946EF]/70 shadow-[0_0_10px_rgba(217,70,239,0.3)];
   }
   
   /* Calendar day with event styling */
@@ -39,5 +49,25 @@
   /* Improved container for posts and content */
   .content-container {
     @apply bg-black/40 backdrop-blur-xl rounded-lg border border-[#7B68EE]/30 p-5 shadow-md text-white;
+  }
+  
+  /* Enhanced header styling */
+  .intranet-header {
+    @apply border-b border-[#7B68EE]/50 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md;
+  }
+  
+  /* Enhanced tab list container */
+  .tabs-container {
+    @apply bg-black/30 backdrop-blur-xl p-1.5 rounded-full border border-[#7B68EE]/30 shadow-inner;
+  }
+  
+  /* Individual tab trigger styling */
+  .tab-trigger {
+    @apply rounded-full transition-all duration-300 text-white/80 hover:text-white;
+  }
+  
+  /* Active tab trigger styling */
+  .tab-trigger-active {
+    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white shadow-md;
   }
 }

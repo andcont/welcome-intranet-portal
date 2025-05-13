@@ -85,61 +85,25 @@ const Intranet = () => {
     setSelectedPost(null);
   };
 
-  const getTabClasses = (tab: string) => {
-    let baseClasses = "text-gray-700 data-[state=active]:shadow-sm rounded-full flex-1 transition-all";
-    
-    switch(tab) {
-      case 'announcements':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-blue-200/80 to-indigo-200/80`;
-      case 'links':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-indigo-200/80 to-blue-200/80`;
-      case 'calendar':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-purple-200/80 to-indigo-200/80`;
-      case 'feed':
-        return `${baseClasses} data-[state=active]:bg-gradient-to-r from-blue-200/80 to-purple-200/80`;
-      default:
-        return baseClasses;
-    }
-  }
-
-  // Get appropriate background gradient class based on active tab
-  const getBackgroundClass = () => {
-    switch(activeTab) {
-      case 'announcements':
-        return "bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100";
-      case 'links':
-        return "bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100";
-      case 'calendar':
-        return "bg-gradient-to-br from-purple-100 via-indigo-100 to-blue-100";
-      case 'feed':
-        return "bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-100";
-      default:
-        return "bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100";
-    }
+  const getTabClasses = (tabValue: string) => {
+    const isActive = activeTab === tabValue;
+    return `tab-trigger ${isActive ? 'tab-trigger-active' : ''} flex items-center px-4 py-2.5`;
   };
 
-  if (!currentUser) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className={`min-h-screen ${getBackgroundClass()} transition-colors duration-700`}>
+    <div className="site-background bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A] min-h-screen">
       <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
 
       <main className="container mx-auto px-4 py-6">
-        <div className="backdrop-blur-xl bg-white/60 border border-white/40 rounded-lg shadow-xl p-6">
+        <div className="glass-card p-6 animate-fade-in">
           <div className="flex flex-wrap justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Portal AndCont</h2>
+            <h2 className="text-2xl font-bold text-gradient">Portal AndCont</h2>
             
             <div className="flex space-x-2 mt-2 sm:mt-0">
               {activeTab === 'feed' && (
                 <Button 
                   onClick={handleAddUserPost}
-                  className="bg-white/70 hover:bg-white/80 text-gray-800 border border-white/40 shadow-sm"
+                  className="btn-primary"
                 >
                   <Plus size={16} className="mr-2" /> Nova Publicação
                 </Button>
@@ -148,7 +112,7 @@ const Intranet = () => {
               {currentUser.role === 'admin' && activeTab !== 'feed' && (
                 <Button 
                   onClick={handleAddContent}
-                  className="bg-white/70 hover:bg-white/80 text-gray-800 border border-white/40 shadow-sm"
+                  className="btn-primary"
                 >
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
@@ -168,7 +132,7 @@ const Intranet = () => {
             />
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full mb-6 bg-white/60 backdrop-blur-xl rounded-full p-1">
+              <TabsList className="tabs-container w-full mb-6">
                 <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
                   <Bell className="mr-2 h-4 w-4" /> Comunicados
                 </TabsTrigger>
@@ -183,28 +147,28 @@ const Intranet = () => {
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="announcements">
+              <TabsContent value="announcements" className={`tab-announcements p-6 fade-in`}>
                 <AnnouncementsList 
                   isAdmin={currentUser.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'announcement')}
                 />
               </TabsContent>
               
-              <TabsContent value="links">
+              <TabsContent value="links" className={`tab-links p-6 fade-in`}>
                 <LinksList 
                   isAdmin={currentUser.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'link')}
                 />
               </TabsContent>
               
-              <TabsContent value="calendar">
+              <TabsContent value="calendar" className={`tab-calendar p-6 fade-in`}>
                 <CalendarView 
                   isAdmin={currentUser.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'event')}
                 />
               </TabsContent>
               
-              <TabsContent value="feed">
+              <TabsContent value="feed" className={`tab-feed p-6 fade-in`}>
                 <FeedList 
                   isAdmin={currentUser.role === 'admin'} 
                   onSelectPost={(id) => handleSelectPost(id, 'feed')}

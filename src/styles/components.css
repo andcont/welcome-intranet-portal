@@ -70,4 +70,22 @@
   .fade-in {
     @apply animate-fade-in;
   }
+  
+  /* Enhanced tab styling */
+  .enhanced-tab {
+    @apply rounded-full px-4 py-2 transition-all duration-300;
+  }
+  
+  /* Glowing button effect */
+  .glow-button {
+    @apply relative overflow-hidden;
+  }
+  
+  .glow-button::after {
+    @apply content-[''] absolute inset-0 bg-gradient-to-r from-[#7B68EE]/20 to-[#D946EF]/20 opacity-0 transition-opacity duration-300;
+  }
+  
+  .glow-button:hover::after {
+    @apply opacity-100;
+  }
 }
