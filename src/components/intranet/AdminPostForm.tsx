@@ -29,7 +29,7 @@ const AdminPostForm = ({ onClose, activeCategory }: AdminPostFormProps) => {
   } = usePostForm({ activeCategory, onClose });
   
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-lg">
+    <div className="bg-black/50 backdrop-blur-xl rounded-lg p-6 border border-[#7B68EE]/30 shadow-lg">
       <FormHeader activeCategory={activeCategory} onClose={onClose} />
       
       <form onSubmit={handleSubmit} className="space-y-4">

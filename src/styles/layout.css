@@ -1,43 +1,43 @@
 
 @layer components {
   .bg-gradient-andcont {
-    @apply bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100;
+    @apply bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A];
   }
 
   .glass-card {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50 rounded-lg shadow-lg text-gray-800;
+    @apply bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 rounded-lg shadow-lg text-white;
   }
   
-  /* Tab-specific gradients with lighter backgrounds */
+  /* Tab-specific gradients with theme backgrounds */
   .tab-announcements {
-    @apply bg-gradient-to-br from-indigo-100/80 to-violet-100/80;
+    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
   }
   
   .tab-links {
-    @apply bg-gradient-to-br from-blue-100/80 to-indigo-100/80;
+    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
   }
   
   .tab-calendar {
-    @apply bg-gradient-to-br from-violet-100/80 to-purple-100/80;
+    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
   }
   
   .tab-feed {
-    @apply bg-gradient-to-br from-blue-100/80 to-indigo-100/80;
+    @apply bg-gradient-to-br from-[#7B68EE]/10 to-[#D946EF]/10;
   }
   
   /* Calendar day with event styling */
   .rdp-day_selected, 
   .rdp-day_selected:focus-visible, 
   .rdp-day_selected:hover {
-    @apply bg-blue-500/70 text-white;
+    @apply bg-[#9B5DE5]/70 text-white;
   }
   
   .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    @apply bg-white/70 text-gray-800;
+    @apply bg-black/70 text-white;
   }
   
   /* Improved container for posts and content */
   .content-container {
-    @apply bg-white/70 backdrop-blur-xl rounded-lg border border-white/50 p-5 shadow-md;
+    @apply bg-black/40 backdrop-blur-xl rounded-lg border border-[#7B68EE]/30 p-5 shadow-md text-white;
   }
 }

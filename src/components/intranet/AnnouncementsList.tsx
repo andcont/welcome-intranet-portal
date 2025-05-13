@@ -108,12 +108,12 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 fade-in">
       {announcements.length === 0 ? (
         <div className="text-center py-12 glass-card">
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-xl font-medium text-gray-800">Nenhum comunicado disponível</h3>
-          <p className="text-gray-600 mt-2">
+          <h3 className="text-xl font-medium text-white">Nenhum comunicado disponível</h3>
+          <p className="text-gray-300 mt-2">
             {isAdmin 
               ? "Clique em 'Adicionar conteúdo' para criar um novo comunicado." 
               : "Não há comunicados para exibir no momento."}
@@ -123,19 +123,19 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
         announcements.map(announcement => (
           <Card 
             key={announcement.id} 
-            className="bg-white/70 backdrop-blur-xl border border-white/50 hover:border-blue-200 transition-all hover:shadow-lg cursor-pointer"
+            className="bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 hover:border-[#D946EF]/40 transition-all hover:shadow-lg cursor-pointer"
             onClick={() => onSelectPost(announcement.id)}
           >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <h3 className="text-xl font-bold text-gray-800">{announcement.title}</h3>
+                <h3 className="text-xl font-bold text-gradient">{announcement.title}</h3>
                 
                 {isAdmin && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={(e) => handleDelete(announcement.id, e)}
-                    className="text-gray-500 hover:text-red-500 hover:bg-white/80"
+                    className="text-gray-300 hover:text-red-500 hover:bg-black/60"
                   >
                     <Trash size={16} />
                   </Button>
@@ -147,20 +147,20 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
                   <img 
                     src={announcement.image} 
                     alt={announcement.title} 
-                    className="w-full h-auto max-h-64 object-contain rounded-md border border-gray-200/50"
+                    className="w-full h-auto max-h-64 object-contain rounded-md border border-[#7B68EE]/30"
                   />
                 </div>
               )}
               
-              <div className="mt-2 text-gray-700 whitespace-pre-wrap line-clamp-3 bg-white/80 p-3 rounded-md">
+              <div className="mt-2 text-white whitespace-pre-wrap line-clamp-3 bg-black/60 p-3 rounded-md">
                 {announcement.content}
               </div>
             </CardContent>
             
-            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-white/50 mt-4 pt-4 bg-gradient-to-r from-white/70 to-white/80">
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+            <CardFooter className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-[#7B68EE]/30 mt-4 pt-4 bg-gradient-to-r from-black/50 to-black/40">
+              <div className="flex items-center gap-4 text-sm text-gray-300">
                 <div className="flex items-center">
-                  <Heart size={16} className={`mr-1 ${reactionCounts[announcement.id] ? 'fill-red-500 text-red-500' : ''}`} /> 
+                  <Heart size={16} className={`mr-1 ${reactionCounts[announcement.id] ? 'fill-[#D946EF] text-[#D946EF]' : ''}`} /> 
                   {reactionCounts[announcement.id] || 0}
                 </div>
                 <div className="flex items-center">
@@ -169,7 +169,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
                 </div>
               </div>
               
-              <div className="text-sm text-gray-600 flex items-center">
+              <div className="text-sm text-gray-300 flex items-center">
                 <span>Por: {announcement.createdBy}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(announcement.createdAt)}</span>
