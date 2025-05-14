@@ -43,7 +43,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         const parsedUser = JSON.parse(userStr);
         setCurrentUser(parsedUser);
       } catch (error) {
-        console.error("Error parsing user data:", error);
+        console.error("Erro ao analisar dados do usuário:", error);
       }
     }
 
@@ -58,7 +58,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         });
         setUsers(usersMap);
       } catch (error) {
-        console.error("Error parsing users data:", error);
+        console.error("Erro ao analisar dados de usuários:", error);
       }
     }
 
@@ -113,7 +113,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     if (!comment) return;
 
     // Only allow deletion if user is admin or the comment author
-    if (currentUser.role !== "admin" && comment.createdBy !== currentUser.name) {
+    if (currentUser.role !== "admin" && comment.userEmail !== currentUser.email) {
       toast.error("Você não tem permissão para excluir este comentário");
       return;
     }
@@ -185,7 +185,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-white">{comment.createdBy}</h4>
                   
-                  {(currentUser?.role === "admin" || currentUser?.name === comment.createdBy) && (
+                  {(currentUser?.role === "admin" || currentUser?.email === comment.userEmail) && (
                     <Button
                       variant="ghost"
                       size="sm"

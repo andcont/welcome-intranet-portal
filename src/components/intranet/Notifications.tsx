@@ -17,16 +17,28 @@ const Notifications = () => {
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<string>(localStorage.getItem('andcont_last_checked') || '');
   const { selectedGradient } = useTheme();
   
-  // Check for new notifications when component mounts
+  // Check for new notifications when component mounts and whenever the page becomes visible
   useEffect(() => {
     checkForNewContent();
     
-    // Set up an interval to check for new content every minute
+    // Set up an interval to check for new content every 30 seconds
     const intervalId = setInterval(() => {
       checkForNewContent();
-    }, 60000);
+    }, 30000);
     
-    return () => clearInterval(intervalId);
+    // Check for notifications when the tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkForNewContent();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
   
   const checkForNewContent = () => {
@@ -99,7 +111,7 @@ const Notifications = () => {
       ...newComments.map((c: any) => ({
         id: `comment-${c.id}`,
         type: 'comment' as const,
-        message: `Novo comentário em ${c.postType}`,
+        message: `Novo comentário de ${c.createdBy}`,
         read: false,
         timestamp: c.createdAt
       }))
@@ -116,11 +128,16 @@ const Notifications = () => {
           duration: 5000,
         });
       }
+      
+      // Reproduzir som de notificação
+      const audio = new Audio('/notification-sound.mp3');
+      audio.volume = 0.5;
+      audio.play().catch(err => console.log('Não foi possível reproduzir o som de notificação'));
     }
     
     // Update notifications in localStorage
     const existingNotifications = JSON.parse(localStorage.getItem('andcont_notifications') || '[]');
-    const updatedNotifications = [...newNotifications, ...existingNotifications];
+    const updatedNotifications = [...newNotifications, ...existingNotifications].slice(0, 50); // Limitar a 50 notificações
     localStorage.setItem('andcont_notifications', JSON.stringify(updatedNotifications));
     
     // Update last checked timestamp
@@ -130,7 +147,9 @@ const Notifications = () => {
     setNotifications(updatedNotifications);
   };
 
-  return null; // This component doesn't render anything, it just manages notifications
+  return (
+    <Bell className="notification-icon" style={{ display: 'none' }} /> // Ícone oculto apenas para carregar o componente
+  );
 };
 
 export default Notifications;

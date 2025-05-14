@@ -36,13 +36,18 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <img 
-              src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
+              src="/lovable-uploads/07664a7b-d471-41cd-848e-88de04532275.png" 
               alt="AndCont Logo" 
               className="h-10 animate-fade-in" 
             />
-            <h1 className="text-2xl font-bold text-gradient animate-fade-in hidden sm:block">
-              Intranet AndCont
-            </h1>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold text-gradient animate-fade-in hidden sm:block">
+                Intranet AndCont
+              </h1>
+              <span className="text-xs text-white/80 hidden sm:block">
+                Há 30 anos conectando pessoas e números
+              </span>
+            </div>
           </div>
           
           <div className="flex items-center space-x-3">
