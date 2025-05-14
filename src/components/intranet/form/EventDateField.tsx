@@ -2,6 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { useTheme } from "@/contexts/ThemeContext";
+import { pt } from "date-fns/locale";
 
 interface EventDateFieldProps {
   date: Date | undefined;
@@ -20,6 +21,7 @@ const EventDateField = ({ date, onChange }: EventDateFieldProps) => {
           selected={date}
           onSelect={onChange}
           className="bg-transparent text-white mx-auto"
+          locale={pt}
           modifiersClassNames={{
             today: "text-white border border-white/50 bg-primary/50"
           }}

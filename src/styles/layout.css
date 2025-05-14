@@ -73,7 +73,7 @@
 
   /* Full width container for intranet page */
   .intranet-container {
-    @apply w-full max-w-none px-4 sm:px-6 lg:px-8 py-6;
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
   }
   
   /* Full width page for all pages */
