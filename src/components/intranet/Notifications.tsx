@@ -14,6 +14,7 @@ interface Notification {
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<string>(localStorage.getItem('andcont_last_checked') || '');
   const { selectedGradient } = useTheme();
   
@@ -145,10 +146,19 @@ const Notifications = () => {
     localStorage.setItem('andcont_last_checked', now);
     
     setNotifications(updatedNotifications);
+    setUnreadCount(updatedNotifications.filter(n => !n.read).length);
   };
 
   return (
-    <Bell className="notification-icon" style={{ display: 'none' }} /> // Ícone oculto apenas para carregar o componente
+    <div className="notification-container">
+      <Bell 
+        className={`notification-icon ${unreadCount > 0 ? 'animate-pulse text-[#D946EF]' : 'text-white/80'}`} 
+        size={20} 
+      />
+      {unreadCount > 0 && (
+        <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+      )}
+    </div>
   );
 };
 

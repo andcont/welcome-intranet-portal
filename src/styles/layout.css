@@ -80,4 +80,22 @@
   .full-width-page {
     @apply w-full max-w-full m-0 p-0;
   }
+
+  /* Button gradient styling */
+  .button-gradient {
+    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90;
+  }
+  
+  /* Notification container and icon styling */
+  .notification-container {
+    @apply relative flex items-center justify-center cursor-pointer;
+  }
+  
+  .notification-icon {
+    @apply h-5 w-5 transition-all duration-200;
+  }
+  
+  .notification-badge {
+    @apply absolute -top-1 -right-1 bg-[#D946EF] text-white text-xs w-4 h-4 flex items-center justify-center rounded-full;
+  }
 }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
+import Notifications from "./Notifications";
 
 interface IntranetHeaderProps {
   currentUser: {
@@ -38,7 +39,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
             <img 
               src="/lovable-uploads/07664a7b-d471-41cd-848e-88de04532275.png" 
               alt="AndCont Logo" 
-              className="h-10 animate-fade-in" 
+              className="h-12 animate-fade-in" 
             />
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold text-gradient animate-fade-in hidden sm:block">
@@ -50,7 +51,11 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
             </div>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Notifications />
+            </div>
+            
             <GradientSelector />
             
             {userRole === 'admin' && (
