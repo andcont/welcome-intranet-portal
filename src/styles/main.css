@@ -49,7 +49,9 @@ html, body, #root {
 
 /* Apply gradient to the whole page */
 html.gradient-theme-applied {
-  min-height: 100%;
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
   background-color: #050A18;
   background-attachment: fixed;
   background-size: cover;
@@ -95,4 +97,9 @@ html.gradient-theme-applied {
 
 .calendar-theme-midnight {
   @apply from-[#1E293B]/30 to-[#334155]/30;
+}
+
+/* Glass card styling for consistent look */
+.glass-card {
+  @apply bg-black/40 backdrop-blur-xl border border-white/20;
 }

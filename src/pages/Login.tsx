@@ -2,9 +2,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "@/components/LoginForm";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { selectedGradient } = useTheme();
 
   // Verificar se o usuário já está logado
   useEffect(() => {
@@ -16,9 +18,9 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-zinc-900 via-indigo-950 to-zinc-900">
+    <div className={`min-h-screen flex ${selectedGradient.value} w-full`}>
       {/* Lado esquerdo - Banner colorido */}
-      <div className="flex-1 hidden lg:flex flex-col justify-center items-center text-white p-8">
+      <div className="flex-1 hidden lg:flex flex-col justify-center items-center text-white p-8 glass-card">
         <div className="max-w-lg">
           <img 
             src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
@@ -26,7 +28,7 @@ const Login = () => {
             className="w-full h-auto mb-12" 
           />
           <h1 className="text-4xl font-bold mb-4 text-white">Contabilidade no terceiro setor é com a AndCont!</h1>
-          <p className="text-xl text-gray-300">
+          <p className="text-xl text-white/90">
             Conectamos pessoas e números. Acesse nossa intranet para ver todas as ferramentas disponíveis.
           </p>
         </div>

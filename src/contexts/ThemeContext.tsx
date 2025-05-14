@@ -95,11 +95,18 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Apply the site background gradient
     document.documentElement.classList.add('gradient-theme-applied');
+    
+    // Set body to full height and width
+    document.body.style.minHeight = '100vh';
+    document.body.style.width = '100%';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
   }, []);
 
   // Apply the gradient to the root element whenever it changes
   useEffect(() => {
     const htmlElement = document.documentElement;
+    const bodyElement = document.body;
     
     // Remove all existing gradient classes
     gradientOptions.forEach(opt => {
@@ -108,6 +115,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Add the selected gradient class
     htmlElement.classList.add(`gradient-${selectedGradient.id}`);
+    
+    // Update the body background to match
+    bodyElement.className = `${selectedGradient.value} w-full min-h-screen`;
   }, [selectedGradient]);
 
   const handleSetGradient = (gradient: GradientOption) => {
