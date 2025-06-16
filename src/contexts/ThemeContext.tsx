@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type GradientOption = {
@@ -65,6 +64,62 @@ export const gradientOptions: GradientOption[] = [
     value: 'bg-gradient-to-br from-[#1E293B]/30 to-[#334155]/30',
     textColor: 'text-white',
     calendarColor: 'bg-gradient-to-br from-[#1E293B]/30 to-[#334155]/30'
+  },
+  { 
+    id: 'crimson', 
+    name: 'Carmesim', 
+    value: 'bg-gradient-to-br from-[#DC2626]/30 to-[#EF4444]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#DC2626]/30 to-[#EF4444]/30'
+  },
+  { 
+    id: 'amber', 
+    name: 'Âmbar Dourado', 
+    value: 'bg-gradient-to-br from-[#F59E0B]/30 to-[#FBBF24]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#F59E0B]/30 to-[#FBBF24]/30'
+  },
+  { 
+    id: 'cyan', 
+    name: 'Ciano Neon', 
+    value: 'bg-gradient-to-br from-[#06B6D4]/30 to-[#22D3EE]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#06B6D4]/30 to-[#22D3EE]/30'
+  },
+  { 
+    id: 'indigo', 
+    name: 'Índigo Místico', 
+    value: 'bg-gradient-to-br from-[#4F46E5]/30 to-[#6366F1]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#4F46E5]/30 to-[#6366F1]/30'
+  },
+  { 
+    id: 'rose', 
+    name: 'Rosa Clássico', 
+    value: 'bg-gradient-to-br from-[#F43F5E]/30 to-[#FB7185]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#F43F5E]/30 to-[#FB7185]/30'
+  },
+  { 
+    id: 'lime', 
+    name: 'Lima Vibrante', 
+    value: 'bg-gradient-to-br from-[#65A30D]/30 to-[#84CC16]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#65A30D]/30 to-[#84CC16]/30'
+  },
+  { 
+    id: 'violet', 
+    name: 'Violeta Real', 
+    value: 'bg-gradient-to-br from-[#7C3AED]/30 to-[#8B5CF6]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#7C3AED]/30 to-[#8B5CF6]/30'
+  },
+  { 
+    id: 'emerald', 
+    name: 'Esmeralda Profunda', 
+    value: 'bg-gradient-to-br from-[#059669]/30 to-[#10B981]/30',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#059669]/30 to-[#10B981]/30'
   }
 ];
 

@@ -38,6 +38,38 @@
   @apply bg-gradient-to-br from-[#1E293B]/30 to-[#334155]/30;
 }
 
+.gradient-crimson {
+  @apply bg-gradient-to-br from-[#DC2626]/30 to-[#EF4444]/30;
+}
+
+.gradient-amber {
+  @apply bg-gradient-to-br from-[#F59E0B]/30 to-[#FBBF24]/30;
+}
+
+.gradient-cyan {
+  @apply bg-gradient-to-br from-[#06B6D4]/30 to-[#22D3EE]/30;
+}
+
+.gradient-indigo {
+  @apply bg-gradient-to-br from-[#4F46E5]/30 to-[#6366F1]/30;
+}
+
+.gradient-rose {
+  @apply bg-gradient-to-br from-[#F43F5E]/30 to-[#FB7185]/30;
+}
+
+.gradient-lime {
+  @apply bg-gradient-to-br from-[#65A30D]/30 to-[#84CC16]/30;
+}
+
+.gradient-violet {
+  @apply bg-gradient-to-br from-[#7C3AED]/30 to-[#8B5CF6]/30;
+}
+
+.gradient-emerald {
+  @apply bg-gradient-to-br from-[#059669]/30 to-[#10B981]/30;
+}
+
 /* Site-wide styling to use full screen */
 html, body, #root {
   width: 100%;
@@ -97,6 +129,38 @@ html.gradient-theme-applied {
 
 .calendar-theme-midnight {
   @apply from-[#1E293B]/30 to-[#334155]/30;
+}
+
+.calendar-theme-crimson {
+  @apply from-[#DC2626]/30 to-[#EF4444]/30;
+}
+
+.calendar-theme-amber {
+  @apply from-[#F59E0B]/30 to-[#FBBF24]/30;
+}
+
+.calendar-theme-cyan {
+  @apply from-[#06B6D4]/30 to-[#22D3EE]/30;
+}
+
+.calendar-theme-indigo {
+  @apply from-[#4F46E5]/30 to-[#6366F1]/30;
+}
+
+.calendar-theme-rose {
+  @apply from-[#F43F5E]/30 to-[#FB7185]/30;
+}
+
+.calendar-theme-lime {
+  @apply from-[#65A30D]/30 to-[#84CC16]/30;
+}
+
+.calendar-theme-violet {
+  @apply from-[#7C3AED]/30 to-[#8B5CF6]/30;
+}
+
+.calendar-theme-emerald {
+  @apply from-[#059669]/30 to-[#10B981]/30;
 }
 
 /* Glass card styling for consistent look */

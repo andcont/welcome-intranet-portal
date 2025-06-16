@@ -9,13 +9,11 @@ import Intranet from "./pages/Intranet";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Notifications from "./components/intranet/Notifications";
 import "./App.css";
 
 function App() {
   return (
     <ThemeProvider>
-      <Notifications />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
