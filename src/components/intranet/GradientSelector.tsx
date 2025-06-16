@@ -20,7 +20,7 @@ const GradientSelector = () => {
           className="flex items-center gap-1 bg-black/40 border border-[#7B68EE]/30 hover:bg-black/60"
           title="Alterar tema do site"
         >
-          <div className={`w-4 h-4 rounded-full ${selectedGradient.value.replace('/30', '')}`}></div>
+          <div className={`w-4 h-4 rounded-full ${selectedGradient.value.replace('bg-gradient-to-br', 'bg-gradient-to-r')}`}></div>
           <Palette size={16} className="ml-1" />
           <span className="ml-1 hidden sm:inline">Tema</span>
         </Button>
@@ -32,7 +32,7 @@ const GradientSelector = () => {
             {gradientOptions.map((gradient) => (
               <button
                 key={gradient.id}
-                className={`w-16 h-16 rounded-lg flex items-center justify-center transition-all ${gradient.value} border ${
+                className={`w-16 h-16 rounded-lg flex items-center justify-center transition-all ${gradient.value.replace('bg-gradient-to-br', 'bg-gradient-to-r')} border ${
                   selectedGradient.id === gradient.id
                     ? "border-[#D946EF] ring-2 ring-[#D946EF]/50"
                     : "border-white/10 hover:border-white/30"

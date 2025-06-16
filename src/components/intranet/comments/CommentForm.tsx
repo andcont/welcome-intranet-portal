@@ -153,6 +153,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
             size="sm"
             className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => imageInputRef.current?.click()}
+            type="button"
           >
             <Image size={16} />
             <span className="hidden sm:inline">Foto</span>
@@ -163,6 +164,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
             size="sm"
             className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => setShowGifPicker(!showGifPicker)}
+            type="button"
           >
             <Smile size={16} />
             <span className="hidden sm:inline">GIF</span>
@@ -172,6 +174,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         <Button 
           onClick={handleAddComment} 
           className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90 text-white"
+          type="button"
         >
           Comentar
         </Button>
