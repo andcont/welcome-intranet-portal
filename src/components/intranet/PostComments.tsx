@@ -42,6 +42,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [gifs, setGifs] = useState<string[]>([]);
   const [isLoadingGifs, setIsLoadingGifs] = useState(false);
+  const [gifSearchQuery, setGifSearchQuery] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -118,6 +119,8 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         `https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif?q=${query}`,
         `https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif?q=${query}`,
         `https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif?q=${query}`,
+        `https://media.giphy.com/media/3og0IMHaMAAg8OYj1S/giphy.gif?q=${query}`,
+        `https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif?q=${query}`,
       ];
       setGifs(searchResults);
       setIsLoadingGifs(false);
@@ -325,7 +328,11 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
               <input
                 type="text"
                 placeholder="Pesquisar GIFs..."
-                onChange={(e) => searchGifs(e.target.value)}
+                value={gifSearchQuery}
+                onChange={(e) => {
+                  setGifSearchQuery(e.target.value);
+                  searchGifs(e.target.value);
+                }}
                 className="w-full p-2 bg-black/60 text-white border border-white/20 rounded-md placeholder:text-white/60"
               />
             </div>
@@ -414,49 +421,6 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       </div>
     </div>
   );
-
-  function handleDeleteComment(commentId: string) {
-    if (!currentUser) return;
-
-    const allComments = JSON.parse(localStorage.getItem("andcont_comments") || "[]");
-    const comment = allComments.find((c: Comment) => c.id === commentId);
-
-    if (!comment) return;
-
-    if (currentUser.role !== "admin" && comment.userEmail !== currentUser.email) {
-      toast.error("Você não tem permissão para excluir este comentário");
-      return;
-    }
-
-    const updatedComments = allComments.filter((c: Comment) => c.id !== commentId);
-    localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
-    loadComments();
-    toast.success("Comentário removido com sucesso!");
-  }
-
-  function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-  
-  function getUserInitials(name: string) {
-    return name
-      .split(" ")
-      .map(part => part[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  }
-  
-  function getUserProfileImage(userEmail?: string) {
-    if (!userEmail) return null;
-    return users[userEmail]?.profileImage || null;
-  }
 };
 
 export default PostComments;
