@@ -40,8 +40,8 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedGif, setSelectedGif] = useState<string | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
-  const [searchGif, setSearchGif] = useState("");
-  const [gifs, setGifs] = useState<any[]>([]);
+  const [gifs, setGifs] = useState<string[]>([]);
+  const [isLoadingGifs, setIsLoadingGifs] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -73,9 +73,9 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
 
     // Load comments for this post
     loadComments();
-
-    // Load sample gifs
-    loadSampleGifs();
+    
+    // Load popular GIFs
+    loadPopularGifs();
   }, [postId, postType]);
 
   const loadComments = () => {
@@ -86,24 +86,42 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     setComments(filteredComments);
   };
 
-  const loadSampleGifs = () => {
-    // Sample GIFs data - could be replaced with a real API in production
-    const sampleGifs = [
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExajRlaXpyNmxobW02OWl6ZTJ4aHRneWc0MWtmcmQxN2Y0b21obGoyNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZqlvCTNHpqrio/giphy.gif",
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3Rsb2pwcXI0c2wxbW13dWw1ZGg3ZnF0dXNld2RyenZjYmpkMDQyZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUPGcEghH2dZdXvVSM/giphy.gif",
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3c3eGgzbjVuZ3F0MXM1aW9xdHdnazY1ZzU1aHVtZm9kcXA5NGhiZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QMHoU66sBXqqLqYvGO/giphy.gif",
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW9kcngxaWxwdjZ3ZGg5bGFpbDFyaGhucWg4dXFjcG50ZWoxNHI5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt6KHxJTbX20tdC/giphy.gif",
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3o3ZHdsb2lnZGUzNWY4bjZnM2hxM3k5cGdzejZ0c2V0bHYzaDYwcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3og0IMHaMAAg8OYj1S/giphy.gif",
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWU5aHRxb2NtMmdvdzk1dXUzd2ZlZ2J0azBpNjFjNXU0OWpmaWE3dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7SF5scGB2AFrgsXP63/giphy.gif",
+  const loadPopularGifs = async () => {
+    // GIFs populares do Tenor/Giphy para demonstração
+    const popularGifs = [
+      "https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif", // thumbs up
+      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif", // applause
+      "https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif", // happy
+      "https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif", // laugh
+      "https://media.giphy.com/media/3og0IMHaMAAg8OYj1S/giphy.gif", // wow
+      "https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif", // love
+      "https://media.giphy.com/media/26AHPxxnSw1L9T1rW/giphy.gif", // dance
+      "https://media.giphy.com/media/26FLgGTPUDH6UGAbm/giphy.gif", // party
+      "https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif", // excited
+      "https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif", // celebration
     ];
-    setGifs(sampleGifs);
+    setGifs(popularGifs);
   };
 
-  const handleSearchGifs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchGif(e.target.value);
-    // In a real app, you would call a GIF API with the search term
-    // For this demo, we'll just filter our sample GIFs
-    // No filter applied in this sample implementation
+  const searchGifs = async (query: string) => {
+    if (!query.trim()) {
+      loadPopularGifs();
+      return;
+    }
+
+    setIsLoadingGifs(true);
+    
+    // Simulação de busca de GIFs (em produção, usaria API do Tenor/Giphy)
+    setTimeout(() => {
+      const searchResults = [
+        `https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif?q=${query}`,
+        `https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif?q=${query}`,
+        `https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif?q=${query}`,
+        `https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif?q=${query}`,
+      ];
+      setGifs(searchResults);
+      setIsLoadingGifs(false);
+    }, 500);
   };
 
   const handleSelectGif = (gifUrl: string) => {
@@ -116,6 +134,11 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("A imagem deve ter no máximo 5MB");
+        return;
+      }
+      
       setSelectedImage(file);
       setSelectedGif(null);
       
@@ -134,6 +157,15 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     }
   };
 
+  const clearMedia = () => {
+    setSelectedImage(null);
+    setPreviewImage(null);
+    setSelectedGif(null);
+    if (imageInputRef.current) {
+      imageInputRef.current.value = '';
+    }
+  };
+
   const handleAddComment = () => {
     if (!newComment.trim() && !selectedImage && !selectedGif) {
       toast.error("O comentário não pode estar vazio");
@@ -148,8 +180,6 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     let imageUrl: string | undefined;
     
     if (selectedImage) {
-      // In a real app, you would upload the image to a server and get a URL
-      // For this demo, we'll use the data URL as the image URL
       imageUrl = previewImage || undefined;
     }
 
@@ -170,9 +200,8 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
 
     setNewComment("");
-    setSelectedImage(null);
-    setPreviewImage(null);
-    setSelectedGif(null);
+    clearMedia();
+    setShowGifPicker(false);
     loadComments();
     toast.success("Comentário adicionado com sucesso!");
   };
@@ -234,81 +263,90 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         />
         
         {(previewImage || selectedGif) && (
-          <div className="mt-2 relative">
+          <div className="mt-3 relative">
             <img 
               src={selectedGif || previewImage || ''} 
-              alt="Prévia da imagem" 
-              className="max-h-64 max-w-full rounded-md border border-white/20" 
+              alt="Prévia" 
+              className="max-h-64 max-w-full rounded-md border border-white/20 object-contain" 
             />
             <Button 
               variant="ghost" 
               size="sm" 
-              className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white rounded-full p-1"
-              onClick={() => {
-                setSelectedImage(null);
-                setPreviewImage(null);
-                setSelectedGif(null);
-              }}
+              className="absolute top-2 right-2 bg-black/80 hover:bg-black/90 text-white rounded-full p-1 h-8 w-8"
+              onClick={clearMedia}
             >
               <Trash size={16} />
             </Button>
           </div>
         )}
         
-        <div className="flex items-center mt-2 gap-2">
-          <Button onClick={handleAddComment} className="btn-primary">
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={imageInputRef}
+              onChange={handleImageUpload}
+            />
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
+              onClick={handleImageButtonClick}
+            >
+              <Image size={16} />
+              <span className="hidden sm:inline">Foto</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
+              onClick={() => setShowGifPicker(!showGifPicker)}
+            >
+              <Smile size={16} />
+              <span className="hidden sm:inline">GIF</span>
+            </Button>
+          </div>
+          
+          <Button 
+            onClick={handleAddComment} 
+            className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90 text-white"
+          >
             Comentar
-          </Button>
-          
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={imageInputRef}
-            onChange={handleImageUpload}
-          />
-          
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="bg-black/30 hover:bg-black/40 text-white border-white/20"
-            onClick={handleImageButtonClick}
-          >
-            <Image size={18} />
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="bg-black/30 hover:bg-black/40 text-white border-white/20"
-            onClick={() => setShowGifPicker(!showGifPicker)}
-          >
-            <Smile size={18} />
           </Button>
         </div>
         
         {showGifPicker && (
-          <div className="mt-2 p-3 bg-black/40 backdrop-blur-xl rounded-lg border border-white/20">
-            <div className="mb-2">
+          <div className="mt-4 p-4 bg-black/40 backdrop-blur-xl rounded-lg border border-white/20">
+            <div className="mb-3">
               <input
                 type="text"
                 placeholder="Pesquisar GIFs..."
-                value={searchGif}
-                onChange={handleSearchGifs}
-                className="w-full p-2 bg-black/60 text-white border border-white/20 rounded"
+                onChange={(e) => searchGifs(e.target.value)}
+                className="w-full p-2 bg-black/60 text-white border border-white/20 rounded-md placeholder:text-white/60"
               />
             </div>
-            <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto">
-              {gifs.map((gif, index) => (
-                <img
-                  key={index}
-                  src={gif}
-                  alt={`GIF ${index + 1}`}
-                  className="cursor-pointer hover:opacity-80 rounded-md"
-                  onClick={() => handleSelectGif(gif)}
-                />
-              ))}
-            </div>
+            
+            {isLoadingGifs ? (
+              <div className="text-center py-4 text-white/60">
+                Carregando GIFs...
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-60 overflow-y-auto">
+                {gifs.map((gif, index) => (
+                  <img
+                    key={index}
+                    src={gif}
+                    alt={`GIF ${index + 1}`}
+                    className="cursor-pointer hover:opacity-80 rounded-md h-20 w-full object-cover border border-white/10 hover:border-white/30 transition-all"
+                    onClick={() => handleSelectGif(gif)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -320,45 +358,47 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
             className="p-4 bg-black/20 backdrop-blur-xl rounded-lg border border-white/20"
           >
             <div className="flex items-start gap-3">
-              <Avatar className="h-10 w-10 border border-white/30">
+              <Avatar className="h-10 w-10 border border-white/30 flex-shrink-0">
                 <AvatarImage 
                   src={getUserProfileImage(comment.userEmail)} 
                   alt={comment.createdBy} 
                 />
-                <AvatarFallback className="bg-primary/30 text-white">
+                <AvatarFallback className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white">
                   {getUserInitials(comment.createdBy)}
                 </AvatarFallback>
               </Avatar>
               
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-white">{comment.createdBy}</h4>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-white truncate">{comment.createdBy}</h4>
                   
                   {(currentUser?.role === "admin" || currentUser?.email === comment.userEmail) && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteComment(comment.id)}
-                      className="text-white/60 hover:text-red-400 hover:bg-black/30"
+                      className="text-white/60 hover:text-red-400 hover:bg-black/30 flex-shrink-0"
                     >
                       <Trash size={14} />
                     </Button>
                   )}
                 </div>
                 
-                <p className="text-white/90 whitespace-pre-wrap">{comment.content}</p>
+                {comment.content && (
+                  <p className="text-white/90 whitespace-pre-wrap mb-2">{comment.content}</p>
+                )}
                 
                 {(comment.imageUrl || comment.gifUrl) && (
-                  <div className="mt-2 mb-2">
+                  <div className="mb-2">
                     <img 
                       src={comment.gifUrl || comment.imageUrl} 
-                      alt="Imagem do comentário" 
+                      alt="Mídia do comentário" 
                       className="max-h-64 max-w-full rounded-md border border-white/20 object-contain" 
                     />
                   </div>
                 )}
                 
-                <div className="mt-2 text-xs text-white/60">
+                <div className="text-xs text-white/60">
                   {formatDate(comment.createdAt)}
                 </div>
               </div>
@@ -367,13 +407,56 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         ))}
         
         {comments.length === 0 && (
-          <p className="text-center text-white/60 py-4">
+          <p className="text-center text-white/60 py-8">
             Nenhum comentário ainda. Seja o primeiro a comentar!
           </p>
         )}
       </div>
     </div>
   );
+
+  function handleDeleteComment(commentId: string) {
+    if (!currentUser) return;
+
+    const allComments = JSON.parse(localStorage.getItem("andcont_comments") || "[]");
+    const comment = allComments.find((c: Comment) => c.id === commentId);
+
+    if (!comment) return;
+
+    if (currentUser.role !== "admin" && comment.userEmail !== currentUser.email) {
+      toast.error("Você não tem permissão para excluir este comentário");
+      return;
+    }
+
+    const updatedComments = allComments.filter((c: Comment) => c.id !== commentId);
+    localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
+    loadComments();
+    toast.success("Comentário removido com sucesso!");
+  }
+
+  function formatDate(dateString: string) {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  
+  function getUserInitials(name: string) {
+    return name
+      .split(" ")
+      .map(part => part[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  }
+  
+  function getUserProfileImage(userEmail?: string) {
+    if (!userEmail) return null;
+    return users[userEmail]?.profileImage || null;
+  }
 };
 
 export default PostComments;

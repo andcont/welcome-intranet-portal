@@ -13,10 +13,8 @@ interface Notification {
 }
 
 const Notifications = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState<string>(localStorage.getItem('andcont_last_checked') || '');
-  const { selectedGradient } = useTheme();
   
   // Check for new notifications when component mounts and whenever the page becomes visible
   useEffect(() => {
@@ -129,34 +127,31 @@ const Notifications = () => {
           duration: 5000,
         });
       }
-      
-      // Reproduzir som de notificação
-      const audio = new Audio('/notification-sound.mp3');
-      audio.volume = 0.5;
-      audio.play().catch(err => console.log('Não foi possível reproduzir o som de notificação'));
     }
     
     // Update notifications in localStorage
     const existingNotifications = JSON.parse(localStorage.getItem('andcont_notifications') || '[]');
-    const updatedNotifications = [...newNotifications, ...existingNotifications].slice(0, 50); // Limitar a 50 notificações
+    const updatedNotifications = [...newNotifications, ...existingNotifications].slice(0, 50);
     localStorage.setItem('andcont_notifications', JSON.stringify(updatedNotifications));
     
     // Update last checked timestamp
     setLastCheckedTimestamp(now);
     localStorage.setItem('andcont_last_checked', now);
     
-    setNotifications(updatedNotifications);
     setUnreadCount(updatedNotifications.filter(n => !n.read).length);
   };
 
   return (
-    <div className="notification-container">
+    <div className="relative flex items-center justify-center">
       <Bell 
-        className={`notification-icon ${unreadCount > 0 ? 'animate-pulse text-[#D946EF]' : 'text-white/80'}`} 
-        size={20} 
+        className={`h-5 w-5 transition-all duration-200 ${
+          unreadCount > 0 ? 'animate-pulse text-[#D946EF]' : 'text-white/80'
+        }`}
       />
       {unreadCount > 0 && (
-        <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+        <span className="absolute -top-1 -right-1 bg-[#D946EF] text-white text-xs w-4 h-4 flex items-center justify-center rounded-full font-bold">
+          {unreadCount > 9 ? '9+' : unreadCount}
+        </span>
       )}
     </div>
   );
