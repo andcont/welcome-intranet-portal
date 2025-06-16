@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Trash, Image, Smile } from "lucide-react";
+import { Trash, Image, Smile, X } from "lucide-react";
 
 interface Comment {
   id: string;
@@ -31,6 +31,20 @@ interface PostCommentsProps {
   postType: string;
 }
 
+// GIFs populares para demonstração
+const POPULAR_GIFS = [
+  "https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif",
+  "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif",
+  "https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif",
+  "https://media.giphy.com/media/3og0IMHaMAAg8OYj1S/giphy.gif",
+  "https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif",
+  "https://media.giphy.com/media/26AHPxxnSw1L9T1rW/giphy.gif",
+  "https://media.giphy.com/media/26FLgGTPUDH6UGAbm/giphy.gif",
+  "https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif",
+  "https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif",
+];
+
 const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -40,7 +54,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedGif, setSelectedGif] = useState<string | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
-  const [gifs, setGifs] = useState<string[]>([]);
+  const [gifs, setGifs] = useState<string[]>(POPULAR_GIFS);
   const [isLoadingGifs, setIsLoadingGifs] = useState(false);
   const [gifSearchQuery, setGifSearchQuery] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -72,11 +86,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       }
     }
 
-    // Load comments for this post
     loadComments();
-    
-    // Load popular GIFs
-    loadPopularGifs();
   }, [postId, postType]);
 
   const loadComments = () => {
@@ -87,41 +97,19 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     setComments(filteredComments);
   };
 
-  const loadPopularGifs = async () => {
-    // GIFs populares do Tenor/Giphy para demonstração
-    const popularGifs = [
-      "https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif", // thumbs up
-      "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif", // applause
-      "https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif", // happy
-      "https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif", // laugh
-      "https://media.giphy.com/media/3og0IMHaMAAg8OYj1S/giphy.gif", // wow
-      "https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif", // love
-      "https://media.giphy.com/media/26AHPxxnSw1L9T1rW/giphy.gif", // dance
-      "https://media.giphy.com/media/26FLgGTPUDH6UGAbm/giphy.gif", // party
-      "https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif", // excited
-      "https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif", // celebration
-    ];
-    setGifs(popularGifs);
-  };
-
   const searchGifs = async (query: string) => {
     if (!query.trim()) {
-      loadPopularGifs();
+      setGifs(POPULAR_GIFS);
       return;
     }
 
     setIsLoadingGifs(true);
     
-    // Simulação de busca de GIFs (em produção, usaria API do Tenor/Giphy)
+    // Simulação de busca de GIFs com query específica
     setTimeout(() => {
-      const searchResults = [
-        `https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif?q=${query}`,
-        `https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif?q=${query}`,
-        `https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif?q=${query}`,
-        `https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif?q=${query}`,
-        `https://media.giphy.com/media/3og0IMHaMAAg8OYj1S/giphy.gif?q=${query}`,
-        `https://media.giphy.com/media/26BRBKqUiq586bRVm/giphy.gif?q=${query}`,
-      ];
+      const searchResults = POPULAR_GIFS.map(gif => 
+        gif.replace('giphy.gif', `giphy.gif?search=${encodeURIComponent(query)}`)
+      );
       setGifs(searchResults);
       setIsLoadingGifs(false);
     }, 500);
@@ -130,15 +118,19 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const handleSelectGif = (gifUrl: string) => {
     setSelectedGif(gifUrl);
     setShowGifPicker(false);
-    setSelectedImage(null);
-    setPreviewImage(null);
+    clearImage();
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) {
         toast.error("A imagem deve ter no máximo 5MB");
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        toast.error("Por favor, selecione apenas arquivos de imagem");
         return;
       }
       
@@ -154,19 +146,21 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     }
   };
 
-  const handleImageButtonClick = () => {
-    if (imageInputRef.current) {
-      imageInputRef.current.click();
-    }
-  };
-
-  const clearMedia = () => {
+  const clearImage = () => {
     setSelectedImage(null);
     setPreviewImage(null);
-    setSelectedGif(null);
     if (imageInputRef.current) {
       imageInputRef.current.value = '';
     }
+  };
+
+  const clearGif = () => {
+    setSelectedGif(null);
+  };
+
+  const clearAllMedia = () => {
+    clearImage();
+    clearGif();
   };
 
   const handleAddComment = () => {
@@ -180,12 +174,6 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       return;
     }
 
-    let imageUrl: string | undefined;
-    
-    if (selectedImage) {
-      imageUrl = previewImage || undefined;
-    }
-
     const comment: Comment = {
       id: Date.now().toString(),
       postId,
@@ -194,7 +182,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       createdAt: new Date().toISOString(),
       createdBy: currentUser.name,
       userEmail: currentUser.email,
-      imageUrl: imageUrl,
+      imageUrl: previewImage || undefined,
       gifUrl: selectedGif || undefined
     };
 
@@ -203,7 +191,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
 
     setNewComment("");
-    clearMedia();
+    clearAllMedia();
     setShowGifPicker(false);
     loadComments();
     toast.success("Comentário adicionado com sucesso!");
@@ -217,7 +205,6 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
 
     if (!comment) return;
 
-    // Only allow deletion if user is admin or the comment author
     if (currentUser.role !== "admin" && comment.userEmail !== currentUser.email) {
       toast.error("Você não tem permissão para excluir este comentário");
       return;
@@ -265,6 +252,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
           className="bg-black/30 text-white border-white/20 resize-none h-24"
         />
         
+        {/* Preview da mídia selecionada */}
         {(previewImage || selectedGif) && (
           <div className="mt-3 relative">
             <img 
@@ -276,9 +264,9 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
               variant="ghost" 
               size="sm" 
               className="absolute top-2 right-2 bg-black/80 hover:bg-black/90 text-white rounded-full p-1 h-8 w-8"
-              onClick={clearMedia}
+              onClick={clearAllMedia}
             >
-              <Trash size={16} />
+              <X size={16} />
             </Button>
           </div>
         )}
@@ -297,7 +285,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
               variant="outline" 
               size="sm"
               className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
-              onClick={handleImageButtonClick}
+              onClick={() => imageInputRef.current?.click()}
             >
               <Image size={16} />
               <span className="hidden sm:inline">Foto</span>
@@ -322,6 +310,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
           </Button>
         </div>
         
+        {/* Seletor de GIF */}
         {showGifPicker && (
           <div className="mt-4 p-4 bg-black/40 backdrop-blur-xl rounded-lg border border-white/20">
             <div className="mb-3">
@@ -358,6 +347,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         )}
       </div>
 
+      {/* Lista de comentários */}
       <div className="space-y-4">
         {comments.map((comment) => (
           <div
@@ -400,7 +390,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
                     <img 
                       src={comment.gifUrl || comment.imageUrl} 
                       alt="Mídia do comentário" 
-                      className="max-h-64 max-w-full rounded-md border border-white/20 object-contain" 
+                      className="max-h-64 max-w-full rounded-md border border-white/20 object-contain cursor-pointer hover:opacity-90 transition-opacity" 
                     />
                   </div>
                 )}
