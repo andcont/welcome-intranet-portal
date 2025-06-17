@@ -2,32 +2,28 @@
 @layer components {
   .btn-primary {
     background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
-    @apply text-white hover:opacity-90 transition-opacity shadow-md;
+    @apply text-white hover:opacity-90 transition-all duration-200 shadow-lg;
+    box-shadow: 0 10px 20px -5px rgba(123, 104, 238, 0.4), 0 4px 8px -2px rgba(217, 70, 239, 0.3);
   }
   
   .btn-secondary {
-    @apply bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-colors shadow-sm;
-    border-color: var(--theme-accent);
-    border-width: 1px;
+    @apply bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900 backdrop-blur-md transition-all duration-200 shadow-lg border border-gray-200/50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   .card-hover {
-    @apply hover:shadow-xl transition-all duration-300 hover:translate-y-[-2px];
+    @apply hover:shadow-2xl transition-all duration-300 hover:translate-y-[-2px];
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-black/40 shadow-lg text-white;
-    border-color: var(--theme-accent);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply backdrop-blur-xl bg-white/95 shadow-2xl text-gray-800 border border-gray-200/50;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
   }
 
   /* Improved Gradient components */
   .card-gradient {
-    @apply bg-black/40 backdrop-blur-xl shadow-lg hover:bg-black/50 transition-all duration-300 text-white;
-    border-color: var(--theme-accent);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/95 backdrop-blur-xl shadow-2xl hover:shadow-3xl transition-all duration-300 text-gray-800 border border-gray-200/50;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
   }
   
   .header-gradient {
@@ -35,7 +31,8 @@
   }
   
   .tab-gradient {
-    @apply bg-gradient-to-r from-black/40 to-black/50 backdrop-blur-xl;
+    @apply bg-white/95 backdrop-blur-xl border border-gray-200/50;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   .button-gradient {
@@ -50,19 +47,15 @@
   
   /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-lg bg-black/40 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
-    border-color: var(--theme-accent);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply rounded-lg bg-white/95 backdrop-blur-xl shadow-2xl hover:shadow-3xl transition-all text-gray-800 border border-gray-200/50;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
   }
   
   .modern-input {
-    @apply bg-black/50 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-400;
-    border-color: var(--theme-accent);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/90 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-gray-800 placeholder:text-gray-500 border border-gray-200/50;
     --tw-ring-color: var(--theme-accent);
     --tw-ring-opacity: 0.5;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   .modern-button {
@@ -71,24 +64,20 @@
   
   /* Improved form input styling to ensure text is visible */
   .form-input, input, textarea {
-    @apply text-white bg-black/50 placeholder:text-gray-400;
-    border-color: var(--theme-accent);
-    border-opacity: 0.3;
+    @apply text-gray-800 bg-white/90 placeholder:text-gray-500 border border-gray-200/50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   /* Post styling for better visibility */
   .post-content {
-    @apply bg-black/50 backdrop-blur-md rounded-lg p-4 text-white;
-    border-color: var(--theme-accent);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/95 backdrop-blur-md rounded-lg p-4 text-gray-800 border border-gray-200/50;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
   
   /* Comment styling for better visibility */
   .comment-input {
-    @apply bg-black/50 text-white placeholder:text-gray-400;
-    border-color: var(--theme-accent);
-    border-opacity: 0.3;
+    @apply bg-white/90 text-gray-800 placeholder:text-gray-500 border border-gray-200/50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   /* Animation for fade-in */
@@ -96,9 +85,11 @@
     @apply animate-fade-in;
   }
   
-  /* Enhanced tab styling */
+  /* Enhanced tab styling with 3D effect */
   .enhanced-tab {
-    @apply rounded-full px-4 py-2 transition-all duration-300;
+    @apply rounded-xl px-4 py-3 transition-all duration-300 font-medium;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
   }
   
   /* Glowing button effect */

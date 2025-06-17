@@ -5,7 +5,8 @@
   }
 
   .glass-card {
-    @apply bg-black/40 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg text-white;
+    @apply bg-white/95 backdrop-blur-xl border border-gray-200/50 rounded-lg shadow-2xl text-gray-800;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
   }
   
   /* Enhanced gradient background for the entire site - full width and height */
@@ -13,21 +14,25 @@
     @apply min-h-screen w-full max-w-full m-0 p-0;
   }
   
-  /* Improved tab-specific gradients with animated transitions */
+  /* Improved tab-specific gradients with 3D white styling */
   .tab-announcements {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/95 backdrop-blur-md rounded-lg border border-gray-200/50;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   .tab-links {
-    @apply bg-gradient-to-br from-[#D946EF]/20 to-[#7B68EE]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/95 backdrop-blur-md rounded-lg border border-gray-200/50;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   .tab-calendar {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#9B5DE5]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/95 backdrop-blur-md rounded-lg border border-gray-200/50;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   .tab-feed {
-    @apply bg-gradient-to-br from-[#9B5DE5]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/95 backdrop-blur-md rounded-lg border border-gray-200/50;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   /* Active tab styling with stronger gradient and glow effect */
@@ -43,12 +48,13 @@
   }
   
   .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    @apply bg-black/70 text-white;
+    @apply bg-gray-100 text-gray-800;
   }
   
   /* Improved container for posts and content */
   .content-container {
-    @apply bg-black/40 backdrop-blur-xl rounded-lg border border-white/30 p-5 shadow-md text-white;
+    @apply bg-white/95 backdrop-blur-xl rounded-lg border border-gray-200/50 p-5 shadow-2xl text-gray-800;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
   }
   
   /* Enhanced header styling */
@@ -56,19 +62,39 @@
     @apply border-b border-white/30 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md w-full;
   }
   
-  /* Enhanced tab list container */
+  /* Enhanced tab list container with 3D white styling */
   .tabs-container {
-    @apply bg-black/30 backdrop-blur-xl p-1.5 rounded-full border border-white/30 shadow-inner;
+    @apply bg-white/95 backdrop-blur-xl p-2 rounded-2xl border border-gray-200/50;
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+      0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      inset 0 2px 4px 0 rgba(255, 255, 255, 0.3);
   }
   
-  /* Individual tab trigger styling */
+  /* Individual tab trigger styling with 3D effect */
   .tab-trigger {
-    @apply rounded-full transition-all duration-300 text-white/80 hover:text-white;
+    @apply rounded-xl transition-all duration-300 text-gray-700 hover:text-gray-900 px-4 py-3 font-medium;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
   }
   
-  /* Active tab trigger styling */
+  .tab-trigger:hover {
+    @apply transform scale-105;
+    box-shadow: 
+      0 8px 15px -3px rgba(0, 0, 0, 0.1), 
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Active tab trigger styling with theme colors */
   .tab-trigger-active {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white shadow-md;
+    @apply text-white shadow-lg transform scale-105;
+    background: var(--theme-button-gradient, linear-gradient(to right, #7B68EE, #D946EF));
+    box-shadow: 
+      0 10px 20px -5px rgba(123, 104, 238, 0.4),
+      0 4px 8px -2px rgba(217, 70, 239, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   /* Full width container for intranet page */

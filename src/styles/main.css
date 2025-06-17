@@ -14,9 +14,10 @@ html, body, #root {
   overflow-x: hidden;
 }
 
-/* Glass card styling for consistent look */
+/* Glass card styling for consistent look with 3D effect */
 .glass-card {
-  @apply bg-black/40 backdrop-blur-xl border border-white/20;
+  @apply bg-white/95 backdrop-blur-xl border border-gray-200/50;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
 }
 
 /* Enhanced button hover effects */
@@ -26,10 +27,13 @@ html, body, #root {
 
 /* Text gradient for headings */
 .text-gradient {
-  @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] bg-clip-text text-transparent;
+  background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
+  @apply bg-clip-text text-transparent;
 }
 
-/* Button gradient styling */
+/* Button gradient styling with 3D effect */
 .button-gradient {
-  @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90;
+  background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
+  @apply hover:opacity-90 transition-all duration-200;
+  box-shadow: 0 10px 20px -5px rgba(123, 104, 238, 0.4), 0 4px 8px -2px rgba(217, 70, 239, 0.3);
 }
