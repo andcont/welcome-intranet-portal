@@ -5,7 +5,8 @@
   }
 
   .glass-card {
-    @apply bg-black/40 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg text-white;
+    @apply bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl shadow-2xl text-white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
   /* Enhanced gradient background for the entire site - full width and height */
@@ -13,62 +14,78 @@
     @apply min-h-screen w-full max-w-full m-0 p-0;
   }
   
-  /* Improved tab-specific gradients with animated transitions */
+  /* Improved tab-specific gradients with glassmorphism */
   .tab-announcements {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .tab-links {
-    @apply bg-gradient-to-br from-[#D946EF]/20 to-[#7B68EE]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .tab-calendar {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#9B5DE5]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .tab-feed {
-    @apply bg-gradient-to-br from-[#9B5DE5]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+    @apply bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
-  /* Active tab styling with stronger gradient and glow effect */
+  /* Active tab styling with enhanced glassmorphism and theme colors */
   .tab-active {
-    @apply bg-gradient-to-r from-[#7B68EE]/60 to-[#D946EF]/60 border-[#D946EF]/70 shadow-[0_0_10px_rgba(217,70,239,0.3)];
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    @apply border-white/40 backdrop-blur-3xl;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                0 0 20px var(--theme-primary);
   }
   
-  /* Calendar day with event styling - this will now inherit from the theme */
+  /* Calendar day with event styling - glassmorphism */
   .rdp-day_selected, 
   .rdp-day_selected:focus-visible, 
   .rdp-day_selected:hover {
-    @apply bg-primary/70 text-white;
+    @apply bg-white/20 text-white backdrop-blur-md;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
   
   .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    @apply bg-black/70 text-white;
+    @apply bg-white/10 text-white backdrop-blur-md;
   }
   
-  /* Improved container for posts and content */
+  /* Enhanced glassmorphism container for posts and content */
   .content-container {
-    @apply bg-black/40 backdrop-blur-xl rounded-lg border border-white/30 p-5 shadow-md text-white;
+    @apply bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20 p-5 shadow-2xl text-white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
-  /* Enhanced header styling */
+  /* Enhanced header styling with glassmorphism */
   .intranet-header {
-    @apply border-b border-white/30 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md w-full;
+    @apply border-b border-white/20 bg-white/10 backdrop-blur-2xl shadow-2xl w-full;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   }
   
-  /* Enhanced tab list container */
+  /* Enhanced tab list container with glassmorphism */
   .tabs-container {
-    @apply bg-black/30 backdrop-blur-xl p-1.5 rounded-full border border-white/30 shadow-inner;
+    @apply bg-white/10 backdrop-blur-2xl p-2 rounded-2xl border border-white/20 shadow-xl;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.2);
   }
   
-  /* Individual tab trigger styling */
+  /* Individual tab trigger styling with glassmorphism */
   .tab-trigger {
-    @apply rounded-full transition-all duration-300 text-white/80 hover:text-white;
+    @apply rounded-xl transition-all duration-300 text-white/80 hover:text-white bg-white/5 hover:bg-white/15 backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  /* Active tab trigger styling */
+  /* Active tab trigger styling with enhanced glassmorphism */
   .tab-trigger-active {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white shadow-md;
+    background: linear-gradient(135deg, var(--theme-gradient-from), var(--theme-gradient-to));
+    @apply text-white shadow-lg backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 20px var(--theme-primary);
   }
 
   /* Full width container for intranet page */
@@ -81,8 +98,11 @@
     @apply w-full max-w-full m-0 p-0;
   }
 
-  /* Button gradient styling */
+  /* Button gradient styling with glassmorphism */
   .button-gradient {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90;
+    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
+    @apply hover:opacity-90 backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 }

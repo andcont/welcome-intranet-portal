@@ -2,44 +2,48 @@
 @layer components {
   .btn-primary {
     background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90 transition-all duration-300 shadow-md;
+    @apply text-white hover:opacity-90 transition-all duration-300 shadow-lg backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .btn-secondary {
-    @apply bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-colors shadow-sm;
-    border-color: var(--theme-primary);
-    border-width: 1px;
+    @apply bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl transition-all duration-300 shadow-lg;
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .card-hover {
-    @apply hover:shadow-xl transition-all duration-300 hover:translate-y-[-2px];
+    @apply hover:shadow-2xl transition-all duration-300 hover:translate-y-[-2px] hover:bg-white/15;
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-black/40 shadow-lg text-white;
-    border-color: var(--theme-primary);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply backdrop-blur-2xl bg-white/10 shadow-2xl text-white border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   .card-gradient {
-    @apply bg-black/40 backdrop-blur-xl shadow-lg hover:bg-black/50 transition-all duration-300 text-white;
-    border-color: var(--theme-primary);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/10 backdrop-blur-2xl shadow-2xl hover:bg-white/15 transition-all duration-300 text-white border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
   .header-gradient {
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
+    @apply backdrop-blur-2xl bg-white/10 border-b;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
   
   .tab-gradient {
-    @apply bg-gradient-to-r from-black/40 to-black/50 backdrop-blur-xl;
+    @apply bg-white/10 backdrop-blur-2xl border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
   .button-gradient {
     background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply transition-all duration-300 hover:opacity-90;
+    @apply transition-all duration-300 hover:opacity-90 backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
   
   .text-gradient {
@@ -48,44 +52,43 @@
   }
   
   .modern-card {
-    @apply rounded-lg bg-black/40 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
-    border-color: var(--theme-primary);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply rounded-xl bg-white/10 backdrop-blur-2xl shadow-2xl hover:shadow-3xl transition-all text-white border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
   .modern-input {
-    @apply bg-black/50 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-400;
-    border-color: var(--theme-primary);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-300 border;
+    border-color: rgba(255, 255, 255, 0.2);
     --tw-ring-color: var(--theme-primary);
     --tw-ring-opacity: 0.5;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   .modern-button {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300;
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300 backdrop-blur-md;
     background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
     @apply text-white hover:opacity-90;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
   
   .form-input, input, textarea {
-    @apply text-white bg-black/50 placeholder:text-gray-400;
-    border-color: var(--theme-primary);
-    border-opacity: 0.3;
+    @apply text-white bg-white/10 placeholder:text-gray-300 backdrop-blur-xl border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   .post-content {
-    @apply bg-black/50 backdrop-blur-md rounded-lg p-4 text-white;
-    border-color: var(--theme-primary);
-    border-width: 1px;
-    border-opacity: 0.3;
+    @apply bg-white/10 backdrop-blur-xl rounded-lg p-4 text-white border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .comment-input {
-    @apply bg-black/50 text-white placeholder:text-gray-400;
-    border-color: var(--theme-primary);
-    border-opacity: 0.3;
+    @apply bg-white/10 text-white placeholder:text-gray-300 backdrop-blur-xl border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .fade-in {
@@ -93,13 +96,17 @@
   }
   
   .enhanced-tab {
-    @apply rounded-full px-4 py-2 transition-all duration-300;
+    @apply rounded-full px-4 py-2 transition-all duration-300 backdrop-blur-xl bg-white/10 border;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   .glow-button {
-    @apply relative overflow-hidden transition-all duration-300;
+    @apply relative overflow-hidden transition-all duration-300 backdrop-blur-md;
     background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
     @apply text-white hover:opacity-90;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 20px var(--theme-primary);
   }
   
   .glow-button::after {
@@ -112,27 +119,42 @@
     @apply opacity-100;
   }
 
-  /* Theme-aware primary button */
+  /* Theme-aware primary button with glassmorphism */
   .theme-button-primary {
     background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90 transition-all duration-300 shadow-md;
+    @apply text-white hover:opacity-90 transition-all duration-300 shadow-lg backdrop-blur-md;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 
-  /* Theme-aware secondary button */
+  /* Theme-aware secondary button with glassmorphism */
   .theme-button-secondary {
-    @apply bg-black/30 hover:bg-black/50 text-white backdrop-blur-md transition-all duration-300 shadow-sm;
-    border: 1px solid var(--theme-primary);
-    border-opacity: 0.5;
+    @apply bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl transition-all duration-300 shadow-lg;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 
-  /* Theme-aware borders */
+  /* Theme-aware borders with glassmorphism */
   .theme-border {
-    border-color: var(--theme-primary);
-    border-opacity: 0.3;
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   /* Theme-aware text */
   .theme-text {
     color: var(--theme-primary);
+  }
+
+  /* Glassmorphism containers */
+  .glass-container {
+    @apply bg-white/10 backdrop-blur-2xl border rounded-xl;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* Enhanced glassmorphism for main content areas */
+  .glass-content {
+    @apply bg-white/5 backdrop-blur-3xl border rounded-2xl;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.1);
   }
 }
