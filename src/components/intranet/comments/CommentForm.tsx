@@ -1,9 +1,9 @@
+
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Smile } from "lucide-react";
 import { toast } from "sonner";
-import { useTheme } from "@/contexts/ThemeContext";
 import GifPicker from "./GifPicker";
 import MediaPreview from "./MediaPreview";
 
@@ -35,7 +35,6 @@ interface CommentFormProps {
 }
 
 const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentFormProps) => {
-  const { selectedGradient } = useTheme();
   const [newComment, setNewComment] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -130,7 +129,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Escreva seu comentário..."
-        className={`bg-black/30 text-white ${selectedGradient.borderColor} resize-none h-24`}
+        className="bg-black/30 text-white theme-border resize-none h-24"
       />
       
       <MediaPreview 
@@ -152,9 +151,9 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
-            className={`bg-black/30 hover:bg-black/40 text-white ${selectedGradient.borderColor} flex items-center gap-2`}
             onClick={() => imageInputRef.current?.click()}
             type="button"
+            className="flex items-center gap-2"
           >
             <Image size={16} />
             <span className="hidden sm:inline">Foto</span>
@@ -163,9 +162,9 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
-            className={`bg-black/30 hover:bg-black/40 text-white ${selectedGradient.borderColor} flex items-center gap-2`}
             onClick={() => setShowGifPicker(!showGifPicker)}
             type="button"
+            className="flex items-center gap-2"
           >
             <Smile size={16} />
             <span className="hidden sm:inline">GIF</span>
@@ -174,8 +173,8 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         
         <Button 
           onClick={handleAddComment} 
-          className={`${selectedGradient.buttonGradient} ${selectedGradient.hoverColor} text-white transition-all duration-200`}
           type="button"
+          variant="default"
         >
           Comentar
         </Button>
