@@ -7,93 +7,121 @@ type GradientOption = {
   value: string;
   textColor: string;
   calendarColor: string;
-  buttonGradient: string;
-  accentColor: string;
-  borderColor: string;
-  hoverColor: string;
-  primaryColor: string;
-  secondaryColor: string;
 };
 
 export const gradientOptions: GradientOption[] = [
   { 
     id: 'default', 
     name: 'Roxo-Rosa', 
-    value: 'bg-gradient-to-br from-[#7B68EE] via-[#9B5DE5] to-[#D946EF]',
+    value: 'bg-gradient-to-br from-[#7B68EE] to-[#D946EF]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#7B68EE]/30 to-[#D946EF]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#7B68EE] to-[#D946EF]',
-    accentColor: '#D946EF',
-    borderColor: 'border-[#7B68EE]/30',
-    hoverColor: 'hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90',
-    primaryColor: '#7B68EE',
-    secondaryColor: '#D946EF'
+    calendarColor: 'bg-gradient-to-br from-[#7B68EE]/30 to-[#D946EF]/30'
   },
   { 
     id: 'blue', 
     name: 'Azul Oceano', 
-    value: 'bg-gradient-to-br from-[#0EA5E9] via-[#0284C7] to-[#3B82F6]',
+    value: 'bg-gradient-to-br from-[#0EA5E9] to-[#3B82F6]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#0EA5E9]/30 to-[#3B82F6]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#0EA5E9] to-[#3B82F6]',
-    accentColor: '#3B82F6',
-    borderColor: 'border-[#0EA5E9]/30',
-    hoverColor: 'hover:from-[#0EA5E9]/90 hover:to-[#3B82F6]/90',
-    primaryColor: '#0EA5E9',
-    secondaryColor: '#3B82F6'
+    calendarColor: 'bg-gradient-to-br from-[#0EA5E9]/30 to-[#3B82F6]/30'
   },
   { 
     id: 'green', 
     name: 'Verde Esmeralda', 
-    value: 'bg-gradient-to-br from-[#10B981] via-[#059669] to-[#34D399]',
+    value: 'bg-gradient-to-br from-[#10B981] to-[#34D399]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#10B981]/30 to-[#34D399]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#10B981] to-[#34D399]',
-    accentColor: '#34D399',
-    borderColor: 'border-[#10B981]/30',
-    hoverColor: 'hover:from-[#10B981]/90 hover:to-[#34D399]/90',
-    primaryColor: '#10B981',
-    secondaryColor: '#34D399'
+    calendarColor: 'bg-gradient-to-br from-[#10B981]/30 to-[#34D399]/30'
   },
   { 
     id: 'orange', 
     name: 'Laranja Sunset', 
-    value: 'bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#FB923C]',
+    value: 'bg-gradient-to-br from-[#F97316] to-[#FB923C]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#F97316]/30 to-[#FB923C]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#F97316] to-[#FB923C]',
-    accentColor: '#FB923C',
-    borderColor: 'border-[#F97316]/30',
-    hoverColor: 'hover:from-[#F97316]/90 hover:to-[#FB923C]/90',
-    primaryColor: '#F97316',
-    secondaryColor: '#FB923C'
+    calendarColor: 'bg-gradient-to-br from-[#F97316]/30 to-[#FB923C]/30'
   },
   { 
     id: 'teal', 
     name: 'Turquesa', 
-    value: 'bg-gradient-to-br from-[#14B8A6] via-[#0D9488] to-[#2DD4BF]',
+    value: 'bg-gradient-to-br from-[#14B8A6] to-[#2DD4BF]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#14B8A6]/30 to-[#2DD4BF]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#14B8A6] to-[#2DD4BF]',
-    accentColor: '#2DD4BF',
-    borderColor: 'border-[#14B8A6]/30',
-    hoverColor: 'hover:from-[#14B8A6]/90 hover:to-[#2DD4BF]/90',
-    primaryColor: '#14B8A6',
-    secondaryColor: '#2DD4BF'
+    calendarColor: 'bg-gradient-to-br from-[#14B8A6]/30 to-[#2DD4BF]/30'
   },
   { 
     id: 'purple', 
     name: 'Roxo Profundo', 
-    value: 'bg-gradient-to-br from-[#8B5CF6] via-[#7C3AED] to-[#A78BFA]',
+    value: 'bg-gradient-to-br from-[#8B5CF6] to-[#A78BFA]',
     textColor: 'text-white',
-    calendarColor: 'bg-gradient-to-br from-[#8B5CF6]/30 to-[#A78BFA]/30',
-    buttonGradient: 'bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA]',
-    accentColor: '#A78BFA',
-    borderColor: 'border-[#8B5CF6]/30',
-    hoverColor: 'hover:from-[#8B5CF6]/90 hover:to-[#A78BFA]/90',
-    primaryColor: '#8B5CF6',
-    secondaryColor: '#A78BFA'
+    calendarColor: 'bg-gradient-to-br from-[#8B5CF6]/30 to-[#A78BFA]/30'
   },
+  { 
+    id: 'pink', 
+    name: 'Rosa Neon', 
+    value: 'bg-gradient-to-br from-[#EC4899] to-[#F472B6]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#EC4899]/30 to-[#F472B6]/30'
+  },
+  { 
+    id: 'midnight', 
+    name: 'Meia-Noite', 
+    value: 'bg-gradient-to-br from-[#1E293B] to-[#334155]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#1E293B]/30 to-[#334155]/30'
+  },
+  { 
+    id: 'crimson', 
+    name: 'Carmesim', 
+    value: 'bg-gradient-to-br from-[#DC2626] to-[#EF4444]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#DC2626]/30 to-[#EF4444]/30'
+  },
+  { 
+    id: 'amber', 
+    name: 'Âmbar Dourado', 
+    value: 'bg-gradient-to-br from-[#F59E0B] to-[#FBBF24]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#F59E0B]/30 to-[#FBBF24]/30'
+  },
+  { 
+    id: 'cyan', 
+    name: 'Ciano Neon', 
+    value: 'bg-gradient-to-br from-[#06B6D4] to-[#22D3EE]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#06B6D4]/30 to-[#22D3EE]/30'
+  },
+  { 
+    id: 'indigo', 
+    name: 'Índigo Místico', 
+    value: 'bg-gradient-to-br from-[#4F46E5] to-[#6366F1]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#4F46E5]/30 to-[#6366F1]/30'
+  },
+  { 
+    id: 'rose', 
+    name: 'Rosa Clássico', 
+    value: 'bg-gradient-to-br from-[#F43F5E] to-[#FB7185]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#F43F5E]/30 to-[#FB7185]/30'
+  },
+  { 
+    id: 'lime', 
+    name: 'Lima Vibrante', 
+    value: 'bg-gradient-to-br from-[#65A30D] to-[#84CC16]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#65A30D]/30 to-[#84CC16]/30'
+  },
+  { 
+    id: 'violet', 
+    name: 'Violeta Real', 
+    value: 'bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#7C3AED]/30 to-[#8B5CF6]/30'
+  },
+  { 
+    id: 'emerald', 
+    name: 'Esmeralda Profunda', 
+    value: 'bg-gradient-to-br from-[#059669] to-[#10B981]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#059669]/30 to-[#10B981]/30'
+  }
 ];
 
 type ThemeContextType = {
@@ -122,30 +150,16 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  // Apply the gradient to the body element whenever it changes
   useEffect(() => {
     const bodyElement = document.body;
-    const root = document.documentElement;
     
-    // Apply background gradient to body
+    // Set the background with the selected gradient
     bodyElement.className = `${selectedGradient.value} min-h-screen w-full`;
     bodyElement.style.minHeight = '100vh';
     bodyElement.style.width = '100%';
     bodyElement.style.margin = '0';
     bodyElement.style.padding = '0';
-    
-    // Set CSS custom properties for dynamic theming
-    root.style.setProperty('--theme-primary', selectedGradient.primaryColor);
-    root.style.setProperty('--theme-secondary', selectedGradient.secondaryColor);
-    root.style.setProperty('--theme-accent', selectedGradient.accentColor);
-    root.style.setProperty('--theme-border', `${selectedGradient.primaryColor}50`);
-    root.style.setProperty('--theme-gradient-from', selectedGradient.primaryColor);
-    root.style.setProperty('--theme-gradient-to', selectedGradient.secondaryColor);
-    
-    console.log('Theme applied:', selectedGradient.name, {
-      primary: selectedGradient.primaryColor,
-      secondary: selectedGradient.secondaryColor,
-      accent: selectedGradient.accentColor
-    });
   }, [selectedGradient]);
 
   const handleSetGradient = (gradient: GradientOption) => {

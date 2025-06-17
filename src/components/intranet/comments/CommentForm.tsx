@@ -129,7 +129,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Escreva seu comentário..."
-        className="bg-black/30 text-white theme-border resize-none h-24"
+        className="bg-black/30 text-white border-white/20 resize-none h-24"
       />
       
       <MediaPreview 
@@ -151,9 +151,9 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
+            className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => imageInputRef.current?.click()}
             type="button"
-            className="flex items-center gap-2"
           >
             <Image size={16} />
             <span className="hidden sm:inline">Foto</span>
@@ -162,9 +162,9 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
+            className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => setShowGifPicker(!showGifPicker)}
             type="button"
-            className="flex items-center gap-2"
           >
             <Smile size={16} />
             <span className="hidden sm:inline">GIF</span>
@@ -173,8 +173,8 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         
         <Button 
           onClick={handleAddComment} 
+          className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90 text-white"
           type="button"
-          variant="default"
         >
           Comentar
         </Button>

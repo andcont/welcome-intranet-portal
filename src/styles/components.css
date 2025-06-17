@@ -1,160 +1,91 @@
 
 @layer components {
   .btn-primary {
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90 transition-all duration-300 shadow-lg backdrop-blur-md;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white hover:opacity-90 transition-opacity shadow-md;
   }
   
   .btn-secondary {
-    @apply bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl transition-all duration-300 shadow-lg;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    @apply bg-black/40 hover:bg-black/60 text-white border border-[#7B68EE]/30 backdrop-blur-md transition-colors shadow-sm;
   }
   
   .card-hover {
-    @apply hover:shadow-2xl transition-all duration-300 hover:translate-y-[-2px] hover:bg-white/15;
+    @apply hover:shadow-xl transition-all duration-300 hover:translate-y-[-2px];
   }
   
   .glass-morphism {
-    @apply backdrop-blur-2xl bg-white/10 shadow-2xl text-white border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    @apply backdrop-blur-xl bg-black/40 border border-[#7B68EE]/30 shadow-lg text-white;
   }
 
+  /* Improved Gradient components */
   .card-gradient {
-    @apply bg-white/10 backdrop-blur-2xl shadow-2xl hover:bg-white/15 transition-all duration-300 text-white border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    @apply bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 shadow-lg hover:bg-black/50 transition-all duration-300 text-white;
   }
   
   .header-gradient {
-    @apply backdrop-blur-2xl bg-white/10 border-b;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    @apply bg-gradient-to-r from-[#7B68EE] via-[#9B5DE5] to-[#D946EF];
   }
   
   .tab-gradient {
-    @apply bg-white/10 backdrop-blur-2xl border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    @apply bg-gradient-to-r from-black/40 to-black/50 backdrop-blur-xl;
   }
   
   .button-gradient {
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply transition-all duration-300 hover:opacity-90 backdrop-blur-md;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#6B58DE] hover:to-[#C936DF];
   }
   
+  /* Text gradients */
   .text-gradient {
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] bg-clip-text text-transparent;
   }
   
+  /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-xl bg-white/10 backdrop-blur-2xl shadow-2xl hover:shadow-3xl transition-all text-white border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    @apply rounded-lg border border-[#7B68EE]/30 bg-black/40 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
   }
   
   .modern-input {
-    @apply bg-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-300 border;
-    border-color: rgba(255, 255, 255, 0.2);
-    --tw-ring-color: var(--theme-primary);
-    --tw-ring-opacity: 0.5;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    @apply bg-black/50 border border-[#7B68EE]/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#D946EF]/50 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-400;
   }
   
   .modern-button {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300 backdrop-blur-md;
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    @apply px-4 py-2 rounded-lg font-medium;
   }
   
+  /* Improved form input styling to ensure text is visible */
   .form-input, input, textarea {
-    @apply text-white bg-white/10 placeholder:text-gray-300 backdrop-blur-xl border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    @apply text-white bg-black/50 border-[#7B68EE]/30 placeholder:text-gray-400;
   }
   
+  /* Post styling for better visibility */
   .post-content {
-    @apply bg-white/10 backdrop-blur-xl rounded-lg p-4 text-white border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    @apply bg-black/50 backdrop-blur-md rounded-lg border border-[#7B68EE]/30 p-4 text-white;
   }
   
+  /* Comment styling for better visibility */
   .comment-input {
-    @apply bg-white/10 text-white placeholder:text-gray-300 backdrop-blur-xl border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    @apply bg-black/50 text-white border-[#7B68EE]/30 placeholder:text-gray-400;
   }
 
+  /* Animation for fade-in */
   .fade-in {
     @apply animate-fade-in;
   }
   
+  /* Enhanced tab styling */
   .enhanced-tab {
-    @apply rounded-full px-4 py-2 transition-all duration-300 backdrop-blur-xl bg-white/10 border;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    @apply rounded-full px-4 py-2 transition-all duration-300;
   }
   
+  /* Glowing button effect */
   .glow-button {
-    @apply relative overflow-hidden transition-all duration-300 backdrop-blur-md;
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 20px var(--theme-primary);
+    @apply relative overflow-hidden;
   }
   
   .glow-button::after {
-    @apply content-[''] absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    opacity: 0.2;
+    @apply content-[''] absolute inset-0 bg-gradient-to-r from-[#7B68EE]/20 to-[#D946EF]/20 opacity-0 transition-opacity duration-300;
   }
   
   .glow-button:hover::after {
     @apply opacity-100;
-  }
-
-  /* Theme-aware primary button with glassmorphism */
-  .theme-button-primary {
-    background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-    @apply text-white hover:opacity-90 transition-all duration-300 shadow-lg backdrop-blur-md;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Theme-aware secondary button with glassmorphism */
-  .theme-button-secondary {
-    @apply bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl transition-all duration-300 shadow-lg;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Theme-aware borders with glassmorphism */
-  .theme-border {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Theme-aware text */
-  .theme-text {
-    color: var(--theme-primary);
-  }
-
-  /* Glassmorphism containers */
-  .glass-container {
-    @apply bg-white/10 backdrop-blur-2xl border rounded-xl;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-
-  /* Enhanced glassmorphism for main content areas */
-  .glass-content {
-    @apply bg-white/5 backdrop-blur-3xl border rounded-2xl;
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.1);
   }
 }

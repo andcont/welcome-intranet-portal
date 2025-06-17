@@ -14,43 +14,22 @@ html, body, #root {
   overflow-x: hidden;
 }
 
-/* Enhanced glassmorphism styling for consistent look */
+/* Glass card styling for consistent look */
 .glass-card {
-  @apply bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  @apply bg-black/40 backdrop-blur-xl border border-white/20;
 }
 
-/* Enhanced button hover effects with glassmorphism */
+/* Enhanced button hover effects */
 .hover-grow {
-  @apply transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl;
+  @apply transition-transform duration-200 hover:scale-[1.02];
 }
 
 /* Text gradient for headings */
 .text-gradient {
-  background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-  @apply bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] bg-clip-text text-transparent;
 }
 
-/* Button gradient styling with glassmorphism */
+/* Button gradient styling */
 .button-gradient {
-  background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to));
-  @apply hover:opacity-90 backdrop-blur-md;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Enhanced glassmorphism effects */
-.glass-ultra {
-  @apply bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 
-              inset 0 2px 0 rgba(255, 255, 255, 0.1),
-              0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Frosted glass effect */
-.glass-frosted {
-  @apply bg-white/5 backdrop-blur-2xl backdrop-saturate-150 border border-white/15 rounded-xl;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.2),
-              0 0 0 1px rgba(255, 255, 255, 0.1);
+  @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90;
 }
