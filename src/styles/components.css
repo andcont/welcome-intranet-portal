@@ -1,11 +1,14 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white hover:opacity-90 transition-opacity shadow-md;
+    background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
+    @apply text-white hover:opacity-90 transition-opacity shadow-md;
   }
   
   .btn-secondary {
-    @apply bg-black/40 hover:bg-black/60 text-white border border-[#7B68EE]/30 backdrop-blur-md transition-colors shadow-sm;
+    @apply bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-colors shadow-sm;
+    border-color: var(--theme-accent);
+    border-width: 1px;
   }
   
   .card-hover {
@@ -13,16 +16,22 @@
   }
   
   .glass-morphism {
-    @apply backdrop-blur-xl bg-black/40 border border-[#7B68EE]/30 shadow-lg text-white;
+    @apply backdrop-blur-xl bg-black/40 shadow-lg text-white;
+    border-color: var(--theme-accent);
+    border-width: 1px;
+    border-opacity: 0.3;
   }
 
   /* Improved Gradient components */
   .card-gradient {
-    @apply bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 shadow-lg hover:bg-black/50 transition-all duration-300 text-white;
+    @apply bg-black/40 backdrop-blur-xl shadow-lg hover:bg-black/50 transition-all duration-300 text-white;
+    border-color: var(--theme-accent);
+    border-width: 1px;
+    border-opacity: 0.3;
   }
   
   .header-gradient {
-    @apply bg-gradient-to-r from-[#7B68EE] via-[#9B5DE5] to-[#D946EF];
+    background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
   }
   
   .tab-gradient {
@@ -30,21 +39,30 @@
   }
   
   .button-gradient {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#6B58DE] hover:to-[#C936DF];
+    background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
   }
   
   /* Text gradients */
   .text-gradient {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] bg-clip-text text-transparent;
+    background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
+    @apply bg-clip-text text-transparent;
   }
   
   /* Modern UI components with enhanced glass effect */
   .modern-card {
-    @apply rounded-lg border border-[#7B68EE]/30 bg-black/40 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
+    @apply rounded-lg bg-black/40 backdrop-blur-xl shadow-md hover:shadow-lg transition-all text-white;
+    border-color: var(--theme-accent);
+    border-width: 1px;
+    border-opacity: 0.3;
   }
   
   .modern-input {
-    @apply bg-black/50 border border-[#7B68EE]/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#D946EF]/50 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-400;
+    @apply bg-black/50 rounded-lg px-4 py-2 focus:ring-2 focus:border-transparent backdrop-blur-xl text-white placeholder:text-gray-400;
+    border-color: var(--theme-accent);
+    border-width: 1px;
+    border-opacity: 0.3;
+    --tw-ring-color: var(--theme-accent);
+    --tw-ring-opacity: 0.5;
   }
   
   .modern-button {
@@ -53,17 +71,24 @@
   
   /* Improved form input styling to ensure text is visible */
   .form-input, input, textarea {
-    @apply text-white bg-black/50 border-[#7B68EE]/30 placeholder:text-gray-400;
+    @apply text-white bg-black/50 placeholder:text-gray-400;
+    border-color: var(--theme-accent);
+    border-opacity: 0.3;
   }
   
   /* Post styling for better visibility */
   .post-content {
-    @apply bg-black/50 backdrop-blur-md rounded-lg border border-[#7B68EE]/30 p-4 text-white;
+    @apply bg-black/50 backdrop-blur-md rounded-lg p-4 text-white;
+    border-color: var(--theme-accent);
+    border-width: 1px;
+    border-opacity: 0.3;
   }
   
   /* Comment styling for better visibility */
   .comment-input {
-    @apply bg-black/50 text-white border-[#7B68EE]/30 placeholder:text-gray-400;
+    @apply bg-black/50 text-white placeholder:text-gray-400;
+    border-color: var(--theme-accent);
+    border-opacity: 0.3;
   }
 
   /* Animation for fade-in */
@@ -82,7 +107,9 @@
   }
   
   .glow-button::after {
-    @apply content-[''] absolute inset-0 bg-gradient-to-r from-[#7B68EE]/20 to-[#D946EF]/20 opacity-0 transition-opacity duration-300;
+    @apply content-[''] absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(to right, var(--theme-button-gradient, #7B68EE, #D946EF));
+    opacity: 0.2;
   }
   
   .glow-button:hover::after {

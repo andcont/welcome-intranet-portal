@@ -1,11 +1,14 @@
 
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface FormActionsProps {
   onCancel: () => void;
 }
 
 const FormActions = ({ onCancel }: FormActionsProps) => {
+  const { selectedGradient } = useTheme();
+  
   return (
     <div className="flex justify-end gap-4 pt-2">
       <Button 
@@ -18,7 +21,7 @@ const FormActions = ({ onCancel }: FormActionsProps) => {
       </Button>
       <Button 
         type="submit"
-        className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90 text-white shadow-sm"
+        className={`${selectedGradient.buttonGradient} ${selectedGradient.hoverColor} text-white shadow-sm transition-all duration-200`}
       >
         Publicar
       </Button>

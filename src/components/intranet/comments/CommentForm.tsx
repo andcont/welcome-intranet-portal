@@ -1,9 +1,9 @@
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Smile } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
 import GifPicker from "./GifPicker";
 import MediaPreview from "./MediaPreview";
 
@@ -35,6 +35,7 @@ interface CommentFormProps {
 }
 
 const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentFormProps) => {
+  const { selectedGradient } = useTheme();
   const [newComment, setNewComment] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -129,7 +130,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Escreva seu comentário..."
-        className="bg-black/30 text-white border-white/20 resize-none h-24"
+        className={`bg-black/30 text-white ${selectedGradient.borderColor} resize-none h-24`}
       />
       
       <MediaPreview 
@@ -151,7 +152,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
-            className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
+            className={`bg-black/30 hover:bg-black/40 text-white ${selectedGradient.borderColor} flex items-center gap-2`}
             onClick={() => imageInputRef.current?.click()}
             type="button"
           >
@@ -162,7 +163,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           <Button 
             variant="outline" 
             size="sm"
-            className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
+            className={`bg-black/30 hover:bg-black/40 text-white ${selectedGradient.borderColor} flex items-center gap-2`}
             onClick={() => setShowGifPicker(!showGifPicker)}
             type="button"
           >
@@ -173,7 +174,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         
         <Button 
           onClick={handleAddComment} 
-          className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90 text-white"
+          className={`${selectedGradient.buttonGradient} ${selectedGradient.hoverColor} text-white transition-all duration-200`}
           type="button"
         >
           Comentar
