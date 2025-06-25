@@ -1,58 +1,64 @@
 
-import { useTheme, gradientOptions } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Check, Palette } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Check, X } from "lucide-react";
 
-const GradientSelector = () => {
-  const { selectedGradient, setSelectedGradient } = useTheme();
+interface GradientSelectorProps {
+  onClose: () => void;
+}
+
+const GradientSelector = ({ onClose }: GradientSelectorProps) => {
+  const { selectedGradient, setSelectedGradient, gradientOptions } = useTheme();
+
+  const handleGradientSelect = (gradient: any) => {
+    setSelectedGradient(gradient);
+  };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <div className="w-80 max-h-96 overflow-y-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-white">Personalizar Tema</h3>
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1 bg-black/40 border border-[#7B68EE]/30 hover:bg-black/60"
-          title="Alterar tema do site"
+          onClick={onClose}
+          className="text-white hover:bg-white/10 rounded-full w-8 h-8 p-0"
         >
-          <div className={`w-4 h-4 rounded-full ${selectedGradient.value.replace('bg-gradient-to-br', 'bg-gradient-to-r')}`}></div>
-          <Palette size={16} className="ml-1" />
-          <span className="ml-1 hidden sm:inline">Tema</span>
+          <X className="h-4 w-4" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 bg-black/80 backdrop-blur-xl border border-[#7B68EE]/30 max-h-96 overflow-y-auto">
-        <div className="space-y-3">
-          <h4 className="font-bold text-sm text-gradient mb-3">Selecionar Tema do Site</h4>
-          <div className="grid grid-cols-4 gap-3">
-            {gradientOptions.map((gradient) => (
-              <button
-                key={gradient.id}
-                className={`w-16 h-16 rounded-lg flex items-center justify-center transition-all ${gradient.value.replace('bg-gradient-to-br', 'bg-gradient-to-r')} border ${
-                  selectedGradient.id === gradient.id
-                    ? "border-[#D946EF] ring-2 ring-[#D946EF]/50"
-                    : "border-white/10 hover:border-white/30"
-                }`}
-                onClick={() => setSelectedGradient(gradient)}
-                title={gradient.name}
-              >
+      </div>
+      
+      <div className="space-y-3">
+        {gradientOptions.map((gradient) => (
+          <div
+            key={gradient.id}
+            className={`relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+              selectedGradient.id === gradient.id 
+                ? 'border-white/60 shadow-lg transform scale-105' 
+                : 'border-white/20 hover:border-white/40'
+            }`}
+            onClick={() => handleGradientSelect(gradient)}
+          >
+            <div className={`h-16 ${gradient.value} relative`}>
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-between px-4">
+                <span className="text-white font-medium text-sm">{gradient.name}</span>
                 {selectedGradient.id === gradient.id && (
-                  <Check size={20} className="text-white drop-shadow-lg" />
+                  <div className="bg-white/20 backdrop-blur-md rounded-full p-1">
+                    <Check className="h-4 w-4 text-white" />
+                  </div>
                 )}
-              </button>
-            ))}
+              </div>
+            </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-[#7B68EE]/30">
-            <p className="text-xs text-gray-300">Tema atual: {selectedGradient.name}</p>
-            <p className="text-xs text-gray-400 mt-1">O tema será aplicado em todo o site</p>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        ))}
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-white/20">
+        <p className="text-xs text-white/60 text-center">
+          As alterações são aplicadas imediatamente
+        </p>
+      </div>
+    </div>
   );
 };
 

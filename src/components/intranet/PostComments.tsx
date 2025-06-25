@@ -72,15 +72,23 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4 text-white">Comentários</h3>
+    <div className="mt-12 space-y-8">
+      <div className="bg-gradient-to-r from-black/40 to-black/30 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="text-4xl">💬</div>
+          <div>
+            <h3 className="text-2xl font-bold text-white mb-1">Comentários</h3>
+            <p className="text-white/60 text-sm">Compartilhe seus pensamentos e participe da conversa</p>
+          </div>
+        </div>
 
-      <CommentForm
-        postId={postId}
-        postType={postType}
-        currentUser={currentUser}
-        onCommentAdded={loadComments}
-      />
+        <CommentForm
+          postId={postId}
+          postType={postType}
+          currentUser={currentUser}
+          onCommentAdded={loadComments}
+        />
+      </div>
 
       <CommentsList
         comments={comments}

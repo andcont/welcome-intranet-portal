@@ -15,8 +15,10 @@ import {
   MessageSquare,
   Settings,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Palette
 } from "lucide-react";
+import GradientSelector from "./GradientSelector";
 
 interface IntranetLayoutProps {
   children: React.ReactNode;
@@ -32,6 +34,7 @@ interface IntranetLayoutProps {
 
 const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabChange }: IntranetLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showGradientSelector, setShowGradientSelector] = useState(false);
 
   const menuItems = [
     { icon: Home, label: "Dashboard", id: "dashboard" },
@@ -49,6 +52,10 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
     setSidebarOpen(false);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -59,10 +66,10 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-white hover:bg-white/10"
+              onClick={toggleSidebar}
+              className="text-white hover:bg-white/10 transition-colors duration-200"
             >
-              <Menu className="h-5 w-5" />
+              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             
             <div className="flex items-center space-x-3">
@@ -92,6 +99,15 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
 
           {/* Right side */}
           <div className="flex items-center space-x-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:bg-white/10"
+              onClick={() => setShowGradientSelector(!showGradientSelector)}
+            >
+              <Palette className="h-5 w-5" />
+            </Button>
+
             <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
               <Bell className="h-5 w-5" />
             </Button>
@@ -122,6 +138,15 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
             </Button>
           </div>
         </div>
+
+        {/* Gradient Selector Dropdown */}
+        {showGradientSelector && (
+          <div className="absolute top-full right-4 mt-2 z-50">
+            <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl">
+              <GradientSelector onClose={() => setShowGradientSelector(false)} />
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="flex">
@@ -150,7 +175,7 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left text-white hover:bg-white/10 ${
+                    className={`w-full justify-start text-left text-white hover:bg-white/10 transition-all duration-200 ${
                       activeSection === item.id ? 'bg-white/10 border-r-2 border-purple-500' : ''
                     }`}
                     onClick={() => handleMenuClick(item.id)}
