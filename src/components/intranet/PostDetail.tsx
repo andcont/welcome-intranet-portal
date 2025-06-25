@@ -1,14 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar } from "@/components/ui/avatar";
-import { X, MessageSquare, User, Send, Edit, Trash, Image, Save } from "lucide-react";
+import { X, Edit, Trash, ExternalLink, Calendar, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
-import PostReactions from "./PostReactions";
-import ImageViewer from "./ImageViewer";
 import EditPostForm from "./EditPostForm";
-import { useTheme } from "@/contexts/ThemeContext";
-import GradientSelector from "./GradientSelector";
+import PostReactions from "./PostReactions";
+import PostComments from "./PostComments";
 
 interface PostDetailProps {
   postId: string;
@@ -16,505 +13,221 @@ interface PostDetailProps {
   onClose: () => void;
 }
 
-interface Comment {
-  id: string;
-  postId: string;
-  postType: string;
-  content: string;
-  createdAt: string;
-  createdBy: string;
-  createdByRole?: string;
-}
-
-interface Post {
-  id: string;
-  title: string;
-  content?: string;
-  description?: string;
-  image?: string | null;
-  url?: string;
-  date?: string;
-  createdAt: string;
-  createdBy: string;
-}
-
 const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
-  const { selectedGradient } = useTheme();
-  const [post, setPost] = useState<Post | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [showImageViewer, setShowImageViewer] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [post, setPost] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editCommentContent, setEditCommentContent] = useState("");
-  
-  const loadPost = () => {
-    let storageKey = "";
-    switch(postType) {
-      case 'announcement':
-        storageKey = 'andcont_announcements';
-        break;
-      case 'link':
-        storageKey = 'andcont_links';
-        break;
-      case 'event':
-        storageKey = 'andcont_events';
-        break;
-      case 'feed':
-        storageKey = 'andcont_feed';
-        break;
-    }
-    
-    const storedItems = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    const foundPost = storedItems.find((item: Post) => item.id === postId);
-    
-    if (foundPost) {
-      setPost(foundPost);
-    }
-    
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const postComments = allComments.filter(
-      (comment: Comment) => comment.postId === postId && comment.postType === postType
-    );
-    setComments(postComments);
-    setLoading(false);
-  };
-  
+
   useEffect(() => {
-    loadPost();
-    
+    // Load current user
     const userStr = localStorage.getItem("andcont_user");
     if (userStr) {
       try {
-        const user = JSON.parse(userStr);
-        setCurrentUser(user);
+        const parsedUser = JSON.parse(userStr);
+        setCurrentUser(parsedUser);
       } catch (error) {
-        console.error("Error parsing user data:", error);
+        console.error("Erro ao analisar dados do usuário:", error);
       }
     }
+
+    // Load the specific post
+    loadPost();
   }, [postId, postType]);
-  
-  const getCurrentUser = () => {
-    const userStr = localStorage.getItem("andcont_user");
-    if (!userStr) return { name: "Usuário", role: "user" };
-    
-    try {
-      const user = JSON.parse(userStr);
-      return { name: user.name || "Usuário", role: user.role || "user" };
-    } catch {
-      return { name: "Usuário", role: "user" };
-    }
-  };
-  
-  const handleSubmitComment = () => {
-    if (!newComment.trim()) {
-      toast.error("Por favor, informe um comentário");
-      return;
-    }
-    
-    const user = getCurrentUser();
-    const now = new Date();
-    const commentId = Date.now().toString();
-    
-    const comment = {
-      id: commentId,
-      postId,
-      postType,
-      content: newComment,
-      createdAt: now.toISOString(),
-      createdBy: user.name,
-      createdByRole: user.role
-    };
-    
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    allComments.push(comment);
-    localStorage.setItem('andcont_comments', JSON.stringify(allComments));
-    
-    setComments([...comments, comment]);
-    setNewComment("");
-    
-    toast.success("Comentário adicionado com sucesso!");
-  };
-  
-  const handleDeletePost = () => {
-    if (!confirm("Tem certeza que deseja excluir esta publicação?")) {
-      return;
-    }
-    
+
+  const loadPost = () => {
     let storageKey = "";
-    switch(postType) {
+    switch (postType) {
       case 'announcement':
-        storageKey = 'andcont_announcements';
+        storageKey = "andcont_announcements";
         break;
       case 'link':
-        storageKey = 'andcont_links';
+        storageKey = "andcont_links";
         break;
       case 'event':
-        storageKey = 'andcont_events';
+        storageKey = "andcont_events";
         break;
       case 'feed':
-        storageKey = 'andcont_feed';
+        storageKey = "andcont_feed";
         break;
     }
-    
-    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    const updatedItems = items.filter((item: Post) => item.id !== postId);
-    localStorage.setItem(storageKey, JSON.stringify(updatedItems));
-    
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const updatedComments = allComments.filter(
-      (comment: Comment) => !(comment.postId === postId && comment.postType === postType)
-    );
-    localStorage.setItem('andcont_comments', JSON.stringify(updatedComments));
-    
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const updatedReactions = allReactions.filter(
-      (reaction: any) => !(reaction.postId === postId && reaction.postType === postType)
-    );
-    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
-    
-    const user = JSON.parse(localStorage.getItem('andcont_user') || '{}');
-    const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
-    activities.push({
-      id: Date.now().toString(),
-      userId: user.id || 'unknown',
-      userName: user.name || 'Usuário',
-      userEmail: user.email || '',
-      type: `delete_${postType}`,
-      timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('andcont_activities', JSON.stringify(activities));
-    
-    toast.success("Publicação excluída com sucesso!");
-    onClose();
-  };
-  
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+
+    const posts = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    const foundPost = posts.find((p: any) => p.id === postId);
+    setPost(foundPost);
   };
 
-  const canEditOrDelete = () => {
-    if (!currentUser || !post) return false;
-    
-    if (currentUser.role === 'admin') return true;
-    
-    if (postType === 'feed' && post.createdBy === currentUser.name) return true;
-    
-    return false;
-  };
-  
-  const handleEditComment = (comment: Comment) => {
-    setEditingCommentId(comment.id);
-    setEditCommentContent(comment.content);
-  };
-  
-  const handleCancelEditComment = () => {
-    setEditingCommentId(null);
-    setEditCommentContent("");
-  };
-  
-  const handleSaveComment = (commentId: string) => {
-    if (!editCommentContent.trim()) {
-      toast.error("O comentário não pode estar vazio");
+  const handleDelete = () => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      toast.error("Apenas administradores podem excluir conteúdo");
       return;
     }
-    
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const updatedComments = allComments.map((comment: Comment) => {
-      if (comment.id === commentId) {
-        return { ...comment, content: editCommentContent };
+
+    if (window.confirm("Tem certeza que deseja excluir este item?")) {
+      let storageKey = "";
+      switch (postType) {
+        case 'announcement':
+          storageKey = "andcont_announcements";
+          break;
+        case 'link':
+          storageKey = "andcont_links";
+          break;
+        case 'event':
+          storageKey = "andcont_events";
+          break;
+        case 'feed':
+          storageKey = "andcont_feed";
+          break;
       }
-      return comment;
-    });
-    
-    localStorage.setItem('andcont_comments', JSON.stringify(updatedComments));
-    
-    setComments(comments.map(comment => {
-      if (comment.id === commentId) {
-        return { ...comment, content: editCommentContent };
-      }
-      return comment;
-    }));
-    
-    setEditingCommentId(null);
-    setEditCommentContent("");
-    toast.success("Comentário atualizado com sucesso!");
-  };
-  
-  const handleDeleteComment = (commentId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este comentário?")) {
-      return;
+
+      const posts = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      const updatedPosts = posts.filter((p: any) => p.id !== postId);
+      localStorage.setItem(storageKey, JSON.stringify(updatedPosts));
+      
+      toast.success("Item excluído com sucesso!");
+      onClose();
     }
-    
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const updatedComments = allComments.filter(
-      (comment: Comment) => comment.id !== commentId
-    );
-    
-    localStorage.setItem('andcont_comments', JSON.stringify(updatedComments));
-    
-    setComments(comments.filter(comment => comment.id !== commentId));
-    toast.success("Comentário excluído com sucesso!");
   };
-  
-  const isCommentOwner = (comment: Comment) => {
-    if (!currentUser) return false;
-    return comment.createdBy === currentUser.name || currentUser.role === 'admin';
+
+  const handleEditSave = () => {
+    setIsEditing(false);
+    loadPost(); // Reload the post to reflect changes
   };
-  
-  if (loading || !post) {
+
+  if (!post) {
     return (
-      <div className="bg-black/40 backdrop-blur-xl rounded-lg p-6 border border-[#7B68EE]/30 shadow-lg">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gradient">Carregando...</h3>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-            className="text-gray-300"
-          >
-            <X size={18} />
-          </Button>
+      <div className="flex items-center justify-center p-12">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-white/70">Carregando...</p>
         </div>
       </div>
     );
   }
 
-  if (showEditForm) {
+  if (isEditing) {
     return (
-      <EditPostForm 
-        postId={postId} 
-        postType={postType} 
-        onClose={() => setShowEditForm(false)}
-        onUpdate={loadPost}
+      <EditPostForm
+        post={post}
+        postType={postType}
+        onSave={handleEditSave}
+        onCancel={() => setIsEditing(false)}
       />
     );
   }
-  
+
   return (
-    <div className={`${selectedGradient.value} backdrop-blur-xl rounded-lg p-6 border border-[#7B68EE]/30 shadow-lg`}>
-      {showImageViewer && post.image && (
-        <ImageViewer 
-          src={post.image} 
-          alt={post.title} 
-          onClose={() => setShowImageViewer(false)}
-        />
-      )}
-      
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-gradient">{post.title}</h3>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-white">{post.title}</h1>
+          {postType === 'event' && <Calendar className="h-5 w-5 text-purple-400" />}
+          {postType === 'link' && <ExternalLink className="h-5 w-5 text-blue-400" />}
+        </div>
         <div className="flex items-center gap-2">
-          <GradientSelector />
-          
-          {canEditOrDelete() && (
+          {currentUser?.role === 'admin' && (
             <>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setShowEditForm(true)}
-                className="text-gray-300 hover:text-blue-400 hover:bg-black/40 edit-button"
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+                className="text-white/70 hover:text-white hover:bg-white/10"
               >
-                <Edit size={16} />
+                <Edit className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleDeletePost}
-                className="text-gray-300 hover:text-red-400 hover:bg-black/40"
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDelete}
+                className="text-white/70 hover:text-red-400 hover:bg-red-500/20"
               >
-                <Trash size={16} />
+                <Trash className="h-4 w-4" />
               </Button>
             </>
           )}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onClose}
-            className="text-gray-300 hover:bg-black/40"
+            className="text-white/70 hover:text-white hover:bg-white/10"
           >
-            <X size={18} />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      
-      {/* Post content with improved visibility */}
-      <div className="mb-8">
-        {post.image && (
-          <div className="mb-4">
-            <div 
-              className="relative cursor-zoom-in group"
-              onClick={() => setShowImageViewer(true)}
-            >
-              <img 
-                src={post.image} 
-                alt={post.title} 
-                className="w-full h-auto max-h-80 object-contain rounded-md border border-[#7B68EE]/30"
-              />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-md transition-opacity">
-                <div className="bg-black/60 p-2 rounded-full">
-                  <Image size={24} className="text-white" />
-                </div>
-              </div>
-            </div>
+
+      {/* Content */}
+      <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20">
+        {/* Meta Information */}
+        <div className="flex items-center gap-4 mb-4 text-sm text-white/60">
+          <span className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            {new Date(post.createdAt).toLocaleDateString('pt-BR')}
+          </span>
+          {post.author && (
+            <span>Por: {post.author}</span>
+          )}
+        </div>
+
+        {/* Event specific fields */}
+        {postType === 'event' && (
+          <div className="flex flex-wrap gap-4 mb-4 text-sm">
+            {post.date && (
+              <span className="flex items-center gap-1 text-purple-400">
+                <Calendar className="h-4 w-4" />
+                {new Date(post.date).toLocaleDateString('pt-BR')}
+              </span>
+            )}
+            {post.location && (
+              <span className="flex items-center gap-1 text-blue-400">
+                <MapPin className="h-4 w-4" />
+                {post.location}
+              </span>
+            )}
           </div>
         )}
-        
-        <div className="text-white whitespace-pre-wrap bg-black/50 p-4 rounded-lg border border-[#7B68EE]/30">
-          {post.content || post.description}
-        </div>
-        
-        {post.url && (
-          <div className="mt-4">
-            <a 
-              href={post.url} 
-              target="_blank" 
+
+        {/* Link specific fields */}
+        {postType === 'link' && post.url && (
+          <div className="mb-4">
+            <a
+              href={post.url}
+              target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 hover:underline flex items-center"
+              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 hover:underline"
             >
-              Acessar link
+              <ExternalLink className="h-4 w-4" />
+              Acessar Link
             </a>
           </div>
         )}
-        
-        {post.date && (
-          <div className="mt-2 text-gray-300">
-            <span>Data: {new Date(post.date).toLocaleDateString('pt-BR')}</span>
-          </div>
-        )}
-        
-        <div className="mt-4 text-sm text-gray-300 flex items-center justify-between">
-          <span>Por: {post.createdBy}</span>
-          <span>{formatDate(post.createdAt)}</span>
-        </div>
-        
-        <div className="mt-4 flex items-center gap-4">
-          <PostReactions postId={postId} postType={postType} />
-        </div>
-      </div>
-      
-      {/* Comments section with improved visibility */}
-      <div className="pt-6 border-t border-[#7B68EE]/30">
-        <h4 className="flex items-center text-lg font-bold text-gradient mb-4">
-          <MessageSquare className="mr-2 h-5 w-5" /> 
-          Comentários ({comments.length})
-        </h4>
-        
-        {comments.length > 0 ? (
-          <div className="space-y-4 mb-6">
-            {comments.map(comment => (
-              <div key={comment.id} className="bg-black/40 backdrop-blur-sm rounded-lg p-4 border border-[#7B68EE]/20 shadow-sm">
-                <div className="flex items-start">
-                  <Avatar className="h-8 w-8 mr-3 bg-[#7B68EE]/30 text-white">
-                    <User className="h-4 w-4" />
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center">
-                        <span className="font-medium text-white">{comment.createdBy}</span>
-                        {comment.createdByRole === 'admin' && (
-                          <span className="ml-2 bg-[#7B68EE]/30 text-white text-xs px-2 py-0.5 rounded-full">
-                            Admin
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center">
-                        <span className="text-xs text-gray-400 mr-2">{formatDate(comment.createdAt)}</span>
-                        {isCommentOwner(comment) && (
-                          <div className="flex space-x-1">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => handleEditComment(comment)}
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-blue-400"
-                            >
-                              <Edit size={14} />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => handleDeleteComment(comment.id)}
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-400"
-                            >
-                              <Trash size={14} />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {editingCommentId === comment.id ? (
-                      <div>
-                        <Textarea 
-                          value={editCommentContent}
-                          onChange={(e) => setEditCommentContent(e.target.value)}
-                          rows={3}
-                          className="border-[#7B68EE]/30 bg-black/30 text-white placeholder:text-gray-400 mb-2 resize-none"
-                        />
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={handleCancelEditComment}
-                            className="text-gray-300 border-[#7B68EE]/30"
-                          >
-                            Cancelar
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            onClick={() => handleSaveComment(comment.id)}
-                            className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white"
-                          >
-                            <Save className="mr-1 h-4 w-4" /> Salvar
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-gray-100 bg-black/30 p-2 rounded">{comment.content}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-400">Seja o primeiro a comentar!</p>
-          </div>
-        )}
-        
-        {/* Add comment form with improved visibility */}
-        <div className="flex space-x-3 mt-4">
-          <Avatar className="h-8 w-8 bg-[#7B68EE]/30 text-white">
-            <User className="h-4 w-4" />
-          </Avatar>
-          <div className="flex-1">
-            <Textarea 
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Adicione um comentário..."
-              rows={3}
-              className="border-[#7B68EE]/30 bg-black/30 text-white placeholder:text-gray-400 mb-2 resize-none"
+
+        {/* Image */}
+        {post.imageUrl && (
+          <div className="mb-6">
+            <img
+              src={post.imageUrl}
+              alt={post.title}
+              className="w-full max-h-96 object-cover rounded-lg border border-white/20"
             />
-            <div className="flex justify-end">
-              <Button 
-                onClick={handleSubmitComment}
-                size="sm"
-                className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white"
-              >
-                <Send className="mr-2 h-4 w-4" /> Comentar
-              </Button>
-            </div>
           </div>
-        </div>
+        )}
+
+        {/* Content */}
+        {post.content && (
+          <div className="prose prose-invert max-w-none">
+            <p className="text-white/90 leading-relaxed whitespace-pre-wrap">
+              {post.content}
+            </p>
+          </div>
+        )}
       </div>
+
+      {/* Reactions */}
+      <PostReactions postId={postId} postType={postType} />
+
+      {/* Comments */}
+      <PostComments postId={postId} postType={postType} />
     </div>
   );
 };

@@ -1,8 +1,8 @@
+
 import { LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
-import GradientSelector from "./GradientSelector";
 
 interface IntranetHeaderProps {
   currentUser: {
@@ -50,8 +50,6 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <GradientSelector />
-            
             {userRole === 'admin' && (
               <Button 
                 onClick={goToAdmin} 
