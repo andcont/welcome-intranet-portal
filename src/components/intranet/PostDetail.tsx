@@ -107,10 +107,10 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   if (isEditing) {
     return (
       <EditPostForm
-        post={post}
+        postId={postId}
         postType={postType}
-        onSave={handleEditSave}
-        onCancel={() => setIsEditing(false)}
+        onUpdate={handleEditSave}
+        onClose={() => setIsEditing(false)}
       />
     );
   }
