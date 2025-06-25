@@ -17,7 +17,6 @@ import {
   LogOut,
   ChevronRight
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 interface IntranetLayoutProps {
   children: React.ReactNode;
@@ -28,24 +27,27 @@ interface IntranetLayoutProps {
   };
   onLogout: () => void;
   activeSection?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-const IntranetLayout = ({ children, currentUser, onLogout, activeSection }: IntranetLayoutProps) => {
+const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabChange }: IntranetLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
 
   const menuItems = [
-    { icon: Home, label: "Dashboard", id: "dashboard", path: "/intranet" },
-    { icon: Bell, label: "Comunicados", id: "announcements", path: "/intranet" },
-    { icon: LinkIcon, label: "Links Úteis", id: "links", path: "/intranet" },
-    { icon: Calendar, label: "Calendário", id: "calendar", path: "/intranet" },
-    { icon: MessageSquare, label: "Feed", id: "feed", path: "/intranet" },
-    { icon: Users, label: "Equipe", id: "team", path: "/intranet" },
+    { icon: Home, label: "Dashboard", id: "dashboard" },
+    { icon: Bell, label: "Comunicados", id: "announcements" },
+    { icon: LinkIcon, label: "Links Úteis", id: "links" },
+    { icon: Calendar, label: "Calendário", id: "calendar" },
+    { icon: MessageSquare, label: "Feed", id: "feed" },
+    { icon: Users, label: "Equipe", id: "team" },
   ];
 
-  const adminItems = [
-    { icon: Settings, label: "Administração", id: "admin", path: "/admin" },
-  ];
+  const handleMenuClick = (itemId: string) => {
+    if (onTabChange) {
+      onTabChange(itemId);
+    }
+    setSidebarOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -151,10 +153,7 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection }: Intr
                     className={`w-full justify-start text-left text-white hover:bg-white/10 ${
                       activeSection === item.id ? 'bg-white/10 border-r-2 border-purple-500' : ''
                     }`}
-                    onClick={() => {
-                      navigate(item.path);
-                      setSidebarOpen(false);
-                    }}
+                    onClick={() => handleMenuClick(item.id)}
                   >
                     <item.icon className="h-5 w-5 mr-3" />
                     {item.label}
@@ -168,21 +167,15 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection }: Intr
                   <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
                     Administração
                   </h3>
-                  {adminItems.map((item) => (
-                    <Button
-                      key={item.id}
-                      variant="ghost"
-                      className="w-full justify-start text-left text-white hover:bg-white/10"
-                      onClick={() => {
-                        navigate(item.path);
-                        setSidebarOpen(false);
-                      }}
-                    >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.label}
-                      <ChevronRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  ))}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-left text-white hover:bg-white/10"
+                    onClick={() => handleMenuClick('admin')}
+                  >
+                    <Settings className="h-5 w-5 mr-3" />
+                    Administração
+                    <ChevronRight className="h-4 w-4 ml-auto" />
+                  </Button>
                 </div>
               )}
             </nav>

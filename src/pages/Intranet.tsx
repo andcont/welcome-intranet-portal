@@ -101,6 +101,14 @@ const Intranet = () => {
     setSelectedPost(null);
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    // Close any open forms when changing tabs
+    setShowPostForm(false);
+    setShowUserPostForm(false);
+    setSelectedPost(null);
+  };
+
   const getTabClasses = (tabValue: string) => {
     const isActive = activeTab === tabValue;
     return `tab-trigger ${isActive ? 'tab-trigger-active' : ''} flex items-center px-4 py-2.5`;
@@ -122,6 +130,7 @@ const Intranet = () => {
       currentUser={currentUser} 
       onLogout={handleLogout}
       activeSection={activeTab}
+      onTabChange={handleTabChange}
     >
       {(showPostForm && currentUser?.role === 'admin') ? (
         <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
@@ -140,7 +149,7 @@ const Intranet = () => {
           />
         </div>
       ) : (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="bg-black/40 backdrop-blur-xl border border-white/20 p-1 rounded-full mb-6">
             <TabsTrigger value="dashboard" className={getTabClasses('dashboard')}>
               Dashboard
@@ -162,7 +171,7 @@ const Intranet = () => {
           <TabsContent value="dashboard" className="fade-in">
             <ModernDashboard 
               currentUser={currentUser}
-              onTabChange={setActiveTab}
+              onTabChange={handleTabChange}
               onAddContent={handleAddContent}
               onAddUserPost={handleAddUserPost}
             />
