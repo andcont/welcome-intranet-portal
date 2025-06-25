@@ -1,88 +1,142 @@
 
 @layer components {
   .bg-gradient-andcont {
-    @apply bg-gradient-to-br from-[#050A18] via-[#0A1128] to-[#0F172A];
+    @apply bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
   }
 
   .glass-card {
-    @apply bg-black/40 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg text-white;
+    @apply bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl text-white;
   }
   
-  /* Enhanced gradient background for the entire site - full width and height */
+  /* Enhanced gradient background for the entire site */
   .site-background {
-    @apply min-h-screen w-full max-w-full m-0 p-0;
+    @apply min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
   }
   
-  /* Improved tab-specific gradients with animated transitions */
-  .tab-announcements {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+  /* Modern tab system */
+  .modern-tabs {
+    @apply bg-black/40 backdrop-blur-xl border border-white/20 rounded-full p-1 shadow-lg;
   }
   
-  .tab-links {
-    @apply bg-gradient-to-br from-[#D946EF]/20 to-[#7B68EE]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
+  .modern-tab {
+    @apply px-6 py-3 rounded-full transition-all duration-300 text-white/70 hover:text-white font-medium;
   }
   
-  .tab-calendar {
-    @apply bg-gradient-to-br from-[#7B68EE]/20 to-[#9B5DE5]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
-  }
-  
-  .tab-feed {
-    @apply bg-gradient-to-br from-[#9B5DE5]/20 to-[#D946EF]/20 backdrop-blur-md rounded-lg border border-[#7B68EE]/30;
-  }
-  
-  /* Active tab styling with stronger gradient and glow effect */
-  .tab-active {
-    @apply bg-gradient-to-r from-[#7B68EE]/60 to-[#D946EF]/60 border-[#D946EF]/70 shadow-[0_0_10px_rgba(217,70,239,0.3)];
-  }
-  
-  /* Calendar day with event styling - this will now inherit from the theme */
-  .rdp-day_selected, 
-  .rdp-day_selected:focus-visible, 
-  .rdp-day_selected:hover {
-    @apply bg-primary/70 text-white;
-  }
-  
-  .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    @apply bg-black/70 text-white;
-  }
-  
-  /* Improved container for posts and content */
-  .content-container {
-    @apply bg-black/40 backdrop-blur-xl rounded-lg border border-white/30 p-5 shadow-md text-white;
+  .modern-tab.active {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg;
   }
   
   /* Enhanced header styling */
-  .intranet-header {
-    @apply border-b border-white/30 bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-xl shadow-md w-full;
+  .modern-header {
+    @apply bg-black/20 backdrop-blur-xl border-b border-white/10 shadow-lg;
   }
   
-  /* Enhanced tab list container */
-  .tabs-container {
-    @apply bg-black/30 backdrop-blur-xl p-1.5 rounded-full border border-white/30 shadow-inner;
+  .modern-sidebar {
+    @apply bg-black/30 backdrop-blur-xl border-r border-white/10 shadow-2xl;
   }
   
-  /* Individual tab trigger styling */
-  .tab-trigger {
-    @apply rounded-full transition-all duration-300 text-white/80 hover:text-white;
+  /* Content areas */
+  .content-container {
+    @apply bg-black/40 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl text-white;
   }
   
-  /* Active tab trigger styling */
-  .tab-trigger-active {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] text-white shadow-md;
-  }
-
-  /* Full width container for intranet page */
-  .intranet-container {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
+  .content-section {
+    @apply bg-black/30 backdrop-blur-md rounded-xl border border-white/20 p-4 shadow-lg;
   }
   
-  /* Full width page for all pages */
-  .full-width-page {
-    @apply w-full max-w-full m-0 p-0;
+  /* Dashboard specific layouts */
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
   }
-
-  /* Button gradient styling */
-  .button-gradient {
-    @apply bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90;
+  
+  .dashboard-welcome {
+    @apply bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl;
+  }
+  
+  /* Button enhancements */
+  .button-modern {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  .button-primary {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white;
+  }
+  
+  .button-secondary {
+    @apply bg-black/30 hover:bg-black/50 text-white border border-white/20 backdrop-blur-md;
+  }
+  
+  /* Card enhancements */
+  .card-modern {
+    @apply bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl text-white transition-all duration-300;
+  }
+  
+  .card-hover-effect {
+    @apply hover:border-white/30 hover:shadow-3xl hover:transform hover:scale-[1.02] hover:-translate-y-1;
+  }
+  
+  /* Form styling */
+  .form-modern {
+    @apply space-y-6;
+  }
+  
+  .form-field {
+    @apply space-y-2;
+  }
+  
+  .form-label {
+    @apply text-white font-medium text-sm;
+  }
+  
+  .form-input-modern {
+    @apply w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300;
+  }
+  
+  /* Responsive utilities */
+  .container-modern {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Animation utilities */
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+  
+  .animate-fade-in-delayed {
+    animation: fadeIn 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Utility classes for shadows */
+  .shadow-3xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  }
+  
+  .shadow-glow-pink {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
   }
 }

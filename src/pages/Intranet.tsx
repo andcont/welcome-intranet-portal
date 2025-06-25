@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,8 @@ import AdminPostForm from "@/components/intranet/AdminPostForm";
 import FeedList from "@/components/intranet/FeedList";
 import PostDetail from "@/components/intranet/PostDetail";
 import UserPostForm from "@/components/intranet/UserPostForm";
-import IntranetHeader from "@/components/intranet/IntranetHeader";
+import IntranetLayout from "@/components/intranet/IntranetLayout";
+import ModernDashboard from "@/components/intranet/ModernDashboard";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const Intranet = () => {
@@ -21,7 +21,7 @@ const Intranet = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showPostForm, setShowPostForm] = useState(false);
   const [showUserPostForm, setShowUserPostForm] = useState(false);
-  const [activeTab, setActiveTab] = useState("announcements");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' } | null>(null);
   const { selectedGradient } = useTheme();
 
@@ -108,7 +108,7 @@ const Intranet = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="text-center text-white">
           <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
           <h1 className="text-2xl font-bold mb-2">Carregando...</h1>
@@ -118,94 +118,116 @@ const Intranet = () => {
   }
 
   return (
-    <div className="site-background w-full min-h-screen">
-      <IntranetHeader currentUser={currentUser} onLogout={handleLogout} />
-
-      <main className="intranet-container">
-        <div className="glass-card p-6 animate-fade-in">
-          <div className="flex flex-wrap justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gradient">Portal AndCont</h2>
-            
-            <div className="flex space-x-2 mt-2 sm:mt-0">
-              {activeTab === 'feed' && (
-                <Button 
-                  onClick={handleAddUserPost}
-                  className="btn-primary"
-                >
-                  <Plus size={16} className="mr-2" /> Nova Publicação
-                </Button>
-              )}
-              
-              {currentUser?.role === 'admin' && activeTab !== 'feed' && (
-                <Button 
-                  onClick={handleAddContent}
-                  className="btn-primary"
-                >
+    <IntranetLayout 
+      currentUser={currentUser} 
+      onLogout={handleLogout}
+      activeSection={activeTab}
+    >
+      {(showPostForm && currentUser?.role === 'admin') ? (
+        <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+          <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
+        </div>
+      ) : showUserPostForm ? (
+        <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+          <UserPostForm onClose={handleCloseForm} />
+        </div>
+      ) : selectedPost ? (
+        <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+          <PostDetail 
+            postId={selectedPost.id} 
+            postType={selectedPost.type} 
+            onClose={handleClosePostDetail} 
+          />
+        </div>
+      ) : (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="bg-black/40 backdrop-blur-xl border border-white/20 p-1 rounded-full mb-6">
+            <TabsTrigger value="dashboard" className={getTabClasses('dashboard')}>
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
+              <Bell className="mr-2 h-4 w-4" /> Comunicados
+            </TabsTrigger>
+            <TabsTrigger value="links" className={getTabClasses('links')}>
+              <LinkIcon className="mr-2 h-4 w-4" /> Links Úteis
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className={getTabClasses('calendar')}>
+              <Calendar className="mr-2 h-4 w-4" /> Calendário
+            </TabsTrigger>
+            <TabsTrigger value="feed" className={getTabClasses('feed')}>
+              <MessageSquare className="mr-2 h-4 w-4" /> Feed
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="dashboard" className="fade-in">
+            <ModernDashboard 
+              currentUser={currentUser}
+              onTabChange={setActiveTab}
+              onAddContent={handleAddContent}
+              onAddUserPost={handleAddUserPost}
+            />
+          </TabsContent>
+          
+          <TabsContent value="announcements" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Comunicados</h2>
+              {currentUser?.role === 'admin' && (
+                <Button onClick={handleAddContent} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
                   <Plus size={16} className="mr-2" /> Adicionar
                 </Button>
               )}
             </div>
-          </div>
-
-          {(showPostForm && currentUser?.role === 'admin') ? (
-            <AdminPostForm onClose={handleCloseForm} activeCategory={activeTab} />
-          ) : showUserPostForm ? (
-            <UserPostForm onClose={handleCloseForm} />
-          ) : selectedPost ? (
-            <PostDetail 
-              postId={selectedPost.id} 
-              postType={selectedPost.type} 
-              onClose={handleClosePostDetail} 
+            <AnnouncementsList 
+              isAdmin={currentUser?.role === 'admin'} 
+              onSelectPost={(id) => handleSelectPost(id, 'announcement')}
             />
-          ) : (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="tabs-container w-full mb-6">
-                <TabsTrigger value="announcements" className={getTabClasses('announcements')}>
-                  <Bell className="mr-2 h-4 w-4" /> Comunicados
-                </TabsTrigger>
-                <TabsTrigger value="links" className={getTabClasses('links')}>
-                  <LinkIcon className="mr-2 h-4 w-4" /> Links Úteis
-                </TabsTrigger>
-                <TabsTrigger value="calendar" className={getTabClasses('calendar')}>
-                  <Calendar className="mr-2 h-4 w-4" /> Calendário
-                </TabsTrigger>
-                <TabsTrigger value="feed" className={getTabClasses('feed')}>
-                  <MessageSquare className="mr-2 h-4 w-4" /> Feed
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="announcements" className={`tab-announcements p-6 fade-in`}>
-                <AnnouncementsList 
-                  isAdmin={currentUser?.role === 'admin'} 
-                  onSelectPost={(id) => handleSelectPost(id, 'announcement')}
-                />
-              </TabsContent>
-              
-              <TabsContent value="links" className={`tab-links p-6 fade-in`}>
-                <LinksList 
-                  isAdmin={currentUser?.role === 'admin'} 
-                  onSelectPost={(id) => handleSelectPost(id, 'link')}
-                />
-              </TabsContent>
-              
-              <TabsContent value="calendar" className={`tab-calendar p-6 fade-in`}>
-                <CalendarView 
-                  isAdmin={currentUser?.role === 'admin'} 
-                  onSelectPost={(id) => handleSelectPost(id, 'event')}
-                />
-              </TabsContent>
-              
-              <TabsContent value="feed" className={`tab-feed p-6 fade-in`}>
-                <FeedList 
-                  isAdmin={currentUser?.role === 'admin'} 
-                  onSelectPost={(id) => handleSelectPost(id, 'feed')}
-                />
-              </TabsContent>
-            </Tabs>
-          )}
-        </div>
-      </main>
-    </div>
+          </TabsContent>
+          
+          <TabsContent value="links" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Links Úteis</h2>
+              {currentUser?.role === 'admin' && (
+                <Button onClick={handleAddContent} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Plus size={16} className="mr-2" /> Adicionar
+                </Button>
+              )}
+            </div>
+            <LinksList 
+              isAdmin={currentUser?.role === 'admin'} 
+              onSelectPost={(id) => handleSelectPost(id, 'link')}
+            />
+          </TabsContent>
+          
+          <TabsContent value="calendar" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Calendário</h2>
+              {currentUser?.role === 'admin' && (
+                <Button onClick={handleAddContent} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Plus size={16} className="mr-2" /> Adicionar
+                </Button>
+              )}
+            </div>
+            <CalendarView 
+              isAdmin={currentUser?.role === 'admin'} 
+              onSelectPost={(id) => handleSelectPost(id, 'event')}
+            />
+          </TabsContent>
+          
+          <TabsContent value="feed" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Feed</h2>
+              <Button onClick={handleAddUserPost} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                <Plus size={16} className="mr-2" /> Nova Publicação
+              </Button>
+            </div>
+            <FeedList 
+              isAdmin={currentUser?.role === 'admin'} 
+              onSelectPost={(id) => handleSelectPost(id, 'feed')}
+            />
+          </TabsContent>
+        </Tabs>
+      )}
+    </IntranetLayout>
   );
 };
 
