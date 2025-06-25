@@ -31,13 +31,15 @@ interface CommentsListProps {
 const CommentsList = ({ comments, currentUser, users, onCommentDeleted }: CommentsListProps) => {
   if (comments.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-gradient-to-r from-black/40 to-black/30 backdrop-blur-xl rounded-2xl border border-white/10 p-8">
-          <div className="text-6xl mb-4">💬</div>
-          <p className="text-white/70 text-lg font-medium mb-2">
+      <div className="text-center py-16">
+        <div className="bg-gradient-to-br from-black/50 to-black/30 backdrop-blur-xl rounded-3xl border border-white/20 p-12 shadow-2xl">
+          <div className="w-24 h-24 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-6xl">💭</div>
+          </div>
+          <p className="text-white/80 text-xl font-semibold mb-3">
             Nenhum comentário ainda
           </p>
-          <p className="text-white/50 text-sm">
+          <p className="text-white/60 text-lg">
             Seja o primeiro a compartilhar seus pensamentos!
           </p>
         </div>
@@ -47,11 +49,14 @@ const CommentsList = ({ comments, currentUser, users, onCommentDeleted }: Commen
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <h3 className="text-xl font-bold text-white">
-          Comentários ({comments.length})
+      <div className="flex items-center gap-4 mb-8">
+        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold text-lg">{comments.length}</span>
+        </div>
+        <h3 className="text-2xl font-bold text-white">
+          {comments.length === 1 ? 'Comentário' : 'Comentários'}
         </h3>
-        <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 via-pink-500/30 to-transparent"></div>
       </div>
       
       {comments.map((comment, index) => (

@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Palette
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
 
 interface IntranetLayoutProps {
@@ -35,6 +36,7 @@ interface IntranetLayoutProps {
 const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabChange }: IntranetLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showGradientSelector, setShowGradientSelector] = useState(false);
+  const navigate = useNavigate();
 
   const menuItems = [
     { icon: Home, label: "Dashboard", id: "dashboard" },
@@ -54,6 +56,10 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const goToProfile = () => {
+    navigate("/profile");
   };
 
   return (
@@ -112,7 +118,10 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
               <Bell className="h-5 w-5" />
             </Button>
             
-            <div className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-full px-3 py-2 transition-colors">
+            <div 
+              className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-full px-3 py-2 transition-colors"
+              onClick={goToProfile}
+            >
               <Avatar className="h-8 w-8">
                 {currentUser.profilePic ? (
                   <AvatarImage src={currentUser.profilePic} alt={currentUser.name} />
@@ -149,24 +158,12 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
         )}
       </header>
 
-      <div className="flex">
+      <div className="flex relative">
         {/* Sidebar */}
         <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-black/30 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
           <div className="flex flex-col h-full pt-16 lg:pt-0">
-            {/* Close button for mobile */}
-            <div className="flex justify-end p-4 lg:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(false)}
-                className="text-white hover:bg-white/10"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-
             {/* Navigation */}
-            <nav className="flex-1 px-4 pb-4 space-y-2">
+            <nav className="flex-1 px-4 pb-4 space-y-2 pt-4">
               <div className="mb-6">
                 <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
                   Navegação

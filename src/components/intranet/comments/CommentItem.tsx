@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Trash, Heart, Reply } from "lucide-react";
+import { Trash, Heart, Reply, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate, getUserInitials, getUserProfileImage } from "@/utils/commentUtils";
 
@@ -53,47 +53,47 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
   };
 
   return (
-    <div className="group relative">
-      <div className="bg-gradient-to-r from-black/40 to-black/30 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 hover:shadow-xl">
-        <div className="flex items-start gap-4">
-          <div className="relative">
-            <Avatar className="h-12 w-12 border-2 border-gradient-to-r from-purple-500/50 to-pink-500/50 ring-2 ring-white/10">
+    <div className="group relative mb-6">
+      <div className="bg-gradient-to-r from-black/60 to-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-8 hover:border-white/30 transition-all duration-300 hover:shadow-2xl hover:transform hover:scale-[1.02]">
+        <div className="flex items-start gap-6">
+          <div className="relative flex-shrink-0">
+            <Avatar className="h-16 w-16 border-4 border-gradient-to-r from-purple-500/50 to-pink-500/50 ring-4 ring-white/10 shadow-lg">
               <AvatarImage 
                 src={getUserProfileImage(comment.userEmail, users)} 
                 alt={comment.createdBy}
                 className="object-cover"
               />
-              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold text-lg">
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
                 {getUserInitials(comment.createdBy)}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black/40"></div>
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-black/60 shadow-lg"></div>
           </div>
           
-          <div className="flex-1 min-w-0 space-y-3">
+          <div className="flex-1 min-w-0 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h4 className="font-semibold text-white text-lg">{comment.createdBy}</h4>
-                <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full">
+              <div className="flex items-center gap-4">
+                <h4 className="font-bold text-white text-xl">{comment.createdBy}</h4>
+                <span className="text-sm text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   {formatDate(comment.createdAt)}
                 </span>
               </div>
               
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white/60 hover:text-pink-400 hover:bg-pink-500/20 rounded-full w-8 h-8 p-0"
+                  className="text-white/60 hover:text-pink-400 hover:bg-pink-500/20 rounded-full w-10 h-10 p-0 transition-all duration-200"
                 >
-                  <Heart size={14} />
+                  <Heart size={16} />
                 </Button>
                 
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white/60 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-8 h-8 p-0"
+                  className="text-white/60 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-10 h-10 p-0 transition-all duration-200"
                 >
-                  <Reply size={14} />
+                  <Reply size={16} />
                 </Button>
                 
                 {(currentUser?.role === "admin" || currentUser?.email === comment.userEmail) && (
@@ -101,31 +101,50 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDeleteComment(comment.id)}
-                    className="text-white/60 hover:text-red-400 hover:bg-red-500/20 rounded-full w-8 h-8 p-0"
+                    className="text-white/60 hover:text-red-400 hover:bg-red-500/20 rounded-full w-10 h-10 p-0 transition-all duration-200"
                   >
-                    <Trash size={14} />
+                    <Trash size={16} />
                   </Button>
                 )}
               </div>
             </div>
             
             {comment.content && (
-              <div className="bg-black/20 rounded-xl p-4 border border-white/10">
-                <p className="text-white/90 leading-relaxed whitespace-pre-wrap text-sm">
+              <div className="bg-black/30 rounded-2xl p-6 border border-white/10 backdrop-blur-sm shadow-inner">
+                <p className="text-white/90 leading-relaxed whitespace-pre-wrap text-lg">
                   {comment.content}
                 </p>
               </div>
             )}
             
             {(comment.imageUrl || comment.gifUrl) && (
-              <div className="rounded-xl overflow-hidden border border-white/20 shadow-lg">
+              <div className="rounded-2xl overflow-hidden border border-white/30 shadow-xl">
                 <img 
                   src={comment.gifUrl || comment.imageUrl} 
                   alt="Mídia do comentário" 
-                  className="w-full max-h-80 object-cover cursor-pointer hover:scale-105 transition-transform duration-300" 
+                  className="w-full max-h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500" 
                 />
               </div>
             )}
+
+            <div className="flex items-center gap-6 pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white/60 hover:text-white hover:bg-white/10 rounded-full px-4 py-2 transition-all duration-200"
+              >
+                <MessageCircle size={16} className="mr-2" />
+                Responder
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white/60 hover:text-pink-400 hover:bg-pink-500/10 rounded-full px-4 py-2 transition-all duration-200"
+              >
+                <Heart size={16} className="mr-2" />
+                Curtir
+              </Button>
+            </div>
           </div>
         </div>
       </div>
