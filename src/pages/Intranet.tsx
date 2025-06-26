@@ -26,12 +26,20 @@ const Intranet = () => {
   const { selectedGradient } = useTheme();
 
   useEffect(() => {
-    if (loading) return; // Wait for auth to load
+    console.log('Intranet - Auth state:', { loading, isAuthenticated, profile });
+    
+    if (loading) {
+      console.log('Still loading auth...');
+      return;
+    }
     
     if (!isAuthenticated) {
+      console.log('Not authenticated, redirecting to auth');
       navigate("/auth");
       return;
     }
+    
+    console.log('User is authenticated, showing intranet');
   }, [isAuthenticated, loading, navigate]);
 
   const handleLogout = async () => {
@@ -63,7 +71,6 @@ const Intranet = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    // Close any open forms when changing tabs
     setShowPostForm(false);
     setShowUserPostForm(false);
     setSelectedPost(null);
@@ -75,26 +82,32 @@ const Intranet = () => {
   };
 
   if (loading) {
+    console.log('Showing loading screen');
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="text-center text-white">
           <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
-          <h1 className="text-2xl font-bold mb-2">Carregando...</h1>
+          <h1 className="text-2xl font-bold mb-2">Carregando intranet...</h1>
+          <p className="text-sm text-white/70">Autenticando usuário...</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated || !profile) {
+  if (!isAuthenticated) {
+    console.log('Not authenticated, should redirect');
     return null; // Will redirect in useEffect
   }
 
+  // Create a basic current user object even if profile is null
   const currentUser = {
-    name: profile.name,
-    role: profile.role,
-    id: profile.id,
-    email: profile.email
+    name: profile?.name || user?.email || 'Usuário',
+    role: profile?.role || 'user',
+    id: profile?.id || user?.id || '',
+    email: profile?.email || user?.email || ''
   };
+
+  console.log('Rendering intranet with currentUser:', currentUser);
 
   return (
     <IntranetLayout 

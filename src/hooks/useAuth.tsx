@@ -21,28 +21,29 @@ export const useAuth = () => {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         loadProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          setTimeout(() => {
-            loadProfile(session.user.id);
-          }, 0);
+          await loadProfile(session.user.id);
         } else {
           setProfile(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
@@ -51,20 +52,40 @@ export const useAuth = () => {
 
   const loadProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      console.log('Loading profile for user:', userId);
+      
+      // Try to get profile from profiles table
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) {
-        console.error('Error loading profile:', error);
-        return;
+      if (profileError) {
+        console.error('Error loading profile:', profileError);
+        
+        // If profile doesn't exist, create a basic one
+        if (profileError.code === 'PGRST116') {
+          console.log('Profile not found, creating basic profile');
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData.user) {
+            const basicProfile = {
+              id: userId,
+              name: userData.user.user_metadata?.name || userData.user.email || 'Usuário',
+              email: userData.user.email || '',
+              role: 'user'
+            };
+            setProfile(basicProfile);
+          }
+        }
+      } else {
+        console.log('Profile loaded successfully:', profileData);
+        setProfile(profileData);
       }
-
-      setProfile(data);
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error('Error in loadProfile:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
