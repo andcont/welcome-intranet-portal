@@ -1,162 +1,99 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import UsersList from "@/components/admin/UsersList";
-import ActivityLog from "@/components/admin/ActivityLog";
 import { Button } from "@/components/ui/button";
-import { LogOut, Plus, Users, Clock, Home } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ArrowLeft, Users, Activity, Settings, UserCog } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ActivityLog from "@/components/admin/ActivityLog";
+import UsersList from "@/components/admin/UsersList";
+import UserManagement from "@/components/admin/UserManagement";
+import TeamList from "@/components/admin/TeamList";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const { profile, loading, isAuthenticated, isAdmin } = useAuth();
   const { selectedGradient } = useTheme();
+  const [activeTab, setActiveTab] = useState("users");
 
-  useEffect(() => {
-    // Verificar se o usuário é admin
-    const user = localStorage.getItem("andcont_user");
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    
-    const parsedUser = JSON.parse(user);
-    setCurrentUser(parsedUser);
-    
-    if (parsedUser.role !== 'admin') {
-      toast.error("Acesso não autorizado");
-      navigate("/login");
-    }
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("andcont_user");
-    toast.success("Logout realizado com sucesso!");
-    navigate("/login");
-  };
-
-  const goToIntranet = () => {
-    navigate("/");
-  };
-
-  const handleCreateContent = () => {
-    navigate("/");
-    // Use localStorage to set the active tab and open the content form when the page loads
-    localStorage.setItem("andcont_open_content_form", "true");
-  };
-
-  if (!currentUser) {
+  // Redirect if not authenticated or not admin
+  if (loading) {
     return (
-      <div className="site-background h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center text-white">
+          <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h1 className="text-2xl font-bold mb-2">Carregando...</h1>
+        </div>
       </div>
     );
   }
 
+  if (!isAuthenticated) {
+    navigate("/auth");
+    return null;
+  }
+
+  if (!isAdmin) {
+    toast.error("Acesso negado. Apenas administradores podem acessar esta área.");
+    navigate("/intranet");
+    return null;
+  }
+
   return (
-    <div className="site-background min-h-screen w-full">
-      <div className="intranet-container max-w-6xl mx-auto">
-        <div className="intranet-header py-4 w-full mb-6">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <img 
-                  src="/lovable-uploads/705b7447-780b-42c6-9d66-f39cc7a86438.png" 
-                  alt="AndCont Logo" 
-                  className="h-12 mr-4" 
-                />
-                <h1 className="text-3xl font-bold text-gradient">Painel Administrativo</h1>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Button 
-                  onClick={goToIntranet}
-                  variant="outline" 
-                  className="bg-black/30 hover:bg-black/40 text-white border-[#7B68EE]/30"
-                >
-                  <Home className="mr-2 h-4 w-4" />
-                  Voltar para Intranet
-                </Button>
-                <Button 
-                  onClick={handleCreateContent} 
-                  variant="default" 
-                  className="button-gradient text-white hover:opacity-90"
-                >
-                  <Plus className="mr-2 h-4 w-4" /> Novo Conteúdo
-                </Button>
-                <Button 
-                  onClick={handleLogout} 
-                  variant="outline" 
-                  className="bg-black/30 hover:bg-black/40 text-white border-[#7B68EE]/30"
-                >
-                  <LogOut className="mr-2 h-4 w-4" /> Sair
-                </Button>
-              </div>
-            </div>
+    <div className={`min-h-screen ${selectedGradient.value} w-full`}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/intranet")}
+              className="text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar à Intranet
+            </Button>
+            <h1 className="text-3xl font-bold text-white">Painel Administrativo</h1>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card className="glass-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-white">Usuários Ativos</CardTitle>
-              <CardDescription className="text-white/70">Total de usuários cadastrados</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold flex items-center text-white">
-                <Users className="mr-3 h-8 w-8 text-[#7B68EE]" />
-                {(JSON.parse(localStorage.getItem('andcont_users') || '[]')).length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="glass-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-white">Publicações</CardTitle>
-              <CardDescription className="text-white/70">Total de conteúdos publicados</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold flex items-center text-white">
-                <Plus className="mr-3 h-8 w-8 text-[#D946EF]" />
-                {(
-                  JSON.parse(localStorage.getItem('andcont_announcements') || '[]').length +
-                  JSON.parse(localStorage.getItem('andcont_links') || '[]').length +
-                  JSON.parse(localStorage.getItem('andcont_events') || '[]').length
-                )}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="glass-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-white">Atividades</CardTitle>
-              <CardDescription className="text-white/70">Logs de atividades recentes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold flex items-center text-white">
-                <Clock className="mr-3 h-8 w-8 text-[#9B5DE5]" />
-                {(JSON.parse(localStorage.getItem('andcont_activities') || '[]')).length}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="bg-black/40 backdrop-blur-xl border border-white/20 p-1 rounded-full mb-6">
+            <TabsTrigger value="users" className="flex items-center px-4 py-2.5 text-white data-[state=active]:bg-white/20">
+              <UserCog className="mr-2 h-4 w-4" />
+              Gerenciar Usuários
+            </TabsTrigger>
+            <TabsTrigger value="team" className="flex items-center px-4 py-2.5 text-white data-[state=active]:bg-white/20">
+              <Users className="mr-2 h-4 w-4" />
+              Equipe
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex items-center px-4 py-2.5 text-white data-[state=active]:bg-white/20">
+              <Activity className="mr-2 h-4 w-4" />
+              Atividades
+            </TabsTrigger>
+            <TabsTrigger value="legacy" className="flex items-center px-4 py-2.5 text-white data-[state=active]:bg-white/20">
+              <Settings className="mr-2 h-4 w-4" />
+              Lista Legada
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="glass-card p-6">
-          <Tabs defaultValue="users" className="w-full">
-            <TabsList className="tabs-container w-full mb-6">
-              <TabsTrigger value="users" className="tab-trigger flex-1">Usuários</TabsTrigger>
-              <TabsTrigger value="activities" className="tab-trigger flex-1">Atividades</TabsTrigger>
-            </TabsList>
-            <TabsContent value="users">
-              <UsersList />
-            </TabsContent>
-            <TabsContent value="activities">
-              <ActivityLog />
-            </TabsContent>
-          </Tabs>
-        </div>
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="team">
+            <TeamList />
+          </TabsContent>
+
+          <TabsContent value="activity">
+            <ActivityLog />
+          </TabsContent>
+
+          <TabsContent value="legacy">
+            <UsersList />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

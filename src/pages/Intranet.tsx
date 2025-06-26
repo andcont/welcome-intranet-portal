@@ -14,11 +14,11 @@ import UserPostForm from "@/components/intranet/UserPostForm";
 import IntranetLayout from "@/components/intranet/IntranetLayout";
 import ModernDashboard from "@/components/intranet/ModernDashboard";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Intranet = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState<any>({ name: "", role: "user" });
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, profile, loading, signOut, isAuthenticated, isAdmin } = useAuth();
   const [showPostForm, setShowPostForm] = useState(false);
   const [showUserPostForm, setShowUserPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -26,58 +26,18 @@ const Intranet = () => {
   const { selectedGradient } = useTheme();
 
   useEffect(() => {
-    // Verificar usuário
-    const userStr = localStorage.getItem("andcont_user");
-    if (!userStr) {
-      navigate("/login");
-      return;
-    }
+    if (loading) return; // Wait for auth to load
     
-    try {
-      const user = JSON.parse(userStr);
-      if (!user || typeof user !== 'object') {
-        throw new Error("Invalid user data");
-      }
-      
-      setCurrentUser({
-        name: user.name || "Usuário",
-        role: user.role || "user",
-        id: user.id || "",
-        email: user.email || ""
-      });
-      
-      // Check if we should open the content form from Admin page redirection
-      const shouldOpenForm = localStorage.getItem("andcont_open_content_form");
-      if (shouldOpenForm === "true" && user.role === 'admin') {
-        setShowPostForm(true);
-        localStorage.removeItem("andcont_open_content_form");
-      }
-      
-      // Registrar atividade de acesso à intranet
-      const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
-      activities.push({
-        id: Date.now().toString(),
-        userId: user.id || "unknown",
-        userName: user.name || "Usuário",
-        userEmail: user.email || "",
-        type: 'intranet_access',
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('andcont_activities', JSON.stringify(activities));
-      
-    } catch (error) {
-      console.error("Erro ao carregar dados do usuário:", error);
-      navigate("/login");
+    if (!isAuthenticated) {
+      navigate("/auth");
       return;
-    } finally {
-      setIsLoading(false);
     }
-  }, [navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("andcont_user");
+  const handleLogout = async () => {
+    await signOut();
     toast.success("Logout realizado com sucesso!");
-    navigate("/login");
+    navigate("/auth");
   };
 
   const handleAddContent = () => {
@@ -114,7 +74,7 @@ const Intranet = () => {
     return `tab-trigger ${isActive ? 'tab-trigger-active' : ''} flex items-center px-4 py-2.5`;
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="text-center text-white">
@@ -124,6 +84,17 @@ const Intranet = () => {
       </div>
     );
   }
+
+  if (!isAuthenticated || !profile) {
+    return null; // Will redirect in useEffect
+  }
+
+  const currentUser = {
+    name: profile.name,
+    role: profile.role,
+    id: profile.id,
+    email: profile.email
+  };
 
   return (
     <IntranetLayout 

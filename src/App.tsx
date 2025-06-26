@@ -16,8 +16,9 @@ function App() {
     <ThemeProvider>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/login" element={<Auth />} />
+        <Route path="/register" element={<Auth />} />
         <Route path="/intranet" element={<Intranet />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />

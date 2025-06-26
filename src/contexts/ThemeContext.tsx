@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type GradientOption = {
@@ -133,33 +132,18 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [selectedGradient, setSelectedGradient] = useState<GradientOption>(gradientOptions[0]);
+  const [selectedGradient, setSelectedGradient] = useState(gradients[0]);
 
+  // Apply the gradient to the document body when it changes
   useEffect(() => {
-    const savedGradient = localStorage.getItem('andcont_gradient');
-    if (savedGradient) {
-      try {
-        const parsedGradient = JSON.parse(savedGradient);
-        const foundGradient = gradientOptions.find(g => g.id === parsedGradient.id);
-        if (foundGradient) {
-          setSelectedGradient(foundGradient);
-        }
-      } catch (error) {
-        console.error("Error loading saved gradient:", error);
-      }
-    }
-  }, []);
-
-  // Apply the gradient to the body element whenever it changes
-  useEffect(() => {
-    const bodyElement = document.body;
+    // Remove all existing gradient classes from body
+    document.body.className = document.body.className
+      .split(' ')
+      .filter(cls => !cls.startsWith('bg-gradient-to-'))
+      .join(' ');
     
-    // Set the background with the selected gradient
-    bodyElement.className = `${selectedGradient.value} min-h-screen w-full`;
-    bodyElement.style.minHeight = '100vh';
-    bodyElement.style.width = '100%';
-    bodyElement.style.margin = '0';
-    bodyElement.style.padding = '0';
+    // Add the new gradient class to body
+    document.body.classList.add(...selectedGradient.value.split(' '));
   }, [selectedGradient]);
 
   const handleSetGradient = (gradient: GradientOption) => {

@@ -1,27 +1,26 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { selectedGradient } = useTheme();
+  const { isAuthenticated, loading } = useAuth();
   
   useEffect(() => {
-    // Verificar se o usuário está logado
-    const user = localStorage.getItem("andcont_user");
+    if (loading) return; // Wait for auth to load
     
-    if (user) {
-      // Usuário logado, redireciona para a intranet interna
+    if (isAuthenticated) {
+      // User is authenticated, redirect to intranet
       navigate("/intranet");
     } else {
-      // Usuário não logado, redireciona para a página de login
-      navigate("/login");
+      // User is not authenticated, redirect to auth page
+      navigate("/auth");
     }
-  }, [navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
   return (
-    <div className={`min-h-screen flex items-center justify-center w-full ${selectedGradient.value}`}>
+    <div className="min-h-screen flex items-center justify-center w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="text-center text-white">
         <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
         <h1 className="text-4xl font-bold mb-4">Redirecionando...</h1>
