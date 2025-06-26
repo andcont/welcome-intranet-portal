@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type GradientOption = {
@@ -132,7 +133,20 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [selectedGradient, setSelectedGradient] = useState(gradients[0]);
+  const [selectedGradient, setSelectedGradient] = useState(gradientOptions[0]);
+
+  // Load saved gradient from localStorage on mount
+  useEffect(() => {
+    const savedGradient = localStorage.getItem('andcont_gradient');
+    if (savedGradient) {
+      try {
+        const parsedGradient = JSON.parse(savedGradient);
+        setSelectedGradient(parsedGradient);
+      } catch (error) {
+        console.error('Error parsing saved gradient:', error);
+      }
+    }
+  }, []);
 
   // Apply the gradient to the document body when it changes
   useEffect(() => {
