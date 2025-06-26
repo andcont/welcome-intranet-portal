@@ -9,10 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
   const navigate = useNavigate();
   const { selectedGradient } = useTheme();
+  const { isAuthenticated, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -21,13 +23,18 @@ const Auth = () => {
   });
 
   useEffect(() => {
-    // Check if user is already authenticated
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/intranet");
-      }
-    });
-  }, [navigate]);
+    console.log('Auth - Auth state:', { loading, isAuthenticated });
+    
+    if (loading) {
+      console.log('Auth - Still loading...');
+      return;
+    }
+    
+    if (isAuthenticated) {
+      console.log('Auth - User is authenticated, redirecting to intranet');
+      navigate("/intranet", { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -78,7 +85,7 @@ const Auth = () => {
         toast.error(error.message);
       } else {
         toast.success("Login realizado com sucesso!");
-        navigate("/intranet");
+        navigate("/intranet", { replace: true });
       }
     } catch (error) {
       toast.error("Erro ao fazer login");
@@ -86,6 +93,18 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center text-white">
+          <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h1 className="text-2xl font-bold mb-2">Verificando autenticação...</h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex ${selectedGradient.value} w-full`}>
