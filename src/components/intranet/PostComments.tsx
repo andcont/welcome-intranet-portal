@@ -90,6 +90,18 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     userEmail: comment.author_name || 'Usuário'
   }));
 
+  if (loading) {
+    return (
+      <div className="mt-12 space-y-8">
+        <div className="bg-gradient-to-r from-black/60 to-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl">
+          <div className="flex items-center justify-center p-12">
+            <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-12 space-y-8">
       <div className="bg-gradient-to-r from-black/60 to-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl">
@@ -116,7 +128,6 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         currentUser={currentUser}
         users={{}}
         onCommentDeleted={loadComments}
-        loading={loading}
       />
     </div>
   );
