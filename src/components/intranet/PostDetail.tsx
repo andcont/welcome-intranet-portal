@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import EditPostForm from "./EditPostForm";
 import PostReactions from "./PostReactions";
 import PostComments from "./PostComments";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PostDetailProps {
   postId: string;
@@ -16,75 +18,121 @@ interface PostDetailProps {
 const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   const [post, setPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { user, profile } = useAuth();
 
   useEffect(() => {
-    // Load current user
-    const userStr = localStorage.getItem("andcont_user");
-    if (userStr) {
-      try {
-        const parsedUser = JSON.parse(userStr);
-        setCurrentUser(parsedUser);
-      } catch (error) {
-        console.error("Erro ao analisar dados do usuário:", error);
-      }
-    }
-
-    // Load the specific post
     loadPost();
   }, [postId, postType]);
 
-  const loadPost = () => {
-    let storageKey = "";
-    switch (postType) {
-      case 'announcement':
-        storageKey = "andcont_announcements";
-        break;
-      case 'link':
-        storageKey = "andcont_links";
-        break;
-      case 'event':
-        storageKey = "andcont_events";
-        break;
-      case 'feed':
-        storageKey = "andcont_feed";
-        break;
-    }
+  const loadPost = async () => {
+    try {
+      console.log('Loading post:', postId, postType);
+      setLoading(true);
+      
+      let tableName = '';
+      switch (postType) {
+        case 'announcement':
+          tableName = 'announcements';
+          break;
+        case 'link':
+          tableName = 'useful_links';
+          break;
+        case 'event':
+          tableName = 'events';
+          break;
+        case 'feed':
+          tableName = 'feed_posts';
+          break;
+        default:
+          console.error('Unknown post type:', postType);
+          return;
+      }
 
-    const posts = JSON.parse(localStorage.getItem(storageKey) || "[]");
-    const foundPost = posts.find((p: any) => p.id === postId);
-    setPost(foundPost);
+      const { data: postData, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .eq('id', postId)
+        .single();
+
+      if (error) {
+        console.error('Error loading post:', error);
+        toast.error("Erro ao carregar post");
+        return;
+      }
+
+      console.log('Post loaded:', postData);
+
+      // Load author profile
+      const { data: authorProfile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', postData.created_by)
+        .single();
+
+      const enrichedPost = {
+        ...postData,
+        author: authorProfile?.name || 'Usuário',
+        // Map database fields to expected format
+        createdAt: postData.created_at,
+        imageUrl: postData.image_url,
+        url: postData.url,
+        location: postData.location,
+        date: postData.event_date
+      };
+
+      setPost(enrichedPost);
+    } catch (error) {
+      console.error('Error loading post:', error);
+      toast.error("Erro ao carregar post");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = () => {
-    if (!currentUser || currentUser.role !== 'admin') {
+  const handleDelete = async () => {
+    if (!user || profile?.role !== 'admin') {
       toast.error("Apenas administradores podem excluir conteúdo");
       return;
     }
 
-    if (window.confirm("Tem certeza que deseja excluir este item?")) {
-      let storageKey = "";
+    if (!confirm("Tem certeza que deseja excluir este item?")) {
+      return;
+    }
+
+    try {
+      let tableName = '';
       switch (postType) {
         case 'announcement':
-          storageKey = "andcont_announcements";
+          tableName = 'announcements';
           break;
         case 'link':
-          storageKey = "andcont_links";
+          tableName = 'useful_links';
           break;
         case 'event':
-          storageKey = "andcont_events";
+          tableName = 'events';
           break;
         case 'feed':
-          storageKey = "andcont_feed";
+          tableName = 'feed_posts';
           break;
       }
 
-      const posts = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const updatedPosts = posts.filter((p: any) => p.id !== postId);
-      localStorage.setItem(storageKey, JSON.stringify(updatedPosts));
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq('id', postId);
+
+      if (error) {
+        console.error('Error deleting post:', error);
+        toast.error("Erro ao excluir item");
+        return;
+      }
       
       toast.success("Item excluído com sucesso!");
       onClose();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast.error("Erro ao excluir item");
     }
   };
 
@@ -93,12 +141,22 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
     loadPost(); // Reload the post to reflect changes
   };
 
-  if (!post) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-white/70">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-center">
+          <p className="text-white/70">Post não encontrado</p>
         </div>
       </div>
     );
@@ -125,7 +183,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           {postType === 'link' && <ExternalLink className="h-5 w-5 text-blue-400" />}
         </div>
         <div className="flex items-center gap-2">
-          {currentUser?.role === 'admin' && (
+          {profile?.role === 'admin' && (
             <>
               <Button
                 variant="ghost"

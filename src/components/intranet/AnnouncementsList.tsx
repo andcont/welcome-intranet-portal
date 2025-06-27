@@ -29,6 +29,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
 
   const loadAnnouncements = async () => {
     try {
+      console.log('Loading announcements...');
       const { data: announcementsData, error } = await supabase
         .from('announcements')
         .select('*')
@@ -40,19 +41,36 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
         return;
       }
 
+      console.log('Announcements loaded:', announcementsData);
+
+      if (!announcementsData || announcementsData.length === 0) {
+        setAnnouncements([]);
+        setLoading(false);
+        return;
+      }
+
       // Load profiles for authors
-      const authorIds = [...new Set(announcementsData?.map(a => a.created_by) || [])];
-      const { data: profilesData } = await supabase
+      const authorIds = [...new Set(announcementsData.map(a => a.created_by))];
+      console.log('Loading profiles for authors:', authorIds);
+      
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('id, name')
         .in('id', authorIds);
 
+      if (profilesError) {
+        console.error('Error loading profiles:', profilesError);
+        // Continue without profile names
+      }
+
+      console.log('Profiles loaded:', profilesData);
+
       const profilesMap = new Map(profilesData?.map(p => [p.id, p.name]) || []);
 
-      const enrichedAnnouncements = announcementsData?.map(announcement => ({
+      const enrichedAnnouncements = announcementsData.map(announcement => ({
         ...announcement,
         author_name: profilesMap.get(announcement.created_by) || 'Usuário'
-      })) || [];
+      }));
 
       setAnnouncements(enrichedAnnouncements);
     } catch (error) {
@@ -65,6 +83,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
 
   const loadCommentCounts = async () => {
     try {
+      console.log('Loading comment counts...');
       const { data, error } = await supabase
         .from('comments')
         .select('post_id')
@@ -76,6 +95,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
           counts[comment.post_id] = (counts[comment.post_id] || 0) + 1;
         });
         setCommentCounts(counts);
+        console.log('Comment counts loaded:', counts);
       }
     } catch (error) {
       console.error('Error loading comment counts:', error);
@@ -84,6 +104,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
 
   const loadReactionCounts = async () => {
     try {
+      console.log('Loading reaction counts...');
       const { data, error } = await supabase
         .from('reactions')
         .select('post_id')
@@ -95,6 +116,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
           counts[reaction.post_id] = (counts[reaction.post_id] || 0) + 1;
         });
         setReactionCounts(counts);
+        console.log('Reaction counts loaded:', counts);
       }
     } catch (error) {
       console.error('Error loading reaction counts:', error);
@@ -169,7 +191,10 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
           <Card 
             key={announcement.id} 
             className="bg-black/40 backdrop-blur-xl border border-[#7B68EE]/30 hover:border-[#D946EF]/40 transition-all hover:shadow-lg cursor-pointer"
-            onClick={() => onSelectPost(announcement.id)}
+            onClick={() => {
+              console.log('Clicking on announcement:', announcement.id);
+              onSelectPost(announcement.id);
+            }}
           >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
