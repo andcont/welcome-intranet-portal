@@ -14,9 +14,7 @@ interface FeedPost {
   image_url?: string | null;
   created_at: string;
   created_by: string;
-  profiles?: {
-    name: string;
-  };
+  author_name?: string;
 }
 
 interface FeedListProps {
@@ -33,12 +31,9 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: postsData, error } = await supabase
         .from('feed_posts')
-        .select(`
-          *,
-          profiles:created_by (name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -47,7 +42,21 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
         return;
       }
 
-      setPosts(data || []);
+      // Load profiles for authors
+      const authorIds = [...new Set(postsData?.map(p => p.created_by) || [])];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', authorIds);
+
+      const profilesMap = new Map(profilesData?.map(p => [p.id, p.name]) || []);
+
+      const enrichedPosts = postsData?.map(post => ({
+        ...post,
+        author_name: profilesMap.get(post.created_by) || 'Usuário'
+      })) || [];
+
+      setPosts(enrichedPosts);
     } catch (error) {
       console.error('Error loading feed posts:', error);
       toast.error("Erro ao carregar posts");
@@ -232,7 +241,7 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: {post.profiles?.name || 'Usuário'}</span>
+                <span>Por: {post.author_name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(post.created_at)}</span>
               </div>

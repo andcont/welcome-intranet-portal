@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CommentForm from "./comments/CommentForm";
 import CommentsList from "./comments/CommentsList";
 
-interface Comment {
+interface PostComment {
   id: string;
   post_id: string;
   post_type: string;
@@ -14,10 +14,8 @@ interface Comment {
   created_by: string;
   image_url?: string;
   gif_url?: string;
-  profiles?: {
-    name: string;
-    profile_image?: string;
-  };
+  author_name?: string;
+  author_profile_image?: string;
 }
 
 interface PostCommentsProps {
@@ -26,18 +24,15 @@ interface PostCommentsProps {
 }
 
 const PostComments = ({ postId, postType }: PostCommentsProps) => {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<PostComment[]>([]);
   const [loading, setLoading] = useState(true);
   const { user, profile } = useAuth();
 
   const loadComments = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: commentsData, error } = await supabase
         .from('comments')
-        .select(`
-          *,
-          profiles:created_by (name, profile_image)
-        `)
+        .select('*')
         .eq('post_id', postId)
         .eq('post_type', postType)
         .order('created_at', { ascending: true });
@@ -47,7 +42,22 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
         return;
       }
 
-      setComments(data || []);
+      // Load profiles for comment authors
+      const authorIds = [...new Set(commentsData?.map(c => c.created_by) || [])];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, name, profile_image')
+        .in('id', authorIds);
+
+      const profilesMap = new Map(profilesData?.map(p => [p.id, { name: p.name, profile_image: p.profile_image }]) || []);
+
+      const enrichedComments = commentsData?.map(comment => ({
+        ...comment,
+        author_name: profilesMap.get(comment.created_by)?.name || 'Usuário',
+        author_profile_image: profilesMap.get(comment.created_by)?.profile_image
+      })) || [];
+
+      setComments(enrichedComments);
     } catch (error) {
       console.error('Error loading comments:', error);
     } finally {
@@ -66,6 +76,19 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     role: profile.role,
     profileImage: profile.profile_image
   } : null;
+
+  // Transform comments to match CommentsList expected format
+  const transformedComments = comments.map(comment => ({
+    id: comment.id,
+    postId: comment.post_id,
+    postType: comment.post_type,
+    content: comment.content,
+    createdAt: comment.created_at,
+    createdBy: comment.created_by,
+    imageUrl: comment.image_url,
+    gifUrl: comment.gif_url,
+    userEmail: comment.author_name || 'Usuário'
+  }));
 
   return (
     <div className="mt-12 space-y-8">
@@ -89,7 +112,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       </div>
 
       <CommentsList
-        comments={comments}
+        comments={transformedComments}
         currentUser={currentUser}
         users={{}}
         onCommentDeleted={loadComments}

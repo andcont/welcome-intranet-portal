@@ -13,9 +13,7 @@ interface Announcement {
   image_url?: string | null;
   created_at: string;
   created_by: string;
-  profiles?: {
-    name: string;
-  };
+  author_name?: string;
 }
 
 interface AnnouncementsListProps {
@@ -31,12 +29,9 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
 
   const loadAnnouncements = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: announcementsData, error } = await supabase
         .from('announcements')
-        .select(`
-          *,
-          profiles:created_by (name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -45,7 +40,21 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
         return;
       }
 
-      setAnnouncements(data || []);
+      // Load profiles for authors
+      const authorIds = [...new Set(announcementsData?.map(a => a.created_by) || [])];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', authorIds);
+
+      const profilesMap = new Map(profilesData?.map(p => [p.id, p.name]) || []);
+
+      const enrichedAnnouncements = announcementsData?.map(announcement => ({
+        ...announcement,
+        author_name: profilesMap.get(announcement.created_by) || 'Usuário'
+      })) || [];
+
+      setAnnouncements(enrichedAnnouncements);
     } catch (error) {
       console.error('Error loading announcements:', error);
       toast.error("Erro ao carregar comunicados");
@@ -206,7 +215,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: {announcement.profiles?.name || 'Usuário'}</span>
+                <span>Por: {announcement.author_name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(announcement.created_at)}</span>
               </div>
