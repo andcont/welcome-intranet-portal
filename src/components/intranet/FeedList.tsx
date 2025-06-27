@@ -4,14 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Trash, MessageSquare, AlertCircle, Edit, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface FeedPost {
   id: string;
   title: string;
   content: string;
-  image?: string | null;
-  createdAt: string;
-  createdBy: string;
+  image_url?: string | null;
+  created_at: string;
+  created_by: string;
+  profiles?: {
+    name: string;
+  };
 }
 
 interface FeedListProps {
@@ -23,90 +28,113 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { user, profile } = useAuth();
+
+  const loadPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('feed_posts')
+        .select(`
+          *,
+          profiles:created_by (name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading feed posts:', error);
+        toast.error("Erro ao carregar posts");
+        return;
+      }
+
+      setPosts(data || []);
+    } catch (error) {
+      console.error('Error loading feed posts:', error);
+      toast.error("Erro ao carregar posts");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCommentCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('post_id')
+        .eq('post_type', 'feed');
+
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        data.forEach((comment) => {
+          counts[comment.post_id] = (counts[comment.post_id] || 0) + 1;
+        });
+        setCommentCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error loading comment counts:', error);
+    }
+  };
+
+  const loadReactionCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reactions')
+        .select('post_id')
+        .eq('post_type', 'feed');
+
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        data.forEach((reaction) => {
+          counts[reaction.post_id] = (counts[reaction.post_id] || 0) + 1;
+        });
+        setReactionCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error loading reaction counts:', error);
+    }
+  };
 
   useEffect(() => {
-    // Get current user
-    const userStr = localStorage.getItem("andcont_user");
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        setCurrentUser(user);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-
-    // Load feed posts from localStorage
-    const storedPosts = localStorage.getItem('andcont_feed');
-    if (storedPosts) {
-      setPosts(JSON.parse(storedPosts));
-    } else {
-      // Initialize with an empty array if no posts exist
-      localStorage.setItem('andcont_feed', JSON.stringify([]));
-    }
-
-    // Load comment counts
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const counts: Record<string, number> = {};
-    
-    allComments.forEach((comment: any) => {
-      if (comment.postType === 'feed') {
-        counts[comment.postId] = (counts[comment.postId] || 0) + 1;
-      }
-    });
-    
-    setCommentCounts(counts);
-    
-    // Load reaction counts
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const reactionCounts: Record<string, number> = {};
-    
-    allReactions.forEach((reaction: any) => {
-      if (reaction.postType === 'feed') {
-        reactionCounts[reaction.postId] = (reactionCounts[reaction.postId] || 0) + 1;
-      }
-    });
-    
-    setReactionCounts(reactionCounts);
+    loadPosts();
+    loadCommentCounts();
+    loadReactionCounts();
   }, []);
 
   const canEditOrDelete = (post: FeedPost) => {
-    if (!currentUser) return false;
+    if (!user) return false;
     
     // Admin can edit/delete anything
-    if (currentUser.role === 'admin') return true;
+    if (profile?.role === 'admin') return true;
     
     // Regular users can only edit/delete their own feed posts
-    if (post.createdBy === currentUser.name) return true;
+    if (post.created_by === user.id) return true;
     
     return false;
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este post?")) {
       return;
     }
     
-    const updatedPosts = posts.filter(post => post.id !== id);
-    setPosts(updatedPosts);
-    localStorage.setItem('andcont_feed', JSON.stringify(updatedPosts));
-    
-    // Also remove associated comments
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const filteredComments = allComments.filter(
-      (comment: any) => !(comment.postId === id && comment.postType === 'feed')
-    );
-    localStorage.setItem('andcont_comments', JSON.stringify(filteredComments));
-    
-    // Also remove associated reactions
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const filteredReactions = allReactions.filter(
-      (reaction: any) => !(reaction.postId === id && reaction.postType === 'feed')
-    );
-    localStorage.setItem('andcont_reactions', JSON.stringify(filteredReactions));
-    
-    toast.success("Post removido com sucesso!");
+    try {
+      const { error } = await supabase
+        .from('feed_posts')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting feed post:', error);
+        toast.error("Erro ao excluir post");
+        return;
+      }
+
+      toast.success("Post removido com sucesso!");
+      loadPosts();
+    } catch (error) {
+      console.error('Error deleting feed post:', error);
+      toast.error("Erro ao excluir post");
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -119,6 +147,14 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 fade-in">
       {posts.length === 0 ? (
@@ -126,9 +162,7 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
           <h3 className="text-xl font-medium text-white">Nenhum post disponível</h3>
           <p className="text-gray-300 mt-2">
-            {isAdmin 
-              ? "Clique em 'Adicionar conteúdo' para criar um novo post." 
-              : "Não há posts para exibir no momento."}
+            Clique em 'Nova Publicação' para criar seu primeiro post.
           </p>
         </div>
       ) : (
@@ -150,13 +184,6 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectPost(post.id, 'feed');
-                        // Wait for the post detail to load, then show edit form
-                        setTimeout(() => {
-                          const editButton = document.querySelector('.edit-button');
-                          if (editButton) {
-                            (editButton as HTMLButtonElement).click();
-                          }
-                        }, 100);
                       }}
                       className="text-gray-300 hover:text-[#7B68EE] hover:bg-black/60"
                     >
@@ -177,10 +204,10 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
                 )}
               </div>
               
-              {post.image && (
+              {post.image_url && (
                 <div className="mt-4 mb-4">
                   <img 
-                    src={post.image} 
+                    src={post.image_url} 
                     alt={post.title} 
                     className="w-full h-auto max-h-64 object-contain rounded-md border border-[#7B68EE]/30"
                   />
@@ -205,9 +232,9 @@ const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: {post.createdBy}</span>
+                <span>Por: {post.profiles?.name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
-                <span>{formatDate(post.createdAt)}</span>
+                <span>{formatDate(post.created_at)}</span>
               </div>
             </CardFooter>
           </Card>

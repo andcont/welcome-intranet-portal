@@ -4,13 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Heart, ThumbsUp, Star, Circle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Reaction {
-  postId: string;
-  postType: string;
-  userId: string;
-  type: "like" | "love" | "star" | "wow" | "sad";
-  timestamp: string;
+  id: string;
+  post_id: string;
+  post_type: string;
+  created_by: string;
+  reaction_type: string;
+  created_at: string;
 }
 
 interface PostReactionsProps {
@@ -30,118 +33,106 @@ const PostReactions = ({ postId, postType }: PostReactionsProps) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [userReaction, setUserReaction] = useState<string | null>(null);
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
+  const { user } = useAuth();
   
-  const getCurrentUser = (): string => {
-    const userStr = localStorage.getItem("andcont_user");
-    if (!userStr) return "";
+  const loadReactions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reactions')
+        .select('*')
+        .eq('post_id', postId)
+        .eq('post_type', postType);
+
+      if (error) {
+        console.error('Error loading reactions:', error);
+        return;
+      }
+
+      setReactions(data || []);
+      
+      // Calculate counts for each reaction type
+      const counts: Record<string, number> = {};
+      (data || []).forEach((reaction) => {
+        counts[reaction.reaction_type] = (counts[reaction.reaction_type] || 0) + 1;
+      });
+      setReactionCounts(counts);
+      
+      // Check if current user has already reacted
+      if (user) {
+        const userReaction = (data || []).find(
+          (reaction) => reaction.created_by === user.id
+        );
+        
+        if (userReaction) {
+          setUserReaction(userReaction.reaction_type);
+        } else {
+          setUserReaction(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading reactions:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadReactions();
+  }, [postId, postType, user]);
+  
+  const addReaction = async (reactionType: string) => {
+    if (!user) return;
     
     try {
-      const user = JSON.parse(userStr);
-      return user.id || "";
-    } catch {
-      return "";
+      // Remove existing reaction by this user for this post if any
+      await supabase
+        .from('reactions')
+        .delete()
+        .eq('post_id', postId)
+        .eq('post_type', postType)
+        .eq('created_by', user.id);
+      
+      // Add new reaction
+      const { error } = await supabase
+        .from('reactions')
+        .insert({
+          post_id: postId,
+          post_type: postType,
+          created_by: user.id,
+          reaction_type: reactionType
+        });
+
+      if (error) {
+        console.error('Error adding reaction:', error);
+        return;
+      }
+
+      // Reload reactions
+      loadReactions();
+    } catch (error) {
+      console.error('Error adding reaction:', error);
     }
   };
   
-  useEffect(() => {
-    // Load reactions from localStorage
-    const storedReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const postReactions = storedReactions.filter(
-      (reaction: Reaction) => reaction.postId === postId && reaction.postType === postType
-    );
+  const removeReaction = async () => {
+    if (!user) return;
     
-    setReactions(postReactions);
-    
-    // Calculate counts for each reaction type
-    const counts: Record<string, number> = {};
-    postReactions.forEach((reaction: Reaction) => {
-      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
-    });
-    setReactionCounts(counts);
-    
-    // Check if current user has already reacted
-    const userId = getCurrentUser();
-    const userReaction = postReactions.find(
-      (reaction: Reaction) => reaction.userId === userId
-    );
-    
-    if (userReaction) {
-      setUserReaction(userReaction.type);
-    } else {
-      setUserReaction(null);
+    try {
+      const { error } = await supabase
+        .from('reactions')
+        .delete()
+        .eq('post_id', postId)
+        .eq('post_type', postType)
+        .eq('created_by', user.id);
+
+      if (error) {
+        console.error('Error removing reaction:', error);
+        return;
+      }
+
+      // Reload reactions
+      loadReactions();
+    } catch (error) {
+      console.error('Error removing reaction:', error);
     }
-  }, [postId, postType]);
-  
-  const addReaction = (reactionType: string) => {
-    const userId = getCurrentUser();
-    if (!userId) return;
-    
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    
-    // Remove existing reaction by this user for this post if any
-    const filteredReactions = allReactions.filter(
-      (reaction: Reaction) => !(reaction.postId === postId && reaction.postType === postType && reaction.userId === userId)
-    );
-    
-    // Add new reaction
-    const newReaction = {
-      postId,
-      postType,
-      userId,
-      type: reactionType,
-      timestamp: new Date().toISOString()
-    };
-    
-    const updatedReactions = [...filteredReactions, newReaction];
-    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
-    
-    // Update local state
-    const postReactions = updatedReactions.filter(
-      (reaction: Reaction) => reaction.postId === postId && reaction.postType === postType
-    );
-    
-    setReactions(postReactions);
-    
-    // Recalculate counts
-    const counts: Record<string, number> = {};
-    postReactions.forEach((reaction: Reaction) => {
-      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
-    });
-    setReactionCounts(counts);
-    
-    // Update user's reaction
-    setUserReaction(reactionType);
-  };
-  
-  const removeReaction = () => {
-    const userId = getCurrentUser();
-    if (!userId) return;
-    
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    
-    // Remove existing reaction by this user for this post
-    const updatedReactions = allReactions.filter(
-      (reaction: Reaction) => !(reaction.postId === postId && reaction.postType === postType && reaction.userId === userId)
-    );
-    
-    localStorage.setItem('andcont_reactions', JSON.stringify(updatedReactions));
-    
-    // Update local state
-    const postReactions = updatedReactions.filter(
-      (reaction: Reaction) => reaction.postId === postId && reaction.postType === postType
-    );
-    
-    setReactions(postReactions);
-    
-    // Recalculate counts
-    const counts: Record<string, number> = {};
-    postReactions.forEach((reaction: Reaction) => {
-      counts[reaction.type] = (counts[reaction.type] || 0) + 1;
-    });
-    setReactionCounts(counts);
-    
-    // Clear user's reaction
-    setUserReaction(null);
   };
   
   const handleReaction = (reactionType: string) => {

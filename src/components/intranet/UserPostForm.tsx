@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserPostFormProps {
   onClose: () => void;
@@ -15,9 +17,16 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast.error("Usuário não autenticado");
+      return;
+    }
     
     if (!title.trim()) {
       toast.error("Por favor, informe um título");
@@ -29,39 +38,32 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
       return;
     }
     
-    const user = JSON.parse(localStorage.getItem('andcont_user') || '{}');
-    const now = new Date();
-    const id = Date.now().toString();
+    setLoading(true);
     
-    // Salvar post no feed
-    const feed = JSON.parse(localStorage.getItem('andcont_feed') || '[]');
-    feed.push({
-      id,
-      title,
-      content,
-      image,
-      createdAt: now.toISOString(),
-      createdBy: user.name || "Usuário"
-    });
-    localStorage.setItem('andcont_feed', JSON.stringify(feed));
-    
-    // Registrar atividade
-    const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
-    activities.push({
-      id: Date.now().toString(),
-      userId: user.id || 'unknown',
-      userName: user.name || 'Usuário',
-      userEmail: user.email || '',
-      type: 'create_post',
-      itemId: id,
-      itemTitle: title,
-      hasImage: !!image,
-      timestamp: now.toISOString()
-    });
-    localStorage.setItem('andcont_activities', JSON.stringify(activities));
-    
-    toast.success("Publicação realizada com sucesso!");
-    onClose();
+    try {
+      const { error } = await supabase
+        .from('feed_posts')
+        .insert({
+          title,
+          content,
+          image_url: image,
+          created_by: user.id
+        });
+
+      if (error) {
+        console.error('Error creating feed post:', error);
+        toast.error("Erro ao criar publicação");
+        return;
+      }
+      
+      toast.success("Publicação realizada com sucesso!");
+      onClose();
+    } catch (error) {
+      console.error('Error creating feed post:', error);
+      toast.error("Erro ao criar publicação");
+    } finally {
+      setLoading(false);
+    }
   };
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +92,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
           size="sm" 
           onClick={onClose}
           className="text-white/70 hover:text-white hover:bg-white/10"
+          disabled={loading}
         >
           <X size={18} />
         </Button>
@@ -104,6 +107,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Informe o título"
             className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
+            disabled={loading}
           />
         </div>
         
@@ -116,6 +120,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
             placeholder="O que você está pensando?"
             rows={5}
             className="bg-black/20 border-white/30 text-white placeholder:text-white/50 resize-none"
+            disabled={loading}
           />
         </div>
         
@@ -135,6 +140,7 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
                 size="sm"
                 className="absolute top-2 right-2 bg-black/50"
                 onClick={removeImage}
+                disabled={loading}
               >
                 <X size={16} />
               </Button>
@@ -147,12 +153,14 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
                 accept="image/*" 
                 onChange={handleImageChange}
                 className="hidden" 
+                disabled={loading}
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById('image')?.click()}
                 className="bg-black/20 border-white/30 hover:bg-black/30 text-white"
+                disabled={loading}
               >
                 <ImageIcon size={16} className="mr-2" />
                 Selecionar Imagem
@@ -167,14 +175,16 @@ const UserPostForm = ({ onClose }: UserPostFormProps) => {
             variant="outline" 
             onClick={onClose}
             className="bg-black/20 border-white/30 hover:bg-black/30 text-white"
+            disabled={loading}
           >
             Cancelar
           </Button>
           <Button 
             type="submit" 
             className="bg-gradient-to-r from-andcont-blue to-andcont-purple hover:opacity-90 text-white"
+            disabled={loading}
           >
-            Publicar
+            {loading ? "Publicando..." : "Publicar"}
           </Button>
         </div>
       </form>

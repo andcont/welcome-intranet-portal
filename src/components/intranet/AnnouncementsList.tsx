@@ -4,14 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Trash, AlertCircle, MessageSquare, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Announcement {
   id: string;
   title: string;
   content: string;
-  image?: string | null;
-  createdAt: string;
-  createdBy: string;
+  image_url?: string | null;
+  created_at: string;
+  created_by: string;
+  profiles?: {
+    name: string;
+  };
 }
 
 interface AnnouncementsListProps {
@@ -23,78 +27,102 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  const loadAnnouncements = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select(`
+          *,
+          profiles:created_by (name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading announcements:', error);
+        toast.error("Erro ao carregar comunicados");
+        return;
+      }
+
+      setAnnouncements(data || []);
+    } catch (error) {
+      console.error('Error loading announcements:', error);
+      toast.error("Erro ao carregar comunicados");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCommentCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('post_id')
+        .eq('post_type', 'announcement');
+
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        data.forEach((comment) => {
+          counts[comment.post_id] = (counts[comment.post_id] || 0) + 1;
+        });
+        setCommentCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error loading comment counts:', error);
+    }
+  };
+
+  const loadReactionCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reactions')
+        .select('post_id')
+        .eq('post_type', 'announcement');
+
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        data.forEach((reaction) => {
+          counts[reaction.post_id] = (counts[reaction.post_id] || 0) + 1;
+        });
+        setReactionCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error loading reaction counts:', error);
+    }
+  };
 
   useEffect(() => {
-    // Load announcements from localStorage
-    const storedAnnouncements = localStorage.getItem('andcont_announcements');
-    if (storedAnnouncements) {
-      setAnnouncements(JSON.parse(storedAnnouncements));
-    } else {
-      // Sample initial data
-      const initialAnnouncements = [
-        {
-          id: '1',
-          title: 'Bem-vindo à nova Intranet',
-          content: 'Esta é a nova plataforma de comunicação interna da AndCont. Aqui você encontrará todas as informações importantes da empresa.',
-          createdAt: new Date().toISOString(),
-          createdBy: 'Administrador'
-        }
-      ];
-      localStorage.setItem('andcont_announcements', JSON.stringify(initialAnnouncements));
-      setAnnouncements(initialAnnouncements);
-    }
-
-    // Load comment counts
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const counts: Record<string, number> = {};
-    
-    allComments.forEach((comment: any) => {
-      if (comment.postType === 'announcement') {
-        counts[comment.postId] = (counts[comment.postId] || 0) + 1;
-      }
-    });
-    
-    setCommentCounts(counts);
-    
-    // Load reaction counts
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const reactionCounts: Record<string, number> = {};
-    
-    allReactions.forEach((reaction: any) => {
-      if (reaction.postType === 'announcement') {
-        reactionCounts[reaction.postId] = (reactionCounts[reaction.postId] || 0) + 1;
-      }
-    });
-    
-    setReactionCounts(reactionCounts);
+    loadAnnouncements();
+    loadCommentCounts();
+    loadReactionCounts();
   }, []);
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the parent click
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     
     if (!confirm("Tem certeza que deseja excluir este comunicado?")) {
       return;
     }
     
-    const updatedAnnouncements = announcements.filter(item => item.id !== id);
-    setAnnouncements(updatedAnnouncements);
-    localStorage.setItem('andcont_announcements', JSON.stringify(updatedAnnouncements));
-    
-    // Also remove associated comments
-    const allComments = JSON.parse(localStorage.getItem('andcont_comments') || '[]');
-    const filteredComments = allComments.filter(
-      (comment: any) => !(comment.postId === id && comment.postType === 'announcement')
-    );
-    localStorage.setItem('andcont_comments', JSON.stringify(filteredComments));
-    
-    // Also remove associated reactions
-    const allReactions = JSON.parse(localStorage.getItem('andcont_reactions') || '[]');
-    const filteredReactions = allReactions.filter(
-      (reaction: any) => !(reaction.postId === id && reaction.postType === 'announcement')
-    );
-    localStorage.setItem('andcont_reactions', JSON.stringify(filteredReactions));
-    
-    toast.success("Comunicado removido com sucesso!");
+    try {
+      const { error } = await supabase
+        .from('announcements')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting announcement:', error);
+        toast.error("Erro ao excluir comunicado");
+        return;
+      }
+
+      toast.success("Comunicado removido com sucesso!");
+      loadAnnouncements();
+    } catch (error) {
+      console.error('Error deleting announcement:', error);
+      toast.error("Erro ao excluir comunicado");
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -107,6 +135,14 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
     });
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 fade-in">
       {announcements.length === 0 ? (
@@ -115,7 +151,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
           <h3 className="text-xl font-medium text-white">Nenhum comunicado disponível</h3>
           <p className="text-gray-300 mt-2">
             {isAdmin 
-              ? "Clique em 'Adicionar conteúdo' para criar um novo comunicado." 
+              ? "Clique em 'Adicionar' para criar um novo comunicado." 
               : "Não há comunicados para exibir no momento."}
           </p>
         </div>
@@ -142,10 +178,10 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
                 )}
               </div>
               
-              {announcement.image && (
+              {announcement.image_url && (
                 <div className="mt-4 mb-4">
                   <img 
-                    src={announcement.image} 
+                    src={announcement.image_url} 
                     alt={announcement.title} 
                     className="w-full h-auto max-h-64 object-contain rounded-md border border-[#7B68EE]/30"
                   />
@@ -170,9 +206,9 @@ const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) =>
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: {announcement.createdBy}</span>
+                <span>Por: {announcement.profiles?.name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
-                <span>{formatDate(announcement.createdAt)}</span>
+                <span>{formatDate(announcement.created_at)}</span>
               </div>
             </CardFooter>
           </Card>

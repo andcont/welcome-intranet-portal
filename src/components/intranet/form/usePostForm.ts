@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UsePostFormProps {
   activeCategory: string;
@@ -13,143 +15,141 @@ export const usePostForm = ({ activeCategory, onClose }: UsePostFormProps) => {
   const [url, setUrl] = useState("");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [image, setImage] = useState<string | null>(null);
-  
-  const getCurrentUser = () => {
-    const userStr = localStorage.getItem("andcont_user");
-    if (!userStr) return "Administrador";
-    
-    try {
-      const user = JSON.parse(userStr);
-      return user.name || "Administrador";
-    } catch {
-      return "Administrador";
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast.error("Usuário não autenticado");
+      return;
+    }
     
     if (!title.trim()) {
       toast.error("Por favor, informe um título");
       return;
     }
     
-    const currentUser = getCurrentUser();
-    const now = new Date();
-    const id = Date.now().toString();
+    setLoading(true);
     
-    switch (activeCategory) {
-      case "announcements":
-        if (!content.trim()) {
-          toast.error("Por favor, informe o conteúdo do comunicado");
-          return;
-        }
-        
-        // Salvar comunicado
-        const announcements = JSON.parse(localStorage.getItem('andcont_announcements') || '[]');
-        announcements.push({
-          id,
-          title,
-          content,
-          image: image,
-          createdAt: now.toISOString(),
-          createdBy: currentUser
-        });
-        localStorage.setItem('andcont_announcements', JSON.stringify(announcements));
-        toast.success("Comunicado publicado com sucesso!");
-        break;
-        
-      case "links":
-        // Validar URL apenas se for fornecida
-        if (url.trim()) {
-          try {
-            new URL(url);
-          } catch {
-            toast.error("Por favor, informe uma URL válida");
+    try {
+      switch (activeCategory) {
+        case "announcements":
+          if (!content.trim()) {
+            toast.error("Por favor, informe o conteúdo do comunicado");
             return;
           }
-        }
-        
-        // Salvar link
-        const links = JSON.parse(localStorage.getItem('andcont_links') || '[]');
-        links.push({
-          id,
-          title,
-          url: url.trim(),
-          description: content,
-          image: image,
-          createdAt: now.toISOString(),
-          createdBy: currentUser
-        });
-        localStorage.setItem('andcont_links', JSON.stringify(links));
-        toast.success("Link adicionado com sucesso!");
-        break;
-        
-      case "calendar":
-        if (!date) {
-          toast.error("Por favor, selecione uma data para o evento");
-          return;
-        }
-        
-        if (!content.trim()) {
-          toast.error("Por favor, informe uma descrição para o evento");
-          return;
-        }
-        
-        // Salvar evento
-        const events = JSON.parse(localStorage.getItem('andcont_events') || '[]');
-        events.push({
-          id,
-          title,
-          description: content,
-          image: image,
-          date: date.toISOString().split('T')[0],
-          createdAt: now.toISOString(),
-          createdBy: currentUser
-        });
-        localStorage.setItem('andcont_events', JSON.stringify(events));
-        toast.success("Evento adicionado com sucesso!");
-        break;
+          
+          const { error: announcementError } = await supabase
+            .from('announcements')
+            .insert({
+              title,
+              content,
+              image_url: image,
+              created_by: user.id
+            });
 
-      case "feed":
-        if (!content.trim()) {
-          toast.error("Por favor, informe o conteúdo do post");
-          return;
-        }
-        
-        // Salvar post no feed
-        const feed = JSON.parse(localStorage.getItem('andcont_feed') || '[]');
-        feed.push({
-          id,
-          title,
-          content,
-          image: image,
-          createdAt: now.toISOString(),
-          createdBy: currentUser
-        });
-        localStorage.setItem('andcont_feed', JSON.stringify(feed));
-        toast.success("Post publicado com sucesso!");
-        break;
+          if (announcementError) {
+            console.error('Error creating announcement:', announcementError);
+            toast.error("Erro ao criar comunicado");
+            return;
+          }
+          
+          toast.success("Comunicado publicado com sucesso!");
+          break;
+          
+        case "links":
+          if (url.trim()) {
+            try {
+              new URL(url);
+            } catch {
+              toast.error("Por favor, informe uma URL válida");
+              return;
+            }
+          }
+          
+          const { error: linkError } = await supabase
+            .from('useful_links')
+            .insert({
+              title,
+              url: url.trim(),
+              content: content,
+              image_url: image,
+              created_by: user.id
+            });
+
+          if (linkError) {
+            console.error('Error creating link:', linkError);
+            toast.error("Erro ao criar link");
+            return;
+          }
+          
+          toast.success("Link adicionado com sucesso!");
+          break;
+          
+        case "calendar":
+          if (!date) {
+            toast.error("Por favor, selecione uma data para o evento");
+            return;
+          }
+          
+          if (!content.trim()) {
+            toast.error("Por favor, informe uma descrição para o evento");
+            return;
+          }
+          
+          const { error: eventError } = await supabase
+            .from('events')
+            .insert({
+              title,
+              content,
+              event_date: date.toISOString(),
+              image_url: image,
+              created_by: user.id
+            });
+
+          if (eventError) {
+            console.error('Error creating event:', eventError);
+            toast.error("Erro ao criar evento");
+            return;
+          }
+          
+          toast.success("Evento adicionado com sucesso!");
+          break;
+
+        case "feed":
+          if (!content.trim()) {
+            toast.error("Por favor, informe o conteúdo do post");
+            return;
+          }
+          
+          const { error: feedError } = await supabase
+            .from('feed_posts')
+            .insert({
+              title,
+              content,
+              image_url: image,
+              created_by: user.id
+            });
+
+          if (feedError) {
+            console.error('Error creating feed post:', feedError);
+            toast.error("Erro ao criar post");
+            return;
+          }
+          
+          toast.success("Post publicado com sucesso!");
+          break;
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error("Erro ao salvar");
+    } finally {
+      setLoading(false);
     }
-    
-    // Registrar atividade
-    const user = JSON.parse(localStorage.getItem('andcont_user') || '{}');
-    const activities = JSON.parse(localStorage.getItem('andcont_activities') || '[]');
-    activities.push({
-      id: Date.now().toString(),
-      userId: user.id || 'unknown',
-      userName: user.name || 'Administrador',
-      userEmail: user.email || 'admin',
-      type: `create_${activeCategory === 'feed' ? 'post' : activeCategory.slice(0, -1)}`,
-      itemId: id,
-      itemTitle: title,
-      hasImage: !!image,
-      timestamp: now.toISOString()
-    });
-    localStorage.setItem('andcont_activities', JSON.stringify(activities));
-    
-    // Fechar formulário
-    onClose();
   };
 
   return {
@@ -163,7 +163,8 @@ export const usePostForm = ({ activeCategory, onClose }: UsePostFormProps) => {
     setDate,
     image,
     setImage,
-    handleSubmit
+    handleSubmit,
+    loading
   };
 };
 

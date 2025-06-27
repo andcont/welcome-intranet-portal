@@ -1,26 +1,23 @@
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import CommentForm from "./comments/CommentForm";
 import CommentsList from "./comments/CommentsList";
 
 interface Comment {
   id: string;
-  postId: string;
-  postType: string;
+  post_id: string;
+  post_type: string;
   content: string;
-  createdAt: string;
-  createdBy: string;
-  userEmail?: string;
-  imageUrl?: string;
-  gifUrl?: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  profileImage?: string;
+  created_at: string;
+  created_by: string;
+  image_url?: string;
+  gif_url?: string;
+  profiles?: {
+    name: string;
+    profile_image?: string;
+  };
 }
 
 interface PostCommentsProps {
@@ -30,46 +27,45 @@ interface PostCommentsProps {
 
 const PostComments = ({ postId, postType }: PostCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<Record<string, User>>({});
+  const [loading, setLoading] = useState(true);
+  const { user, profile } = useAuth();
+
+  const loadComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select(`
+          *,
+          profiles:created_by (name, profile_image)
+        `)
+        .eq('post_id', postId)
+        .eq('post_type', postType)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading comments:', error);
+        return;
+      }
+
+      setComments(data || []);
+    } catch (error) {
+      console.error('Error loading comments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Load current user
-    const userStr = localStorage.getItem("andcont_user");
-    if (userStr) {
-      try {
-        const parsedUser = JSON.parse(userStr);
-        setCurrentUser(parsedUser);
-      } catch (error) {
-        console.error("Erro ao analisar dados do usuário:", error);
-      }
-    }
-
-    // Load all users to get profile images
-    const usersStr = localStorage.getItem("andcont_users");
-    if (usersStr) {
-      try {
-        const allUsers = JSON.parse(usersStr);
-        const usersMap: Record<string, User> = {};
-        allUsers.forEach((user: User) => {
-          usersMap[user.email] = user;
-        });
-        setUsers(usersMap);
-      } catch (error) {
-        console.error("Erro ao analisar dados de usuários:", error);
-      }
-    }
-
     loadComments();
   }, [postId, postType]);
 
-  const loadComments = () => {
-    const allComments = JSON.parse(localStorage.getItem("andcont_comments") || "[]");
-    const filteredComments = allComments.filter(
-      (comment: Comment) => comment.postId === postId && comment.postType === postType
-    );
-    setComments(filteredComments);
-  };
+  const currentUser = user && profile ? {
+    id: user.id,
+    name: profile.name,
+    email: profile.email,
+    role: profile.role,
+    profileImage: profile.profile_image
+  } : null;
 
   return (
     <div className="mt-12 space-y-8">
@@ -95,8 +91,9 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       <CommentsList
         comments={comments}
         currentUser={currentUser}
-        users={users}
+        users={{}}
         onCommentDeleted={loadComments}
+        loading={loading}
       />
     </div>
   );
