@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Heart, Reply, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate, getUserInitials, getUserProfileImage } from "@/utils/commentUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Comment {
   id: string;
@@ -33,23 +34,42 @@ interface CommentItemProps {
 }
 
 const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentItemProps) => {
-  const handleDeleteComment = (commentId: string) => {
+  const handleDeleteComment = async (commentId: string) => {
     if (!currentUser) return;
 
-    const allComments = JSON.parse(localStorage.getItem("andcont_comments") || "[]");
-    const commentToDelete = allComments.find((c: Comment) => c.id === commentId);
-
-    if (!commentToDelete) return;
-
-    if (currentUser.role !== "admin" && commentToDelete.userEmail !== currentUser.email) {
+    // Check permissions - admin can delete any comment, users can only delete their own
+    const canDelete = currentUser.role === "admin" || currentUser.id === comment.createdBy;
+    
+    if (!canDelete) {
       toast.error("Você não tem permissão para excluir este comentário");
       return;
     }
 
-    const updatedComments = allComments.filter((c: Comment) => c.id !== commentId);
-    localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
-    onCommentDeleted();
-    toast.success("Comentário removido com sucesso!");
+    if (!confirm("Tem certeza que deseja excluir este comentário?")) {
+      return;
+    }
+
+    try {
+      console.log('Deleting comment:', commentId);
+      
+      const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId);
+
+      if (error) {
+        console.error('Error deleting comment:', error);
+        toast.error("Erro ao excluir comentário");
+        return;
+      }
+
+      console.log('Comment deleted successfully');
+      onCommentDeleted();
+      toast.success("Comentário removido com sucesso!");
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error("Erro ao excluir comentário");
+    }
   };
 
   return (
@@ -64,7 +84,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
                 className="object-cover"
               />
               <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
-                {getUserInitials(comment.createdBy)}
+                {getUserInitials(comment.userEmail || comment.createdBy)}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-black/60 shadow-lg"></div>
@@ -73,7 +93,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
           <div className="flex-1 min-w-0 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h4 className="font-bold text-white text-xl">{comment.createdBy}</h4>
+                <h4 className="font-bold text-white text-xl">{comment.userEmail || comment.createdBy}</h4>
                 <span className="text-sm text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   {formatDate(comment.createdAt)}
                 </span>
@@ -96,7 +116,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
                   <Reply size={16} />
                 </Button>
                 
-                {(currentUser?.role === "admin" || currentUser?.email === comment.userEmail) && (
+                {(currentUser?.role === "admin" || currentUser?.id === comment.createdBy) && (
                   <Button
                     variant="ghost"
                     size="sm"

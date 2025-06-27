@@ -6,18 +6,7 @@ import { Image, Smile } from "lucide-react";
 import { toast } from "sonner";
 import GifPicker from "./GifPicker";
 import MediaPreview from "./MediaPreview";
-
-interface Comment {
-  id: string;
-  postId: string;
-  postType: string;
-  content: string;
-  createdAt: string;
-  createdBy: string;
-  userEmail?: string;
-  imageUrl?: string;
-  gifUrl?: string;
-}
+import { supabase } from "@/integrations/supabase/client";
 
 interface User {
   id: string;
@@ -40,6 +29,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedGif, setSelectedGif] = useState<string | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +79,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
     clearGif();
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!newComment.trim() && !selectedImage && !selectedGif) {
       toast.error("O comentário não pode estar vazio");
       return;
@@ -100,27 +90,45 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
       return;
     }
 
-    const comment: Comment = {
-      id: Date.now().toString(),
-      postId,
-      postType,
-      content: newComment,
-      createdAt: new Date().toISOString(),
-      createdBy: currentUser.name,
-      userEmail: currentUser.email,
-      imageUrl: previewImage || undefined,
-      gifUrl: selectedGif || undefined
-    };
+    setIsSubmitting(true);
 
-    const allComments = JSON.parse(localStorage.getItem("andcont_comments") || "[]");
-    const updatedComments = [comment, ...allComments];
-    localStorage.setItem("andcont_comments", JSON.stringify(updatedComments));
+    try {
+      const commentData = {
+        post_id: postId,
+        post_type: postType,
+        content: newComment,
+        created_by: currentUser.id,
+        image_url: previewImage || null,
+        gif_url: selectedGif || null
+      };
 
-    setNewComment("");
-    clearAllMedia();
-    setShowGifPicker(false);
-    onCommentAdded();
-    toast.success("Comentário adicionado com sucesso!");
+      console.log('Inserting comment:', commentData);
+
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([commentData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error inserting comment:', error);
+        toast.error("Erro ao adicionar comentário");
+        return;
+      }
+
+      console.log('Comment inserted successfully:', data);
+      
+      setNewComment("");
+      clearAllMedia();
+      setShowGifPicker(false);
+      onCommentAdded();
+      toast.success("Comentário adicionado com sucesso!");
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast.error("Erro ao adicionar comentário");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -130,6 +138,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Escreva seu comentário..."
         className="bg-black/30 text-white border-white/20 resize-none h-24"
+        disabled={isSubmitting}
       />
       
       <MediaPreview 
@@ -146,6 +155,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
             className="hidden"
             ref={imageInputRef}
             onChange={handleImageUpload}
+            disabled={isSubmitting}
           />
           
           <Button 
@@ -154,6 +164,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
             className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => imageInputRef.current?.click()}
             type="button"
+            disabled={isSubmitting}
           >
             <Image size={16} />
             <span className="hidden sm:inline">Foto</span>
@@ -165,6 +176,7 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
             className="bg-black/30 hover:bg-black/40 text-white border-white/20 flex items-center gap-2"
             onClick={() => setShowGifPicker(!showGifPicker)}
             type="button"
+            disabled={isSubmitting}
           >
             <Smile size={16} />
             <span className="hidden sm:inline">GIF</span>
@@ -175,8 +187,9 @@ const CommentForm = ({ postId, postType, currentUser, onCommentAdded }: CommentF
           onClick={handleAddComment} 
           className="bg-gradient-to-r from-[#7B68EE] to-[#D946EF] hover:from-[#7B68EE]/90 hover:to-[#D946EF]/90 text-white"
           type="button"
+          disabled={isSubmitting}
         >
-          Comentar
+          {isSubmitting ? "Enviando..." : "Comentar"}
         </Button>
       </div>
       
