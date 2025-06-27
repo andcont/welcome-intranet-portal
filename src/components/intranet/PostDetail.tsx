@@ -30,30 +30,26 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       console.log('Loading post:', postId, postType);
       setLoading(true);
       
-      let tableName = '';
+      let query;
       switch (postType) {
         case 'announcement':
-          tableName = 'announcements';
+          query = supabase.from('announcements').select('*').eq('id', postId).single();
           break;
         case 'link':
-          tableName = 'useful_links';
+          query = supabase.from('useful_links').select('*').eq('id', postId).single();
           break;
         case 'event':
-          tableName = 'events';
+          query = supabase.from('events').select('*').eq('id', postId).single();
           break;
         case 'feed':
-          tableName = 'feed_posts';
+          query = supabase.from('feed_posts').select('*').eq('id', postId).single();
           break;
         default:
           console.error('Unknown post type:', postType);
           return;
       }
 
-      const { data: postData, error } = await supabase
-        .from(tableName)
-        .select('*')
-        .eq('id', postId)
-        .single();
+      const { data: postData, error } = await query;
 
       if (error) {
         console.error('Error loading post:', error);
@@ -63,22 +59,27 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
 
       console.log('Post loaded:', postData);
 
-      // Load author profile
-      const { data: authorProfile } = await supabase
-        .from('profiles')
-        .select('name')
-        .eq('id', postData.created_by)
-        .single();
+      // Load author profile if the post has created_by field
+      let authorProfile = null;
+      if (postData && 'created_by' in postData && postData.created_by) {
+        const { data: authorData } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('id', postData.created_by)
+          .single();
+        
+        authorProfile = authorData;
+      }
 
       const enrichedPost = {
         ...postData,
         author: authorProfile?.name || 'Usuário',
         // Map database fields to expected format
         createdAt: postData.created_at,
-        imageUrl: postData.image_url,
-        url: postData.url,
-        location: postData.location,
-        date: postData.event_date
+        imageUrl: 'image_url' in postData ? postData.image_url : null,
+        url: 'url' in postData ? postData.url : null,
+        location: 'location' in postData ? postData.location : null,
+        date: 'event_date' in postData ? postData.event_date : null
       };
 
       setPost(enrichedPost);
@@ -101,26 +102,26 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
     }
 
     try {
-      let tableName = '';
+      let deleteQuery;
       switch (postType) {
         case 'announcement':
-          tableName = 'announcements';
+          deleteQuery = supabase.from('announcements').delete().eq('id', postId);
           break;
         case 'link':
-          tableName = 'useful_links';
+          deleteQuery = supabase.from('useful_links').delete().eq('id', postId);
           break;
         case 'event':
-          tableName = 'events';
+          deleteQuery = supabase.from('events').delete().eq('id', postId);
           break;
         case 'feed':
-          tableName = 'feed_posts';
+          deleteQuery = supabase.from('feed_posts').delete().eq('id', postId);
           break;
+        default:
+          console.error('Unknown post type:', postType);
+          return;
       }
 
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', postId);
+      const { error } = await deleteQuery;
 
       if (error) {
         console.error('Error deleting post:', error);
