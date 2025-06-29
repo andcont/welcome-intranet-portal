@@ -80,24 +80,38 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
     }
   };
 
-  const marginLeft = level > 0 ? `ml-${Math.min(level * 8, 16)}` : '';
+  const isReply = level > 0;
 
   return (
-    <div className={`group relative mb-6 ${marginLeft}`}>
-      <div className="bg-gradient-to-r from-black/60 to-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-6 hover:border-white/30 transition-all duration-300 hover:shadow-2xl">
+    <div className={`group relative mb-6 ${isReply ? 'ml-8' : ''}`}>
+      <div className={`${
+        isReply 
+          ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl border border-purple-300/30 p-4 shadow-lg'
+          : 'bg-gradient-to-r from-black/60 to-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-6 hover:border-white/30 transition-all duration-300 hover:shadow-2xl'
+      }`}>
+        {isReply && (
+          <div className="absolute -top-3 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+            Resposta
+          </div>
+        )}
+        
         <div className="flex items-start gap-4">
           <div className="relative flex-shrink-0">
-            <Avatar className="h-12 w-12 border-2 border-white/20 shadow-lg">
+            <Avatar className={`${isReply ? 'h-10 w-10' : 'h-12 w-12'} border-2 ${isReply ? 'border-purple-300/50' : 'border-white/20'} shadow-lg`}>
               <AvatarImage 
                 src={comment.authorProfileImage} 
                 alt={comment.authorName || comment.createdBy}
                 className="object-cover"
               />
-              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold">
+              <AvatarFallback className={`${
+                isReply 
+                  ? 'bg-gradient-to-br from-purple-400 to-pink-400 text-white font-bold text-sm'
+                  : 'bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold'
+              }`}>
                 {getUserInitials(comment.authorName || comment.userEmail || comment.createdBy)}
               </AvatarFallback>
             </Avatar>
-            {level === 0 && (
+            {!isReply && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black/60 shadow-sm"></div>
             )}
           </div>
@@ -105,10 +119,10 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <h4 className="font-bold text-white text-lg">
-                  {comment.authorName || comment.userEmail || comment.createdBy}
+                <h4 className={`font-bold text-white ${isReply ? 'text-base' : 'text-lg'}`}>
+                  {comment.authorName || 'Usuário'}
                 </h4>
-                <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full">
+                <span className={`text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full ${isReply ? 'text-xs' : ''}`}>
                   {formatDate(comment.createdAt)}
                 </span>
               </div>
@@ -122,14 +136,16 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
                   <Heart size={14} />
                 </Button>
                 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowReply(!showReply)}
-                  className="text-white/60 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-8 h-8 p-0"
-                >
-                  <Reply size={14} />
-                </Button>
+                {!isReply && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowReply(!showReply)}
+                    className="text-white/60 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-8 h-8 p-0"
+                  >
+                    <Reply size={14} />
+                  </Button>
+                )}
                 
                 {(currentUser?.role === "admin" || currentUser?.id === comment.createdBy) && (
                   <Button
@@ -145,7 +161,11 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
             </div>
             
             {comment.content && (
-              <div className="bg-black/30 rounded-xl p-4 border border-white/10">
+              <div className={`${
+                isReply 
+                  ? 'bg-black/20 rounded-lg p-3 border border-purple-200/20'
+                  : 'bg-black/30 rounded-xl p-4 border border-white/10'
+              }`}>
                 <p className="text-white/90 leading-relaxed whitespace-pre-wrap">
                   {comment.content}
                 </p>
@@ -153,7 +173,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
             )}
             
             {(comment.imageUrl || comment.gifUrl) && (
-              <div className="rounded-xl overflow-hidden border border-white/20 shadow-lg">
+              <div className={`rounded-xl overflow-hidden border ${isReply ? 'border-purple-200/30' : 'border-white/20'} shadow-lg`}>
                 <img 
                   src={comment.gifUrl || comment.imageUrl} 
                   alt="Mídia do comentário" 
@@ -162,25 +182,27 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
               </div>
             )}
 
-            <div className="flex items-center gap-4 pt-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowReply(!showReply)}
-                className="text-white/60 hover:text-white hover:bg-white/10 rounded-full px-3 py-1 text-sm"
-              >
-                <MessageCircle size={14} className="mr-1" />
-                Responder
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white/60 hover:text-pink-400 hover:bg-pink-500/10 rounded-full px-3 py-1 text-sm"
-              >
-                <Heart size={14} className="mr-1" />
-                Curtir
-              </Button>
-            </div>
+            {!isReply && (
+              <div className="flex items-center gap-4 pt-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowReply(!showReply)}
+                  className="text-white/60 hover:text-white hover:bg-white/10 rounded-full px-3 py-1 text-sm"
+                >
+                  <MessageCircle size={14} className="mr-1" />
+                  Responder
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white/60 hover:text-pink-400 hover:bg-pink-500/10 rounded-full px-3 py-1 text-sm"
+                >
+                  <Heart size={14} className="mr-1" />
+                  Curtir
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

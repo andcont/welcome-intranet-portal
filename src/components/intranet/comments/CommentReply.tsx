@@ -79,20 +79,22 @@ const CommentReply = ({
   if (!currentUser) return null;
 
   return (
-    <div className="ml-8 bg-black/20 rounded-2xl p-4 border border-white/10">
+    <div className="ml-8 bg-gradient-to-r from-purple-500/30 to-pink-500/20 backdrop-blur-xl rounded-2xl p-4 border border-purple-300/40 shadow-xl">
       <div className="flex items-start gap-3 mb-3">
-        <Avatar className="h-8 w-8 border-2 border-white/20">
+        <Avatar className="h-8 w-8 border-2 border-purple-300/50 shadow-md">
           <AvatarImage 
             src={currentUser.profileImage} 
             alt={currentUser.name}
             className="object-cover"
           />
-          <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm">
+          <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-400 text-white text-sm font-bold">
             {currentUser.name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <p className="text-white/80 text-sm mb-2">Respondendo como {currentUser.name}</p>
+          <p className="text-white/90 text-sm mb-2 font-medium">
+            Respondendo como <span className="text-purple-200">{currentUser.name}</span>
+          </p>
         </div>
       </div>
       
@@ -101,7 +103,7 @@ const CommentReply = ({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Digite sua resposta..."
-          className="bg-black/30 border-white/20 text-white placeholder:text-white/50 resize-none"
+          className="bg-black/40 border-purple-300/30 text-white placeholder:text-white/60 resize-none focus:border-purple-400/50"
           rows={3}
         />
         
@@ -111,7 +113,7 @@ const CommentReply = ({
             variant="ghost"
             size="sm"
             onClick={onCancel}
-            className="text-white/70 hover:text-white hover:bg-white/10"
+            className="text-white/70 hover:text-white hover:bg-white/10 border border-white/20"
           >
             <X size={16} className="mr-1" />
             Cancelar
@@ -119,7 +121,7 @@ const CommentReply = ({
           <Button
             type="submit"
             disabled={loading || !content.trim()}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
             size="sm"
           >
             <Send size={16} className="mr-1" />
