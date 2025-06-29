@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Search } from "lucide-react";
@@ -17,9 +17,8 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
   const searchGifs = async (query: string) => {
     setLoading(true);
     try {
-      // Using Giphy's public API with a simple fetch
       const response = await fetch(
-        `https://api.giphy.com/v1/gifs/search?api_key=GlVGYHkr3WSBnllca54iNt0yFbjz7L65&q=${encodeURIComponent(query)}&limit=20&rating=g`
+        `https://api.giphy.com/v1/gifs/search?api_key=GlVGYHkr3WSBnllca54iNt0yFbjz7L65&q=${encodeURIComponent(query)}&limit=20&rating=g&lang=pt`
       );
       const data = await response.json();
       setGifs(data.data || []);
@@ -54,10 +53,15 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
     }
   };
 
+  const handleQuickSearch = (term: string) => {
+    setSearchTerm(term);
+    searchGifs(term);
+  };
+
   // Load trending GIFs on mount
-  useState(() => {
+  useEffect(() => {
     getTrendingGifs();
-  });
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -84,17 +88,19 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
             />
             <Button 
               type="submit"
+              disabled={loading}
               className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
             >
               <Search size={16} />
             </Button>
           </form>
 
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4">
             <Button
               variant="outline"
               size="sm"
               onClick={getTrendingGifs}
+              disabled={loading}
               className="bg-black/20 border-white/30 text-white hover:bg-white/10"
             >
               Em Alta
@@ -102,7 +108,8 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => searchGifs('feliz')}
+              onClick={() => handleQuickSearch('feliz')}
+              disabled={loading}
               className="bg-black/20 border-white/30 text-white hover:bg-white/10"
             >
               Feliz
@@ -110,7 +117,8 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => searchGifs('parabéns')}
+              onClick={() => handleQuickSearch('parabéns')}
+              disabled={loading}
               className="bg-black/20 border-white/30 text-white hover:bg-white/10"
             >
               Parabéns
@@ -118,10 +126,29 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => searchGifs('trabalho')}
+              onClick={() => handleQuickSearch('trabalho')}
+              disabled={loading}
               className="bg-black/20 border-white/30 text-white hover:bg-white/10"
             >
               Trabalho
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleQuickSearch('celebração')}
+              disabled={loading}
+              className="bg-black/20 border-white/30 text-white hover:bg-white/10"
+            >
+              Celebração
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleQuickSearch('obrigado')}
+              disabled={loading}
+              className="bg-black/20 border-white/30 text-white hover:bg-white/10"
+            >
+              Obrigado
             </Button>
           </div>
         </div>
@@ -130,27 +157,34 @@ const ImprovedGifPicker = ({ onSelectGif, onClose }: GifPickerProps) => {
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
+              <span className="ml-2 text-white/70">Carregando GIFs...</span>
             </div>
           ) : gifs.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {gifs.map((gif) => (
                 <button
                   key={gif.id}
-                  onClick={() => onSelectGif(gif.images.fixed_height.url)}
-                  className="relative overflow-hidden rounded-md hover:opacity-80 transition-opacity"
+                  onClick={() => {
+                    onSelectGif(gif.images.fixed_height.url);
+                    onClose();
+                  }}
+                  className="relative overflow-hidden rounded-md hover:opacity-80 transition-opacity border border-white/10 hover:border-white/30"
                 >
                   <img
-                    src={gif.images.fixed_height.url}
+                    src={gif.images.fixed_height_small.url}
                     alt={gif.title}
                     className="w-full h-auto object-cover"
                     loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end p-2">
+                    <span className="text-white text-xs truncate">{gif.title}</span>
+                  </div>
                 </button>
               ))}
             </div>
           ) : (
             <div className="text-center py-8 text-white/70">
-              {searchTerm ? 'Nenhum GIF encontrado. Tente outro termo.' : 'Digite algo para buscar GIFs!'}
+              {searchTerm ? `Nenhum GIF encontrado para "${searchTerm}". Tente outro termo.` : 'Digite algo para buscar GIFs!'}
             </div>
           )}
         </div>

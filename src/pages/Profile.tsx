@@ -8,78 +8,116 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { User, Camera, LogOut, ArrowLeft } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const { user, profile, loading: authLoading } = useAuth();
   const [name, setName] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Verificar usuário
-    const userStr = localStorage.getItem("andcont_user");
-    if (!userStr) {
+    if (!authLoading && !user) {
       navigate("/login");
       return;
     }
     
-    try {
-      const user = JSON.parse(userStr);
-      setCurrentUser(user);
-      setName(user.name || "");
-      setProfilePic(user.profilePic || null);
-    } catch (error) {
-      console.error("Erro ao carregar dados do usuário:", error);
-      navigate("/login");
+    if (profile) {
+      setName(profile.name || "");
+      setProfilePic(profile.profile_image || null);
     }
-  }, [navigate]);
+  }, [user, profile, authLoading, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("andcont_user");
-    toast.success("Logout realizado com sucesso!");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Error signing out:', error);
+        toast.error("Erro ao fazer logout");
+      } else {
+        toast.success("Logout realizado com sucesso!");
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast.error("Erro ao fazer logout");
+    }
   };
 
-  const handleUpdateProfile = () => {
-    if (!name.trim()) {
+  const uploadProfileImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('profiles')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (error) {
+        console.error('Error uploading image:', error);
+        return null;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('profiles')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!name.trim() || !user) {
       toast.error("Por favor, informe seu nome");
       return;
     }
     
+    setLoading(true);
     try {
-      // Update user in localStorage
-      const userStr = localStorage.getItem("andcont_user");
-      if (!userStr) {
-        navigate("/login");
+      let imageUrl = profilePic;
+      
+      // If profilePic is a data URL (newly selected image), upload it
+      if (profilePic && profilePic.startsWith('data:')) {
+        const response = await fetch(profilePic);
+        const blob = await response.blob();
+        const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+        
+        const uploadedUrl = await uploadProfileImage(file);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        }
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: name.trim(),
+          profile_image: imageUrl
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating profile:', error);
+        toast.error("Erro ao atualizar perfil");
         return;
       }
-      
-      const user = JSON.parse(userStr);
-      const updatedUser = {
-        ...user,
-        name: name.trim(),
-        profilePic: profilePic
-      };
-      
-      // Update in localStorage
-      localStorage.setItem("andcont_user", JSON.stringify(updatedUser));
-      
-      // Update users list if exists
-      const usersStr = localStorage.getItem("andcont_users");
-      if (usersStr) {
-        const users = JSON.parse(usersStr);
-        const updatedUsers = users.map((u: any) => 
-          u.id === user.id ? { ...u, name: name.trim(), profilePic: profilePic } : u
-        );
-        localStorage.setItem("andcont_users", JSON.stringify(updatedUsers));
-      }
-      
-      setCurrentUser(updatedUser);
+
+      setProfilePic(imageUrl);
       toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
+      console.error('Error updating profile:', error);
       toast.error("Erro ao atualizar perfil");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,12 +138,16 @@ const Profile = () => {
     navigate("/");
   };
 
-  if (!currentUser) {
+  if (authLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-andcont">
         <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"></div>
       </div>
     );
+  }
+
+  if (!user || !profile) {
+    return null;
   }
 
   return (
@@ -130,7 +172,7 @@ const Profile = () => {
               <div className="relative mb-4">
                 <Avatar className="h-32 w-32 border-2 border-white">
                   {profilePic ? (
-                    <AvatarImage src={profilePic} alt={name} />
+                    <AvatarImage src={profilePic} alt={name} className="object-cover" />
                   ) : (
                     <AvatarFallback className="bg-andcont-blue text-white text-3xl">
                       {name ? name.charAt(0).toUpperCase() : <User className="h-16 w-16" />}
@@ -156,22 +198,23 @@ const Profile = () => {
               </div>
               
               <div className="text-center mb-4">
-                <p className="text-lg font-medium text-white">{currentUser.email}</p>
+                <p className="text-lg font-medium text-white">{profile.email}</p>
                 <span className="inline-block px-3 py-1 mt-1 bg-black/20 text-white rounded-full text-sm font-medium">
-                  {currentUser.role === 'admin' ? 'Administrador' : 'Usuário'}
+                  {profile.role === 'admin' ? 'Administrador' : 'Usuário'}
                 </span>
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-white">Nome</Label>
+              <Label htmlFor="name" className="text-white">Nome de Exibição</Label>
               <Input 
                 id="name" 
-                placeholder="Seu nome" 
+                placeholder="Seu nome de exibição" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
                 className="bg-black/20 border-white/30 text-white placeholder:text-white/50"
               />
+              <p className="text-white/60 text-sm">Este nome será exibido nos seus comentários e posts</p>
             </div>
             
             <div className="flex justify-between pt-4">
@@ -185,9 +228,10 @@ const Profile = () => {
               
               <Button 
                 onClick={handleUpdateProfile}
+                disabled={loading}
                 className="bg-andcont-blue/80 hover:bg-andcont-blue text-white"
               >
-                Salvar Alterações
+                {loading ? "Salvando..." : "Salvar Alterações"}
               </Button>
             </div>
           </CardContent>

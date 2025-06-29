@@ -87,7 +87,9 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
     createdBy: comment.created_by,
     imageUrl: comment.image_url,
     gifUrl: comment.gif_url,
-    userEmail: comment.author_name || 'Usuário'
+    userEmail: comment.author_name || 'Usuário',
+    authorName: comment.author_name,
+    authorProfileImage: comment.author_profile_image
   }));
 
   if (loading) {

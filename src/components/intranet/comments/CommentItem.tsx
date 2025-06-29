@@ -1,10 +1,12 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Heart, Reply, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate, getUserInitials, getUserProfileImage } from "@/utils/commentUtils";
+import { formatDate, getUserInitials } from "@/utils/commentUtils";
 import { supabase } from "@/integrations/supabase/client";
+import CommentReply from "./CommentReply";
 
 interface Comment {
   id: string;
@@ -16,6 +18,8 @@ interface Comment {
   userEmail?: string;
   imageUrl?: string;
   gifUrl?: string;
+  authorName?: string;
+  authorProfileImage?: string;
 }
 
 interface User {
@@ -34,10 +38,11 @@ interface CommentItemProps {
 }
 
 const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentItemProps) => {
+  const [showReply, setShowReply] = useState(false);
+
   const handleDeleteComment = async (commentId: string) => {
     if (!currentUser) return;
 
-    // Check permissions - admin can delete any comment, users can only delete their own
     const canDelete = currentUser.role === "admin" || currentUser.id === comment.createdBy;
     
     if (!canDelete) {
@@ -79,12 +84,12 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
           <div className="relative flex-shrink-0">
             <Avatar className="h-16 w-16 border-4 border-gradient-to-r from-purple-500/50 to-pink-500/50 ring-4 ring-white/10 shadow-lg">
               <AvatarImage 
-                src={getUserProfileImage(comment.userEmail, users)} 
-                alt={comment.createdBy}
+                src={comment.authorProfileImage} 
+                alt={comment.authorName || comment.createdBy}
                 className="object-cover"
               />
               <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
-                {getUserInitials(comment.userEmail || comment.createdBy)}
+                {getUserInitials(comment.authorName || comment.userEmail || comment.createdBy)}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-black/60 shadow-lg"></div>
@@ -93,7 +98,9 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
           <div className="flex-1 min-w-0 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h4 className="font-bold text-white text-xl">{comment.userEmail || comment.createdBy}</h4>
+                <h4 className="font-bold text-white text-xl">
+                  {comment.authorName || comment.userEmail || comment.createdBy}
+                </h4>
                 <span className="text-sm text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   {formatDate(comment.createdAt)}
                 </span>
@@ -111,6 +118,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={() => setShowReply(!showReply)}
                   className="text-white/60 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-10 h-10 p-0 transition-all duration-200"
                 >
                   <Reply size={16} />
@@ -151,6 +159,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setShowReply(!showReply)}
                 className="text-white/60 hover:text-white hover:bg-white/10 rounded-full px-4 py-2 transition-all duration-200"
               >
                 <MessageCircle size={16} className="mr-2" />
@@ -168,6 +177,17 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted }: CommentI
           </div>
         </div>
       </div>
+      
+      {showReply && currentUser && (
+        <CommentReply
+          parentCommentId={comment.id}
+          postId={comment.postId}
+          postType={comment.postType}
+          currentUser={currentUser}
+          onReplyAdded={onCommentDeleted}
+          onCancel={() => setShowReply(false)}
+        />
+      )}
     </div>
   );
 };
