@@ -16,6 +16,8 @@ interface PostComment {
   gif_url?: string;
   author_name?: string;
   author_profile_image?: string;
+  parent_comment_id?: string;
+  replies?: PostComment[];
 }
 
 interface PostCommentsProps {
@@ -51,13 +53,39 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
 
       const profilesMap = new Map(profilesData?.map(p => [p.id, { name: p.name, profile_image: p.profile_image }]) || []);
 
+      // Organize comments hierarchically
+      const rootComments: PostComment[] = [];
+      const commentsMap = new Map<string, PostComment>();
+
+      // First pass: create all comments with author info
       const enrichedComments = commentsData?.map(comment => ({
         ...comment,
         author_name: profilesMap.get(comment.created_by)?.name || 'Usuário',
-        author_profile_image: profilesMap.get(comment.created_by)?.profile_image
+        author_profile_image: profilesMap.get(comment.created_by)?.profile_image,
+        replies: []
       })) || [];
 
-      setComments(enrichedComments);
+      // Build the comments map
+      enrichedComments.forEach(comment => {
+        commentsMap.set(comment.id, comment);
+      });
+
+      // Second pass: organize hierarchy
+      enrichedComments.forEach(comment => {
+        if (comment.parent_comment_id) {
+          // This is a reply
+          const parentComment = commentsMap.get(comment.parent_comment_id);
+          if (parentComment) {
+            if (!parentComment.replies) parentComment.replies = [];
+            parentComment.replies.push(comment);
+          }
+        } else {
+          // This is a root comment
+          rootComments.push(comment);
+        }
+      });
+
+      setComments(rootComments);
     } catch (error) {
       console.error('Error loading comments:', error);
     } finally {
@@ -78,19 +106,23 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
   } : null;
 
   // Transform comments to match CommentsList expected format
-  const transformedComments = comments.map(comment => ({
-    id: comment.id,
-    postId: comment.post_id,
-    postType: comment.post_type,
-    content: comment.content,
-    createdAt: comment.created_at,
-    createdBy: comment.created_by,
-    imageUrl: comment.image_url,
-    gifUrl: comment.gif_url,
-    userEmail: comment.author_name || 'Usuário',
-    authorName: comment.author_name,
-    authorProfileImage: comment.author_profile_image
-  }));
+  const transformComments = (comments: PostComment[]) => {
+    return comments.map(comment => ({
+      id: comment.id,
+      postId: comment.post_id,
+      postType: comment.post_type,
+      content: comment.content,
+      createdAt: comment.created_at,
+      createdBy: comment.created_by,
+      imageUrl: comment.image_url,
+      gifUrl: comment.gif_url,
+      userEmail: comment.author_name || 'Usuário',
+      authorName: comment.author_name,
+      authorProfileImage: comment.author_profile_image,
+      parentCommentId: comment.parent_comment_id,
+      replies: comment.replies ? transformComments(comment.replies) : []
+    }));
+  };
 
   if (loading) {
     return (
@@ -126,7 +158,7 @@ const PostComments = ({ postId, postType }: PostCommentsProps) => {
       </div>
 
       <CommentsList
-        comments={transformedComments}
+        comments={transformComments(comments)}
         currentUser={currentUser}
         users={{}}
         onCommentDeleted={loadComments}

@@ -11,6 +11,10 @@ interface Comment {
   userEmail?: string;
   imageUrl?: string;
   gifUrl?: string;
+  authorName?: string;
+  authorProfileImage?: string;
+  parentCommentId?: string;
+  replies?: Comment[];
 }
 
 interface User {
@@ -47,14 +51,23 @@ const CommentsList = ({ comments, currentUser, users, onCommentDeleted }: Commen
     );
   }
 
+  // Count total comments including replies
+  const getTotalComments = (comments: Comment[]): number => {
+    return comments.reduce((total, comment) => {
+      return total + 1 + (comment.replies ? getTotalComments(comment.replies) : 0);
+    }, 0);
+  };
+
+  const totalComments = getTotalComments(comments);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4 mb-8">
         <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-          <span className="text-white font-bold text-lg">{comments.length}</span>
+          <span className="text-white font-bold text-lg">{totalComments}</span>
         </div>
         <h3 className="text-2xl font-bold text-white">
-          {comments.length === 1 ? 'Comentário' : 'Comentários'}
+          {totalComments === 1 ? 'Comentário' : 'Comentários'}
         </h3>
         <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 via-pink-500/30 to-transparent"></div>
       </div>
@@ -66,6 +79,7 @@ const CommentsList = ({ comments, currentUser, users, onCommentDeleted }: Commen
             currentUser={currentUser}
             users={users}
             onCommentDeleted={onCommentDeleted}
+            level={0}
           />
         </div>
       ))}

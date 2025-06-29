@@ -41,6 +41,14 @@ const CommentReply = ({
 
     setLoading(true);
     try {
+      console.log('Inserting reply:', {
+        content: content.trim(),
+        post_id: postId,
+        post_type: postType,
+        created_by: currentUser.id,
+        parent_comment_id: parentCommentId
+      });
+
       const { error } = await supabase
         .from('comments')
         .insert({
@@ -59,7 +67,6 @@ const CommentReply = ({
 
       setContent("");
       onReplyAdded();
-      onCancel();
       toast.success("Resposta adicionada com sucesso!");
     } catch (error) {
       console.error('Error adding reply:', error);
@@ -72,7 +79,7 @@ const CommentReply = ({
   if (!currentUser) return null;
 
   return (
-    <div className="mt-4 ml-16 bg-black/20 rounded-2xl p-4 border border-white/10">
+    <div className="ml-8 bg-black/20 rounded-2xl p-4 border border-white/10">
       <div className="flex items-start gap-3 mb-3">
         <Avatar className="h-8 w-8 border-2 border-white/20">
           <AvatarImage 

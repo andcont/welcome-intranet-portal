@@ -47,6 +47,7 @@ export type Database = {
           gif_url: string | null
           id: string
           image_url: string | null
+          parent_comment_id: string | null
           post_id: string
           post_type: string
         }
@@ -57,6 +58,7 @@ export type Database = {
           gif_url?: string | null
           id?: string
           image_url?: string | null
+          parent_comment_id?: string | null
           post_id: string
           post_type: string
         }
@@ -67,10 +69,19 @@ export type Database = {
           gif_url?: string | null
           id?: string
           image_url?: string | null
+          parent_comment_id?: string | null
           post_id?: string
           post_type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       departments: {
         Row: {
