@@ -5,15 +5,16 @@ import { Calendar } from "@/components/ui/calendar";
 import { Trash, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CalendarEvent {
   id: string;
   title: string;
-  description: string;
-  image?: string | null;
-  date: string;
-  createdAt: string;
-  createdBy: string;
+  content: string;
+  image_url?: string | null;
+  event_date: string;
+  created_at: string;
+  created_by: string;
 }
 
 interface CalendarViewProps {
@@ -28,50 +29,72 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
   const { selectedGradient } = useTheme();
 
   useEffect(() => {
-    // Load events from localStorage
-    const storedEvents = localStorage.getItem('andcont_events');
-    if (storedEvents) {
-      setEvents(JSON.parse(storedEvents));
-    } else {
-      // Example initial data
-      const today = new Date();
-      const initialEvents = [
-        {
-          id: '1',
-          title: 'Reunião de Equipe',
-          description: 'Reunião mensal de alinhamento de objetivos',
-          date: today.toISOString().split('T')[0],
-          createdAt: today.toISOString(),
-          createdBy: 'Administrador'
-        }
-      ];
-      localStorage.setItem('andcont_events', JSON.stringify(initialEvents));
-      setEvents(initialEvents);
-    }
+    loadEvents();
   }, []);
+
+  const loadEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('event_date', { ascending: true });
+
+      if (error) {
+        console.error('Error loading events:', error);
+        return;
+      }
+
+      console.log('CalendarView - Loaded events:', data);
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Error loading events:', error);
+    }
+  };
 
   useEffect(() => {
     if (!selectedDate) return;
     
     // Filter events by the selected date
     const dateString = selectedDate.toISOString().split('T')[0];
-    const filtered = events.filter(event => event.date === dateString);
+    const filtered = events.filter(event => {
+      const eventDate = new Date(event.event_date).toISOString().split('T')[0];
+      return eventDate === dateString;
+    });
     setFilteredEvents(filtered);
   }, [selectedDate, events]);
 
-  const handleDelete = (id: string) => {
-    const updatedEvents = events.filter(event => event.id !== id);
-    setEvents(updatedEvents);
-    localStorage.setItem('andcont_events', JSON.stringify(updatedEvents));
-    
-    // Update filtered events
-    if (selectedDate) {
-      const dateString = selectedDate.toISOString().split('T')[0];
-      const filtered = updatedEvents.filter(event => event.date === dateString);
-      setFilteredEvents(filtered);
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting event:', error);
+        toast.error("Erro ao remover evento");
+        return;
+      }
+
+      // Remove from local state
+      const updatedEvents = events.filter(event => event.id !== id);
+      setEvents(updatedEvents);
+      
+      // Update filtered events
+      if (selectedDate) {
+        const dateString = selectedDate.toISOString().split('T')[0];
+        const filtered = updatedEvents.filter(event => {
+          const eventDate = new Date(event.event_date).toISOString().split('T')[0];
+          return eventDate === dateString;
+        });
+        setFilteredEvents(filtered);
+      }
+      
+      toast.success("Evento removido com sucesso!");
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast.error("Erro ao remover evento");
     }
-    
-    toast.success("Evento removido com sucesso!");
   };
 
   // Date formatter
@@ -83,18 +106,14 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
     });
   };
   
-  // Create a map of dates with events for highlighting
-  const eventDateMap = events.reduce((acc: Record<string, number>, event) => {
-    const date = event.date;
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {});
-
-  // Days with events for highlighting in the calendar
-  const eventDays = Object.keys(eventDateMap).map(dateStr => {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    return new Date(year, month - 1, day);
+  // Create array of dates with events for highlighting
+  const eventDays = events.map(event => {
+    const eventDate = new Date(event.event_date);
+    // Ensure we're working with the correct date without timezone issues
+    return new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
   });
+  
+  console.log('CalendarView - Event days for highlighting:', eventDays);
   
   // Custom modifiers for the calendar
   const modifiers = {
@@ -116,8 +135,8 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
             className="text-white"
             modifiers={modifiers}
             modifiersClassNames={{
-              event: `text-white border border-white/50 bg-primary/30`,
-              today: `text-white border border-white/50 bg-primary/50`
+              event: "bg-andcont-purple/30 text-white font-bold border-2 border-andcont-purple/60 rounded-full",
+              today: "text-white border border-white/50 bg-primary/50"
             }}
           />
         </div>
@@ -163,10 +182,10 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                     )}
                   </div>
                   
-                  {event.image && (
+                  {event.image_url && (
                     <div className="mt-3 mb-3">
                       <img 
-                        src={event.image} 
+                        src={event.image_url} 
                         alt={event.title} 
                         className="w-full h-auto max-h-32 object-contain rounded-md border border-white/20"
                       />
@@ -174,11 +193,11 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
                   )}
                   
                   <p className="mt-2 text-white/90 text-sm">
-                    {event.description}
+                    {event.content}
                   </p>
                   
                   <div className="mt-2 text-xs text-white/70">
-                    Por: {event.createdBy}
+                    Data: {formatDate(event.event_date)}
                   </div>
                 </div>
               ))}
@@ -191,3 +210,4 @@ const CalendarView = ({ isAdmin, onSelectPost }: CalendarViewProps) => {
 };
 
 export default CalendarView;
+

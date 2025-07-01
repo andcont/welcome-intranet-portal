@@ -53,10 +53,6 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
-      modifiersClassNames={{
-        // Add the custom class for days with events through modifiersClassNames
-        event: "bg-andcont-purple/20 text-primary font-medium rounded-full border border-andcont-purple/30"
-      }}
       components={{
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
@@ -69,3 +65,4 @@ function Calendar({
 Calendar.displayName = "Calendar";
 
 export { Calendar };
+
