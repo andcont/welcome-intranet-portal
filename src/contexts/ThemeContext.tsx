@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type GradientOption = {
@@ -121,6 +120,111 @@ export const gradientOptions: GradientOption[] = [
     value: 'bg-gradient-to-br from-[#059669] to-[#10B981]',
     textColor: 'text-white',
     calendarColor: 'bg-gradient-to-br from-[#059669]/30 to-[#10B981]/30'
+  },
+  { 
+    id: 'sunset', 
+    name: 'Pôr do Sol Tropical', 
+    value: 'bg-gradient-to-br from-[#FF6B6B] via-[#FFE66D] to-[#FF6B35]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#FF6B6B]/30 via-[#FFE66D]/30 to-[#FF6B35]/30'
+  },
+  { 
+    id: 'aurora', 
+    name: 'Aurora Boreal', 
+    value: 'bg-gradient-to-br from-[#00C9FF] via-[#92FE9D] to-[#00C9FF]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#00C9FF]/30 via-[#92FE9D]/30 to-[#00C9FF]/30'
+  },
+  { 
+    id: 'cosmic', 
+    name: 'Cósmico', 
+    value: 'bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#f093fb]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#667eea]/30 via-[#764ba2]/30 to-[#f093fb]/30'
+  },
+  { 
+    id: 'fire', 
+    name: 'Chamas', 
+    value: 'bg-gradient-to-br from-[#f12711] to-[#f5af19]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#f12711]/30 to-[#f5af19]/30'
+  },
+  { 
+    id: 'ocean', 
+    name: 'Oceano Profundo', 
+    value: 'bg-gradient-to-br from-[#2E3192] to-[#1BFFFF]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#2E3192]/30 to-[#1BFFFF]/30'
+  },
+  { 
+    id: 'paradise', 
+    name: 'Paraíso Tropical', 
+    value: 'bg-gradient-to-br from-[#1FA2FF] via-[#12D8FA] to-[#A6FFCB]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#1FA2FF]/30 via-[#12D8FA]/30 to-[#A6FFCB]/30'
+  },
+  { 
+    id: 'galaxy', 
+    name: 'Galáxia', 
+    value: 'bg-gradient-to-br from-[#360033] via-[#0b8793] to-[#360033]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#360033]/30 via-[#0b8793]/30 to-[#360033]/30'
+  },
+  { 
+    id: 'spring', 
+    name: 'Primavera', 
+    value: 'bg-gradient-to-br from-[#c471f5] via-[#fa71cd] to-[#c471f5]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#c471f5]/30 via-[#fa71cd]/30 to-[#c471f5]/30'
+  },
+  { 
+    id: 'neon', 
+    name: 'Neon Cyberpunk', 
+    value: 'bg-gradient-to-br from-[#FC466B] to-[#3F5EFB]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#FC466B]/30 to-[#3F5EFB]/30'
+  },
+  { 
+    id: 'forest', 
+    name: 'Floresta Mágica', 
+    value: 'bg-gradient-to-br from-[#134E5E] to-[#71B280]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#134E5E]/30 to-[#71B280]/30'
+  },
+  { 
+    id: 'desert', 
+    name: 'Deserto Dourado', 
+    value: 'bg-gradient-to-br from-[#FDBB2D] to-[#22C1C3]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#FDBB2D]/30 to-[#22C1C3]/30'
+  },
+  { 
+    id: 'royal', 
+    name: 'Real Dourado', 
+    value: 'bg-gradient-to-br from-[#8360c3] to-[#2ebf91]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#8360c3]/30 to-[#2ebf91]/30'
+  },
+  { 
+    id: 'volcano', 
+    name: 'Vulcão', 
+    value: 'bg-gradient-to-br from-[#ff9a9e] via-[#fecfef] to-[#fecfef]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#ff9a9e]/30 via-[#fecfef]/30 to-[#fecfef]/30'
+  },
+  { 
+    id: 'arctic', 
+    name: 'Ártico', 
+    value: 'bg-gradient-to-br from-[#74b9ff] to-[#0984e3]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#74b9ff]/30 to-[#0984e3]/30'
+  },
+  { 
+    id: 'rainbow', 
+    name: 'Arco-íris', 
+    value: 'bg-gradient-to-br from-[#ff9a56] via-[#ff6b95] via-[#c44569] to-[#f8b500]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#ff9a56]/30 via-[#ff6b95]/30 via-[#c44569]/30 to-[#f8b500]/30'
   }
 ];
 
