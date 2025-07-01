@@ -18,7 +18,9 @@ const Admin = () => {
   const { selectedGradient } = useTheme();
   const [activeTab, setActiveTab] = useState("users");
 
-  // Redirect if not authenticated or not admin
+  console.log('Admin page - profile:', profile, 'isAdmin:', isAdmin, 'loading:', loading);
+
+  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -30,12 +32,16 @@ const Admin = () => {
     );
   }
 
+  // Redirect if not authenticated
   if (!isAuthenticated) {
+    console.log('User not authenticated, redirecting to auth');
     navigate("/auth");
     return null;
   }
 
+  // Check admin access
   if (!isAdmin) {
+    console.log('User is not admin, redirecting to intranet');
     toast.error("Acesso negado. Apenas administradores podem acessar esta área.");
     navigate("/intranet");
     return null;

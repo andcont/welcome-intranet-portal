@@ -1,12 +1,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Heart, Reply, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate, getUserInitials } from "@/utils/commentUtils";
 import { supabase } from "@/integrations/supabase/client";
 import CommentReply from "./CommentReply";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 
 interface Comment {
   id: string;
@@ -83,9 +83,14 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
   // Get user information with fallback
   const getUserInfo = () => {
     const user = users[comment.createdBy];
+    const displayName = comment.authorName || user?.name || 'Usuário';
+    const profileImage = comment.authorProfileImage || user?.profileImage || null;
+    
+    console.log('Comment author info - authorName:', comment.authorName, 'user:', user, 'displayName:', displayName, 'profileImage:', profileImage);
+    
     return {
-      name: comment.authorName || user?.name || 'Usuário',
-      profileImage: comment.authorProfileImage || user?.profileImage || null
+      name: displayName,
+      profileImage: profileImage
     };
   };
 
@@ -107,20 +112,13 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
         
         <div className="flex items-start gap-4">
           <div className="relative flex-shrink-0">
-            <Avatar className={`${isReply ? 'h-10 w-10' : 'h-12 w-12'} border-2 ${isReply ? 'border-purple-300/50' : 'border-white/20'} shadow-lg`}>
-              <AvatarImage 
-                src={userInfo.profileImage || undefined} 
-                alt={userInfo.name}
-                className="object-cover"
-              />
-              <AvatarFallback className={`${
-                isReply 
-                  ? 'bg-gradient-to-br from-purple-400 to-pink-400 text-white font-bold text-sm'
-                  : 'bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold'
-              }`}>
-                {getUserInitials(userInfo.name)}
-              </AvatarFallback>
-            </Avatar>
+            <ProfileAvatar
+              src={userInfo.profileImage}
+              alt={userInfo.name}
+              fallbackText={userInfo.name}
+              size={isReply ? "md" : "lg"}
+              className={isReply ? 'border-purple-300/50' : 'border-white/20'}
+            />
             {!isReply && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black/60 shadow-sm"></div>
             )}

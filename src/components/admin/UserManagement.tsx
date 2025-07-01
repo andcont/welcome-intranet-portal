@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Edit, Trash2, UserPlus, Upload } from "lucide-react";
+import { Users, Edit, Trash2, Upload } from "lucide-react";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 
 interface Profile {
   id: string;
@@ -54,6 +53,7 @@ const UserManagement = () => {
         return;
       }
 
+      console.log('Loaded profiles for management:', data);
       setProfiles(data || []);
     } catch (error) {
       console.error('Error loading profiles:', error);
@@ -263,16 +263,12 @@ const UserManagement = () => {
                   <TableRow key={profile.id} className="border-white/10 hover:bg-white/5">
                     <TableCell className="text-white">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-white/20">
-                          <AvatarImage 
-                            src={profile.profile_image} 
-                            alt={profile.name}
-                            className="object-cover"
-                          />
-                          <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold">
-                            {profile.name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        <ProfileAvatar
+                          src={profile.profile_image}
+                          alt={profile.name}
+                          fallbackText={profile.name}
+                          size="md"
+                        />
                         <div>
                           <p className="font-medium">{profile.name}</p>
                         </div>
@@ -320,16 +316,12 @@ const UserManagement = () => {
                             </DialogHeader>
                             <form onSubmit={handleUpdateUser} className="space-y-4">
                               <div className="flex flex-col items-center gap-4">
-                                <Avatar className="h-20 w-20 border-2 border-white/20">
-                                  <AvatarImage 
-                                    src={editingUser?.profile_image} 
-                                    alt={editingUser?.name}
-                                    className="object-cover"
-                                  />
-                                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
-                                    {editingUser?.name.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
+                                <ProfileAvatar
+                                  src={editingUser?.profile_image}
+                                  alt={editingUser?.name || ''}
+                                  fallbackText={editingUser?.name || 'U'}
+                                  size="xl"
+                                />
                                 <div className="flex flex-col items-center gap-2">
                                   <input
                                     type="file"

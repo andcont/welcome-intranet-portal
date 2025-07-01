@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Users, Building2 } from "lucide-react";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 
 interface Profile {
   id: string;
@@ -41,12 +41,14 @@ const TeamList = () => {
       if (profilesResult.error) {
         console.error('Error loading profiles:', profilesResult.error);
       } else {
+        console.log('Loaded profiles:', profilesResult.data);
         setProfiles(profilesResult.data || []);
       }
 
       if (departmentsResult.error) {
         console.error('Error loading departments:', departmentsResult.error);
       } else {
+        console.log('Loaded departments:', departmentsResult.data);
         setDepartments(departmentsResult.data || []);
       }
     } catch (error) {
@@ -76,10 +78,6 @@ const TeamList = () => {
     return grouped;
   };
 
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -98,6 +96,9 @@ const TeamList = () => {
             <Users className="h-5 w-5" />
             Equipe AndCont
           </CardTitle>
+          <p className="text-white/70">
+            Total: {profiles.length} {profiles.length === 1 ? 'pessoa' : 'pessoas'}
+          </p>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
@@ -116,12 +117,12 @@ const TeamList = () => {
                     <Card key={member.id} className="bg-black/20 border border-white/10 hover:bg-black/30 transition-colors">
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-12 w-12">
-                            <AvatarImage src={member.profile_image} alt={member.name} />
-                            <AvatarFallback className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                              {getInitials(member.name)}
-                            </AvatarFallback>
-                          </Avatar>
+                          <ProfileAvatar
+                            src={member.profile_image}
+                            alt={member.name}
+                            fallbackText={member.name}
+                            size="lg"
+                          />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-white truncate">{member.name}</h4>
                             <p className="text-sm text-white/70 truncate">{member.email}</p>
@@ -130,11 +131,14 @@ const TeamList = () => {
                                 variant={member.role === 'admin' ? 'default' : 'secondary'}
                                 className={`text-xs ${
                                   member.role === 'admin' 
-                                    ? 'bg-purple-500/20 text-purple-300' 
-                                    : 'bg-blue-500/20 text-blue-300'
+                                    ? 'bg-red-500/20 text-red-300 border-red-500/30' 
+                                    : member.role === 'collaborator'
+                                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                                    : 'bg-gray-500/20 text-gray-300 border-gray-500/30'
                                 }`}
                               >
-                                {member.role === 'admin' ? 'Admin' : 'Usuário'}
+                                {member.role === 'admin' ? 'Admin' : 
+                                 member.role === 'collaborator' ? 'Colaborador' : 'Usuário'}
                               </Badge>
                             </div>
                           </div>

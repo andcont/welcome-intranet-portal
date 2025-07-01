@@ -31,6 +31,8 @@ const ProfileAvatar = ({
     xl: "text-lg"
   };
 
+  console.log('ProfileAvatar - src:', src, 'alt:', alt, 'fallbackText:', fallbackText);
+
   return (
     <Avatar className={cn(
       sizeClasses[size],
@@ -42,6 +44,7 @@ const ProfileAvatar = ({
           src={src} 
           alt={alt}
           className="object-cover"
+          onLoad={() => console.log('Image loaded successfully:', src)}
           onError={(e) => {
             console.log('Image failed to load:', src);
             // Hide the image element if it fails to load
