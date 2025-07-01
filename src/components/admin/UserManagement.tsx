@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Edit, Trash2, Upload } from "lucide-react";
+import { Users, Edit, Trash2, Upload, Calendar } from "lucide-react";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Profile {
   id: string;
@@ -18,6 +20,7 @@ interface Profile {
   role: string;
   department_id?: string;
   profile_image?: string;
+  birthday?: string;
   created_at: string;
 }
 
@@ -129,7 +132,8 @@ const UserManagement = () => {
           name: editingUser.name,
           role: editingUser.role,
           department_id: editingUser.department_id,
-          profile_image: editingUser.profile_image
+          profile_image: editingUser.profile_image,
+          birthday: editingUser.birthday
         })
         .eq('id', editingUser.id);
 
@@ -228,6 +232,11 @@ const UserManagement = () => {
     }
   };
 
+  const formatBirthday = (birthday?: string) => {
+    if (!birthday) return 'Não informado';
+    return format(new Date(birthday), 'dd/MM/yyyy', { locale: ptBR });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -254,6 +263,7 @@ const UserManagement = () => {
                   <TableHead className="text-white">E-mail</TableHead>
                   <TableHead className="text-white">Função</TableHead>
                   <TableHead className="text-white">Departamento</TableHead>
+                  <TableHead className="text-white">Aniversário</TableHead>
                   <TableHead className="text-white">Data de Cadastro</TableHead>
                   <TableHead className="text-white">Ações</TableHead>
                 </TableRow>
@@ -296,6 +306,12 @@ const UserManagement = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-white">{getDepartmentName(profile.department_id)}</TableCell>
+                    <TableCell className="text-white">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4 text-white/60" />
+                        {formatBirthday(profile.birthday)}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-white">{formatDate(profile.created_at)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -359,6 +375,20 @@ const UserManagement = () => {
                                   required
                                 />
                               </div>
+
+                              <div>
+                                <Label htmlFor="birthday" className="text-white">Data de Aniversário</Label>
+                                <Input
+                                  id="birthday"
+                                  type="date"
+                                  value={editingUser?.birthday || ''}
+                                  onChange={(e) => setEditingUser(prev => 
+                                    prev ? { ...prev, birthday: e.target.value } : null
+                                  )}
+                                  className="bg-black/20 border-white/30 text-white"
+                                />
+                              </div>
+
                               <div>
                                 <Label htmlFor="role" className="text-white">Função</Label>
                                 <Select
@@ -377,6 +407,7 @@ const UserManagement = () => {
                                   </SelectContent>
                                 </Select>
                               </div>
+
                               <div>
                                 <Label htmlFor="department" className="text-white">Departamento</Label>
                                 <Select
@@ -397,6 +428,7 @@ const UserManagement = () => {
                                   </SelectContent>
                                 </Select>
                               </div>
+
                               <div className="flex justify-end gap-2">
                                 <Button
                                   type="button"
