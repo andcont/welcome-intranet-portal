@@ -48,6 +48,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
     { icon: Calendar, label: "Calendário", id: "calendar" },
     { icon: MessageSquare, label: "Feed", id: "feed" },
     { icon: Users, label: "Equipe", id: "team" },
+    { icon: Sparkles, label: "Aniversariantes", id: "birthdays" },
   ];
 
   const handleMenuClick = (itemId: string) => {

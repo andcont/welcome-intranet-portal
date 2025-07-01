@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare } from "lucide-react";
+import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
@@ -15,6 +15,7 @@ import IntranetLayout from "@/components/intranet/IntranetLayout";
 import ModernDashboard from "@/components/intranet/ModernDashboard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
+import BirthdayList from "@/components/intranet/BirthdayList";
 
 const Intranet = () => {
   const navigate = useNavigate();
@@ -150,6 +151,9 @@ const Intranet = () => {
             <TabsTrigger value="feed" className={getTabClasses('feed')}>
               <MessageSquare className="mr-2 h-4 w-4" /> Feed
             </TabsTrigger>
+            <TabsTrigger value="birthdays" className={getTabClasses('birthdays')}>
+              <Sparkles className="mr-2 h-4 w-4" /> Aniversariantes
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="dashboard" className="fade-in">
@@ -217,6 +221,13 @@ const Intranet = () => {
               isAdmin={currentUser?.role === 'admin'} 
               onSelectPost={(id) => handleSelectPost(id, 'feed')}
             />
+          </TabsContent>
+          
+          <TabsContent value="birthdays" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Aniversariantes</h2>
+            </div>
+            <BirthdayList />
           </TabsContent>
         </Tabs>
       )}
