@@ -35,7 +35,7 @@ const IntranetHeader = ({ currentUser, onLogout }: IntranetHeaderProps) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <img 
-              src="/lovable-uploads/07664a7b-d471-41cd-848e-88de04532275.png" 
+              src="/lovable-uploads/ea36e87c-48ec-4941-9032-e9c72e4aa87d.png" 
               alt="AndCont Logo" 
               className="h-12 animate-fade-in" 
             />

@@ -84,7 +84,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/aa007dd5-05b0-48aa-aefa-cd0841eed91f.png" 
+                  src="/lovable-uploads/ea36e87c-48ec-4941-9032-e9c72e4aa87d.png" 
                   alt="AndCont Logo" 
                   className="h-12 w-auto drop-shadow-lg" 
                 />
