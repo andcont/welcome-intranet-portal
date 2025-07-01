@@ -141,24 +141,15 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (savedGradient) {
       try {
         const parsedGradient = JSON.parse(savedGradient);
-        setSelectedGradient(parsedGradient);
+        const foundGradient = gradientOptions.find(g => g.id === parsedGradient.id);
+        if (foundGradient) {
+          setSelectedGradient(foundGradient);
+        }
       } catch (error) {
         console.error('Error parsing saved gradient:', error);
       }
     }
   }, []);
-
-  // Apply the gradient to the document body when it changes
-  useEffect(() => {
-    // Remove all existing gradient classes from body
-    document.body.className = document.body.className
-      .split(' ')
-      .filter(cls => !cls.startsWith('bg-gradient-to-'))
-      .join(' ');
-    
-    // Add the new gradient class to body
-    document.body.classList.add(...selectedGradient.value.split(' '));
-  }, [selectedGradient]);
 
   const handleSetGradient = (gradient: GradientOption) => {
     setSelectedGradient(gradient);

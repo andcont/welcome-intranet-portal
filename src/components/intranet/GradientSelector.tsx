@@ -12,6 +12,7 @@ const GradientSelector = ({ onClose }: GradientSelectorProps) => {
 
   const handleGradientSelect = (gradient: any) => {
     setSelectedGradient(gradient);
+    onClose();
   };
 
   return (
@@ -32,9 +33,9 @@ const GradientSelector = ({ onClose }: GradientSelectorProps) => {
         {gradientOptions.map((gradient) => (
           <div
             key={gradient.id}
-            className={`relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+            className={`relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 transform hover:scale-105 ${
               selectedGradient.id === gradient.id 
-                ? 'border-white/60 shadow-lg transform scale-105' 
+                ? 'border-white/60 shadow-lg scale-105' 
                 : 'border-white/20 hover:border-white/40'
             }`}
             onClick={() => handleGradientSelect(gradient)}

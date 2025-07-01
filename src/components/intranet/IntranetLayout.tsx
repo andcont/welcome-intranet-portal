@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface IntranetLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showGradientSelector, setShowGradientSelector] = useState(false);
   const navigate = useNavigate();
+  const { selectedGradient } = useTheme();
 
   const menuItems = [
     { icon: Home, label: "Dashboard", id: "dashboard" },
@@ -63,7 +65,7 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className={`min-h-screen ${selectedGradient.value}`}>
       {/* Header */}
       <header className="bg-black/20 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-3">
@@ -192,7 +194,7 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-left text-white hover:bg-white/10"
-                    onClick={() => handleMenuClick('admin')}
+                    onClick={() => navigate("/admin")}
                   >
                     <Settings className="h-5 w-5 mr-3" />
                     Administração
