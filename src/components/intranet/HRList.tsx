@@ -35,23 +35,40 @@ const HRList = ({ isAdmin, onSelectPost }: HRListProps) => {
 
   const fetchHRPosts = async () => {
     try {
-      const { data, error } = await supabase
+      // First get HR posts
+      const { data: hrPostsData, error: hrPostsError } = await supabase
         .from('hr_posts')
-        .select(`
-          *,
-          profiles:created_by (
-            name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching HR posts:', error);
+      if (hrPostsError) {
+        console.error('Error fetching HR posts:', hrPostsError);
         toast.error("Erro ao carregar publicações de RH");
         return;
       }
 
-      setHrPosts(data || []);
+      // Then get profiles for the creators
+      const creatorIds = hrPostsData?.map(post => post.created_by) || [];
+      let profilesData: any[] = [];
+      
+      if (creatorIds.length > 0) {
+        const { data, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, name')
+          .in('id', creatorIds);
+        
+        if (!profilesError) {
+          profilesData = data || [];
+        }
+      }
+
+      // Combine the data
+      const combinedData = hrPostsData?.map(post => ({
+        ...post,
+        profiles: profilesData.find(profile => profile.id === post.created_by) || null
+      })) || [];
+
+      setHrPosts(combinedData);
     } catch (error) {
       console.error('Error fetching HR posts:', error);
       toast.error("Erro ao carregar publicações de RH");
