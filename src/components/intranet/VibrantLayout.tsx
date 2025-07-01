@@ -17,8 +17,7 @@ import {
   LogOut,
   ChevronRight,
   Palette,
-  Cake,
-  UserCheck
+  Cake
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
@@ -48,9 +47,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
     { icon: LinkIcon, label: "Links Úteis", id: "links" },
     { icon: Calendar, label: "Calendário", id: "calendar" },
     { icon: MessageSquare, label: "Feed", id: "feed" },
-    { icon: Users, label: "Equipe", id: "team" },
     { icon: Cake, label: "Aniversariantes", id: "birthdays" },
-    ...(currentUser.role === 'admin' ? [{ icon: UserCheck, label: "RH", id: "hr" }] : []),
   ];
 
   const handleMenuClick = (itemId: string) => {

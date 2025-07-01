@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare, Cake, UserCheck } from "lucide-react";
+import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare, Cake } from "lucide-react";
 import { toast } from "sonner";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
@@ -16,7 +17,6 @@ import ModernDashboard from "@/components/intranet/ModernDashboard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
 import BirthdayList from "@/components/intranet/BirthdayList";
-import HRList from "@/components/intranet/HRList";
 
 const Intranet = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Intranet = () => {
   const [showPostForm, setShowPostForm] = useState(false);
   const [showUserPostForm, setShowUserPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' | 'hr' } | null>(null);
+  const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' } | null>(null);
   const { selectedGradient } = useTheme();
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const Intranet = () => {
     setShowUserPostForm(false);
   };
 
-  const handleSelectPost = (id: string, type: 'announcement' | 'link' | 'event' | 'feed' | 'hr') => {
+  const handleSelectPost = (id: string, type: 'announcement' | 'link' | 'event' | 'feed') => {
     setSelectedPost({ id, type });
   };
 
@@ -155,11 +155,6 @@ const Intranet = () => {
             <TabsTrigger value="birthdays" className={getTabClasses('birthdays')}>
               <Cake className="mr-2 h-4 w-4" /> Aniversariantes
             </TabsTrigger>
-            {currentUser?.role === 'admin' && (
-              <TabsTrigger value="hr" className={getTabClasses('hr')}>
-                <UserCheck className="mr-2 h-4 w-4" /> RH
-              </TabsTrigger>
-            )}
           </TabsList>
           
           <TabsContent value="dashboard" className="fade-in">
@@ -235,21 +230,6 @@ const Intranet = () => {
             </div>
             <BirthdayList />
           </TabsContent>
-
-          {currentUser?.role === 'admin' && (
-            <TabsContent value="hr" className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6 fade-in">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">Recursos Humanos</h2>
-                <Button onClick={handleAddContent} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                  <Plus size={16} className="mr-2" /> Nova Publicação RH
-                </Button>
-              </div>
-              <HRList 
-                isAdmin={currentUser?.role === 'admin'} 
-                onSelectPost={(id) => handleSelectPost(id, 'hr')}
-              />
-            </TabsContent>
-          )}
         </Tabs>
       )}
     </IntranetLayout>
