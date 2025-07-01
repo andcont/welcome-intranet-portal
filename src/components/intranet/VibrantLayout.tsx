@@ -86,7 +86,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
                 <img 
                   src="/lovable-uploads/ea36e87c-48ec-4941-9032-e9c72e4aa87d.png" 
                   alt="AndCont Logo" 
-                  className="h-12 w-auto drop-shadow-lg" 
+                  className="h-20 w-auto drop-shadow-lg" 
                 />
               </div>
               <div>
