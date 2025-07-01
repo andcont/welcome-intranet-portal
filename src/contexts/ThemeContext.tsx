@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type GradientOption = {
@@ -9,6 +10,48 @@ type GradientOption = {
 };
 
 export const gradientOptions: GradientOption[] = [
+  { 
+    id: 'andcont-vibrant', 
+    name: 'AndCont Vibrante', 
+    value: 'bg-gradient-to-br from-[#00d4ff] via-[#ff00ff] via-[#00ff88] to-[#ffff00]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#00d4ff]/30 via-[#ff00ff]/30 via-[#00ff88]/30 to-[#ffff00]/30'
+  },
+  { 
+    id: 'andcont-neon', 
+    name: 'AndCont Neon', 
+    value: 'bg-gradient-to-r from-[#ff006e] via-[#8338ec] via-[#3a86ff] to-[#06ffa5]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-r from-[#ff006e]/30 via-[#8338ec]/30 via-[#3a86ff]/30 to-[#06ffa5]/30'
+  },
+  { 
+    id: 'andcont-tropical', 
+    name: 'AndCont Tropical', 
+    value: 'bg-gradient-to-br from-[#00f5ff] via-[#ff1744] via-[#76ff03] to-[#ffea00]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#00f5ff]/30 via-[#ff1744]/30 via-[#76ff03]/30 to-[#ffea00]/30'
+  },
+  { 
+    id: 'andcont-electric', 
+    name: 'AndCont Elétrico', 
+    value: 'bg-gradient-to-tr from-[#667eea] via-[#764ba2] via-[#f093fb] to-[#f5576c]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-tr from-[#667eea]/30 via-[#764ba2]/30 via-[#f093fb]/30 to-[#f5576c]/30'
+  },
+  { 
+    id: 'andcont-rainbow', 
+    name: 'AndCont Arco-íris', 
+    value: 'bg-gradient-to-r from-[#ff9a9e] via-[#fecfef] via-[#fecfef] via-[#a8edea] to-[#fed6e3]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-r from-[#ff9a9e]/30 via-[#fecfef]/30 via-[#fecfef]/30 via-[#a8edea]/30 to-[#fed6e3]/30'
+  },
+  { 
+    id: 'andcont-sunset', 
+    name: 'AndCont Pôr do Sol', 
+    value: 'bg-gradient-to-br from-[#ff7e5f] via-[#feb47b] via-[#86a8e7] to-[#91eae4]',
+    textColor: 'text-white',
+    calendarColor: 'bg-gradient-to-br from-[#ff7e5f]/30 via-[#feb47b]/30 via-[#86a8e7]/30 to-[#91eae4]/30'
+  },
   { 
     id: 'default', 
     name: 'Roxo-Rosa', 
