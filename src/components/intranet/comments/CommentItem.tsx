@@ -80,6 +80,16 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
     }
   };
 
+  // Get user information with fallback
+  const getUserInfo = () => {
+    const user = users[comment.createdBy];
+    return {
+      name: comment.authorName || user?.name || 'Usuário',
+      profileImage: comment.authorProfileImage || user?.profileImage || null
+    };
+  };
+
+  const userInfo = getUserInfo();
   const isReply = level > 0;
 
   return (
@@ -99,8 +109,8 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
           <div className="relative flex-shrink-0">
             <Avatar className={`${isReply ? 'h-10 w-10' : 'h-12 w-12'} border-2 ${isReply ? 'border-purple-300/50' : 'border-white/20'} shadow-lg`}>
               <AvatarImage 
-                src={comment.authorProfileImage} 
-                alt={comment.authorName || comment.createdBy}
+                src={userInfo.profileImage || undefined} 
+                alt={userInfo.name}
                 className="object-cover"
               />
               <AvatarFallback className={`${
@@ -108,7 +118,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
                   ? 'bg-gradient-to-br from-purple-400 to-pink-400 text-white font-bold text-sm'
                   : 'bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold'
               }`}>
-                {getUserInitials(comment.authorName || comment.userEmail || comment.createdBy)}
+                {getUserInitials(userInfo.name)}
               </AvatarFallback>
             </Avatar>
             {!isReply && (
@@ -120,7 +130,7 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <h4 className={`font-bold text-white ${isReply ? 'text-base' : 'text-lg'}`}>
-                  {comment.authorName || 'Usuário'}
+                  {userInfo.name}
                 </h4>
                 <span className={`text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full ${isReply ? 'text-xs' : ''}`}>
                   {formatDate(comment.createdAt)}

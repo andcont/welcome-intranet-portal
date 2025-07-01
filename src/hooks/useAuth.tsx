@@ -93,7 +93,8 @@ export const useAuth = () => {
               id: userId,
               name: userData.user.user_metadata?.name || userData.user.email || 'Usuário',
               email: userData.user.email || '',
-              role: 'user'
+              role: 'user',
+              profile_image: userData.user.user_metadata?.avatar_url || null
             };
             setProfile(basicProfile);
           }
