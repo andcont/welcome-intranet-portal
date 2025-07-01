@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare, Sparkles } from "lucide-react";
+import { Calendar, Link as LinkIcon, Bell, Plus, MessageSquare, Cake } from "lucide-react";
 import { toast } from "sonner";
 import AnnouncementsList from "@/components/intranet/AnnouncementsList";
 import LinksList from "@/components/intranet/LinksList";
@@ -152,7 +152,7 @@ const Intranet = () => {
               <MessageSquare className="mr-2 h-4 w-4" /> Feed
             </TabsTrigger>
             <TabsTrigger value="birthdays" className={getTabClasses('birthdays')}>
-              <Sparkles className="mr-2 h-4 w-4" /> Aniversariantes
+              <Cake className="mr-2 h-4 w-4" /> Aniversariantes
             </TabsTrigger>
           </TabsList>
           

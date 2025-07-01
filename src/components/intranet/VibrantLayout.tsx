@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -17,7 +16,7 @@ import {
   LogOut,
   ChevronRight,
   Palette,
-  Sparkles
+  Cake
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
@@ -48,7 +47,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
     { icon: Calendar, label: "Calendário", id: "calendar" },
     { icon: MessageSquare, label: "Feed", id: "feed" },
     { icon: Users, label: "Equipe", id: "team" },
-    { icon: Sparkles, label: "Aniversariantes", id: "birthdays" },
+    { icon: Cake, label: "Aniversariantes", id: "birthdays" },
   ];
 
   const handleMenuClick = (itemId: string) => {
@@ -85,11 +84,10 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/07664a7b-d471-41cd-848e-88de04532275.png" 
+                  src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
                   alt="AndCont Logo" 
-                  className="h-10 w-10 drop-shadow-lg" 
+                  className="h-12 w-auto drop-shadow-lg" 
                 />
-                <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-yellow-400 animate-pulse" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white drop-shadow-lg">AndCont Intranet</h1>
@@ -177,7 +175,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             <nav className="flex-1 px-6 pb-6 space-y-3">
               <div className="mb-8">
                 <h3 className="px-4 text-xs font-bold text-white/60 uppercase tracking-widest mb-4 flex items-center">
-                  <Sparkles className="h-3 w-3 mr-2" />
+                  <Calendar className="h-3 w-3 mr-2" />
                   Navegação
                 </h3>
                 {menuItems.map((item) => (
