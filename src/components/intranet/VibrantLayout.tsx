@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,7 +17,8 @@ import {
   LogOut,
   ChevronRight,
   Palette,
-  Cake
+  Cake,
+  UserCheck
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GradientSelector from "./GradientSelector";
@@ -48,6 +50,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
     { icon: MessageSquare, label: "Feed", id: "feed" },
     { icon: Users, label: "Equipe", id: "team" },
     { icon: Cake, label: "Aniversariantes", id: "birthdays" },
+    ...(currentUser.role === 'admin' ? [{ icon: UserCheck, label: "RH", id: "hr" }] : []),
   ];
 
   const handleMenuClick = (itemId: string) => {
@@ -84,7 +87,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/ccec8aba-57c1-4908-af76-9e3f5effa934.png" 
+                  src="/lovable-uploads/aa007dd5-05b0-48aa-aefa-cd0841eed91f.png" 
                   alt="AndCont Logo" 
                   className="h-12 w-auto drop-shadow-lg" 
                 />
@@ -108,7 +111,6 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             </div>
           </div>
 
-          {/* Right side */}
           <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 

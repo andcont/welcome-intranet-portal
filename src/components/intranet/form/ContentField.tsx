@@ -14,12 +14,17 @@ const ContentField = ({ content, onChange, activeCategory }: ContentFieldProps) 
       case 'announcements': return 'Conteúdo';
       case 'links': return 'Descrição';
       case 'feed': return 'Conteúdo do post';
+      case 'hr': return 'Conteúdo da publicação';
       default: return 'Descrição do evento';
     }
   };
 
   const getPlaceholder = () => {
-    return activeCategory === 'feed' ? "O que está acontecendo?" : "Informe o conteúdo";
+    switch (activeCategory) {
+      case 'feed': return "O que está acontecendo?";
+      case 'hr': return "Descreva as ações e políticas de RH...";
+      default: return "Informe o conteúdo";
+    }
   };
 
   return (

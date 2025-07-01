@@ -14,6 +14,7 @@ const FormHeader = ({ activeCategory, onClose }: FormHeaderProps) => {
       case 'links': return 'Novo Link';
       case 'calendar': return 'Novo Evento';
       case 'feed': return 'Novo Post';
+      case 'hr': return 'Nova Publicação RH';
       default: return 'Novo Item';
     }
   };

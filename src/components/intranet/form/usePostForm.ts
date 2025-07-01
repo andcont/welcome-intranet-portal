@@ -141,6 +141,30 @@ export const usePostForm = ({ activeCategory, onClose }: UsePostFormProps) => {
           
           toast.success("Post publicado com sucesso!");
           break;
+
+        case "hr":
+          if (!content.trim()) {
+            toast.error("Por favor, informe o conteúdo da publicação de RH");
+            return;
+          }
+          
+          const { error: hrError } = await supabase
+            .from('hr_posts')
+            .insert({
+              title,
+              content,
+              image_url: image,
+              created_by: user.id
+            });
+
+          if (hrError) {
+            console.error('Error creating HR post:', hrError);
+            toast.error("Erro ao criar publicação de RH");
+            return;
+          }
+          
+          toast.success("Publicação de RH criada com sucesso!");
+          break;
       }
       
       onClose();
