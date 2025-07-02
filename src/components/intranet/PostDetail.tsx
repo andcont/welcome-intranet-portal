@@ -289,7 +289,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowImagePreview(false)}
         >
-          <div className="relative max-w-7xl max-h-full">
+          <div className="relative max-w-4xl max-h-[80vh]">
             <Button
               variant="ghost"
               size="sm"
