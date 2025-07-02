@@ -46,11 +46,12 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
 
   const loadProfile = async () => {
     try {
+      console.log('Loading profile for userId:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Erro ao carregar perfil:', error);
@@ -58,6 +59,13 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
         return;
       }
 
+      if (!data) {
+        console.log('Profile not found for userId:', userId);
+        toast.error('Perfil não encontrado');
+        return;
+      }
+
+      console.log('Profile loaded successfully:', data);
       setProfile(data);
       setEditForm({
         name: data.name || "",
