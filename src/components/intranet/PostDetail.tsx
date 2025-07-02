@@ -3,6 +3,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Edit, Trash, ExternalLink, Calendar, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
+import EditPostForm from "./EditPostForm";
+import PostReactions from "./PostReactions";
+import PostComments from "./PostComments";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PostDetailProps {
   postId: string;
@@ -10,64 +15,10 @@ interface PostDetailProps {
   onClose: () => void;
 }
 
-// Mock components to replace the missing imports
-const EditPostForm = ({ postId, postType, onUpdate, onClose }: any) => (
-  <div className="p-4 text-white">
-    <p>Edit form placeholder for {postType} {postId}</p>
-    <Button onClick={onClose}>Cancel</Button>
-  </div>
-);
-
-const PostReactions = ({ postId, postType }: any) => (
-  <div className="p-2 text-white/70">
-    Reactions for {postType} {postId}
-  </div>
-);
-
-const PostComments = ({ postId, postType }: any) => (
-  <div className="p-2 text-white/70">
-    Comments for {postType} {postId}
-  </div>
-);
-
-// Mock auth hook
-const useAuth = () => ({
-  user: { id: 'mock-user' },
-  profile: { role: 'admin' }
-});
-
-// Mock supabase client
-const supabase = {
-  from: (table: string) => ({
-    select: (fields: string) => ({
-      eq: (field: string, value: string) => ({
-        single: () => Promise.resolve({
-          data: {
-            id: value,
-            title: `Mock ${table} Title`,
-            content: `This is mock content for ${table}`,
-            created_at: new Date().toISOString(),
-            created_by: 'mock-user',
-            image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-            url: table === 'useful_links' ? 'https://example.com' : null,
-            location: table === 'events' ? 'Mock Location' : null,
-            event_date: table === 'events' ? new Date().toISOString() : null
-          },
-          error: null
-        })
-      })
-    }),
-    delete: () => ({
-      eq: (field: string, value: string) => Promise.resolve({ error: null })
-    })
-  })
-};
-
 const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   const [post, setPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showImagePreview, setShowImagePreview] = useState(false);
   const { user, profile } = useAuth();
 
   useEffect(() => {
@@ -111,8 +62,13 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       // Load author profile if the post has created_by field
       let authorProfile = null;
       if (postData && 'created_by' in postData && postData.created_by) {
-        // Mock author data
-        authorProfile = { name: 'Mock Author' };
+        const { data: authorData } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('id', postData.created_by)
+          .single();
+        
+        authorProfile = authorData;
       }
 
       const enrichedPost = {
@@ -311,8 +267,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
             <img
               src={post.imageUrl}
               alt={post.title}
-              className="w-full max-h-96 object-cover rounded-lg border border-white/20 cursor-pointer transition-transform duration-300 hover:scale-105"
-              onClick={() => setShowImagePreview(true)}
+              className="w-full max-h-96 object-cover rounded-lg border border-white/20"
             />
           </div>
         )}
@@ -326,29 +281,6 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         )}
       </div>
-
-      {/* Image Preview Modal */}
-      {showImagePreview && post.imageUrl && (
-        <div 
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-8"
-          onClick={() => setShowImagePreview(false)}
-        >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowImagePreview(false)}
-            className="absolute top-4 right-4 text-white hover:text-white hover:bg-white/20 z-10 bg-black/50 rounded-full p-3"
-          >
-            <X className="h-6 w-6" />
-          </Button>
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
 
       {/* Reactions */}
       <PostReactions postId={postId} postType={postType} />
