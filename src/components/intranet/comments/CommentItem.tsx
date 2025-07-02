@@ -82,11 +82,10 @@ const CommentItem = ({ comment, currentUser, users, onCommentDeleted, level = 0 
 
   // Get user information with fallback
   const getUserInfo = () => {
-    const user = users[comment.createdBy];
-    const displayName = comment.authorName || user?.name || 'Usuário';
-    const profileImage = comment.authorProfileImage || user?.profileImage || null;
+    const displayName = comment.authorName || 'Usuário';
+    const profileImage = comment.authorProfileImage || null;
     
-    console.log('Comment author info - authorName:', comment.authorName, 'user:', user, 'displayName:', displayName, 'profileImage:', profileImage);
+    console.log('Comment author info - authorName:', comment.authorName, 'displayName:', displayName, 'profileImage:', profileImage);
     
     return {
       name: displayName,
