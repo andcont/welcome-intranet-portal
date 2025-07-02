@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, Edit2, Save, Calendar, Mail, Building } from "lucide-react";
+import { X, Edit2, Save, Calendar, Mail, Building, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,6 +35,8 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
     about_me: "",
     birthday: ""
   });
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const isOwnProfile = user?.id === userId;
 
@@ -67,6 +69,51 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
       toast.error('Erro ao carregar perfil');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !isOwnProfile) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) {
+        console.error('Erro no upload:', uploadError);
+        toast.error('Erro ao fazer upload da imagem');
+        return;
+      }
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ profile_image: data.publicUrl })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error('Erro ao atualizar perfil:', updateError);
+        toast.error('Erro ao atualizar foto do perfil');
+        return;
+      }
+
+      toast.success('Foto atualizada com sucesso!');
+      loadProfile();
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      toast.error('Erro ao fazer upload da imagem');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -149,15 +196,37 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
       <Card className="bg-black/20 border-white/20">
         <CardHeader>
           <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20 ring-2 ring-white/30">
-              {profile.profile_image ? (
-                <AvatarImage src={profile.profile_image} alt={profile.name} />
-              ) : (
-                <AvatarFallback className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-2xl">
-                  {profile.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
+            <div className="relative">
+              <Avatar className="h-20 w-20 ring-2 ring-white/30">
+                {profile.profile_image ? (
+                  <AvatarImage src={profile.profile_image} alt={profile.name} />
+                ) : (
+                  <AvatarFallback className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-2xl">
+                    {profile.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              {isOwnProfile && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </>
               )}
-            </Avatar>
+            </div>
             <div className="flex-1">
               {editing && isOwnProfile ? (
                 <div className="space-y-2">
