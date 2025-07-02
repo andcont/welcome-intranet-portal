@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import UserName from "@/components/ui/UserName";
 
 interface FeedPost {
   id: string;
@@ -21,10 +20,9 @@ interface FeedPost {
 interface FeedListProps {
   isAdmin: boolean;
   onSelectPost: (id: string, type: 'feed') => void;
-  onUserClick?: (userId: string) => void;
 }
 
-const FeedList = ({ isAdmin, onSelectPost, onUserClick }: FeedListProps) => {
+const FeedList = ({ isAdmin, onSelectPost }: FeedListProps) => {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
@@ -243,16 +241,7 @@ const FeedList = ({ isAdmin, onSelectPost, onUserClick }: FeedListProps) => {
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: </span>
-                {onUserClick ? (
-                  <UserName 
-                    name={post.author_name || 'Usuário'} 
-                    userId={post.created_by} 
-                    onUserClick={onUserClick}
-                  />
-                ) : (
-                  <span>{post.author_name || 'Usuário'}</span>
-                )}
+                <span>Por: {post.author_name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(post.created_at)}</span>
               </div>

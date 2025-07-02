@@ -5,7 +5,6 @@ import { Trash, AlertCircle, MessageSquare, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import UserName from "@/components/ui/UserName";
 
 interface Announcement {
   id: string;
@@ -20,10 +19,9 @@ interface Announcement {
 interface AnnouncementsListProps {
   isAdmin: boolean;
   onSelectPost: (id: string) => void;
-  onUserClick?: (userId: string) => void;
 }
 
-const AnnouncementsList = ({ isAdmin, onSelectPost, onUserClick }: AnnouncementsListProps) => {
+const AnnouncementsList = ({ isAdmin, onSelectPost }: AnnouncementsListProps) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
@@ -242,16 +240,7 @@ const AnnouncementsList = ({ isAdmin, onSelectPost, onUserClick }: Announcements
               </div>
               
               <div className="text-sm text-gray-300 flex items-center">
-                <span>Por: </span>
-                {onUserClick ? (
-                  <UserName 
-                    name={announcement.author_name || 'Usuário'} 
-                    userId={announcement.created_by} 
-                    onUserClick={onUserClick}
-                  />
-                ) : (
-                  <span>{announcement.author_name || 'Usuário'}</span>
-                )}
+                <span>Por: {announcement.author_name || 'Usuário'}</span>
                 <span className="mx-2">•</span>
                 <span>{formatDate(announcement.created_at)}</span>
               </div>

@@ -7,15 +7,13 @@ interface IntranetLayoutProps {
     name: string;
     role: string;
     profilePic?: string;
-    id?: string;
   };
   onLogout: () => void;
   activeSection?: string;
   onTabChange?: (tab: string) => void;
-  onUserClick?: (userId: string) => void;
 }
 
-const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabChange, onUserClick }: IntranetLayoutProps) => {
+const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabChange }: IntranetLayoutProps) => {
   // Use the new vibrant layout
   return (
     <VibrantLayout
@@ -23,7 +21,6 @@ const IntranetLayout = ({ children, currentUser, onLogout, activeSection, onTabC
       onLogout={onLogout}
       activeSection={activeSection}
       onTabChange={onTabChange}
-      onUserClick={onUserClick}
     >
       {children}
     </VibrantLayout>
