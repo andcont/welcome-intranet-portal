@@ -199,6 +199,7 @@ const Intranet = () => {
             <AnnouncementsList 
               isAdmin={currentUser?.role === 'admin'} 
               onSelectPost={(id) => handleSelectPost(id, 'announcement')}
+              onUserClick={handleUserClick}
             />
           </TabsContent>
           
@@ -242,6 +243,7 @@ const Intranet = () => {
             <FeedList 
               isAdmin={currentUser?.role === 'admin'} 
               onSelectPost={(id) => handleSelectPost(id, 'feed')}
+              onUserClick={handleUserClick}
             />
           </TabsContent>
           
