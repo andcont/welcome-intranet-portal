@@ -1,4 +1,4 @@
-
+tenho um site que tem esse codigo, como posso melhorar esse codigo para quando passar mouse na imagem a imagem aparecer maior 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Edit, Trash, ExternalLink, Calendar, MapPin, Clock } from "lucide-react";
