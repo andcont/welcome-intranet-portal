@@ -3,15 +3,17 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash, Link, AlertCircle, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LinkItem {
   id: string;
   title: string;
   url: string;
-  description: string;
-  image?: string | null;
-  createdAt: string;
-  createdBy: string;
+  content: string;
+  image_url?: string | null;
+  created_at: string;
+  created_by: string;
 }
 
 interface LinksListProps {
@@ -21,38 +23,79 @@ interface LinksListProps {
 
 const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
   const [links, setLinks] = useState<LinkItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   
   useEffect(() => {
-    // Load links from localStorage
-    const storedLinks = localStorage.getItem('andcont_links');
-    if (storedLinks) {
-      setLinks(JSON.parse(storedLinks));
-    } else {
-      // Sample initial data
-      const initialLinks = [
+    loadLinks();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('useful_links_changes')
+      .on(
+        'postgres_changes',
         {
-          id: '1',
-          title: 'Portal AndCont',
-          url: 'https://www.andcont.com.br',
-          description: 'Link oficial para o site da AndCont.',
-          createdAt: new Date().toISOString(),
-          createdBy: 'Administrador'
+          event: '*',
+          schema: 'public',
+          table: 'useful_links'
+        },
+        (payload) => {
+          console.log('Link change detected:', payload);
+          loadLinks(); // Reload links when there's a change
         }
-      ];
-      localStorage.setItem('andcont_links', JSON.stringify(initialLinks));
-      setLinks(initialLinks);
-    }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  const handleDelete = (id: string) => {
+  const loadLinks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('useful_links')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erro ao carregar links:', error);
+        toast.error('Erro ao carregar links');
+        return;
+      }
+
+      setLinks(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar links:', error);
+      toast.error('Erro ao carregar links');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este link?")) {
       return;
     }
     
-    const updatedLinks = links.filter(item => item.id !== id);
-    setLinks(updatedLinks);
-    localStorage.setItem('andcont_links', JSON.stringify(updatedLinks));
-    toast.success("Link removido com sucesso!");
+    try {
+      const { error } = await supabase
+        .from('useful_links')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Erro ao excluir link:', error);
+        toast.error('Erro ao excluir link');
+        return;
+      }
+
+      setLinks(links.filter(item => item.id !== id));
+      toast.success("Link removido com sucesso!");
+    } catch (error) {
+      console.error('Erro ao excluir link:', error);
+      toast.error('Erro ao excluir link');
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -68,6 +111,15 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
     e.stopPropagation();
     window.open(url, '_blank', 'noopener,noreferrer');
   };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+        <p className="text-white/80">Carregando links...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -87,10 +139,10 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
             key={link.id} 
             className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:border-white/40 flex flex-col h-full"
           >
-            {link.image && (
+            {link.image_url && (
               <div className="w-full h-32 relative">
                 <img 
-                  src={link.image} 
+                  src={link.image_url} 
                   alt={link.title} 
                   className="w-full h-full object-cover border-b border-white/20" 
                 />
@@ -123,12 +175,12 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
               </div>
               
               <p className="mt-2 text-white/90 text-sm">
-                {link.description}
+                {link.content}
               </p>
               
               <div className="mt-4 flex justify-between items-center text-xs text-white/80">
-                <span>Por: {link.createdBy}</span>
-                <span>{formatDate(link.createdAt)}</span>
+                <span>Por: Administrador</span>
+                <span>{formatDate(link.created_at)}</span>
               </div>
             </div>
             
