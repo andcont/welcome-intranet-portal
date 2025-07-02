@@ -199,6 +199,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          about_me: string | null
           birthday: string | null
           created_at: string
           department_id: string | null
@@ -210,6 +211,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          about_me?: string | null
           birthday?: string | null
           created_at?: string
           department_id?: string | null
@@ -221,6 +223,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          about_me?: string | null
           birthday?: string | null
           created_at?: string
           department_id?: string | null

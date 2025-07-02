@@ -29,13 +29,15 @@ interface VibrantLayoutProps {
     name: string;
     role: string;
     profilePic?: string;
+    id?: string;
   };
   onLogout: () => void;
   activeSection?: string;
   onTabChange?: (tab: string) => void;
+  onUserClick?: (userId: string) => void;
 }
 
-const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabChange }: VibrantLayoutProps) => {
+const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabChange, onUserClick }: VibrantLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showGradientSelector, setShowGradientSelector] = useState(false);
   const navigate = useNavigate();
@@ -129,7 +131,7 @@ const VibrantLayout = ({ children, currentUser, onLogout, activeSection, onTabCh
             
             <div 
               className="flex items-center space-x-3 cursor-pointer hover:bg-white/20 rounded-2xl px-4 py-3 transition-all duration-300 backdrop-blur-sm"
-              onClick={() => navigate("/profile")}
+              onClick={() => onUserClick ? onUserClick(currentUser.id || '') : navigate("/profile")}
             >
               <Avatar className="h-10 w-10 ring-2 ring-white/30">
                 {currentUser.profilePic ? (

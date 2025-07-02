@@ -14,6 +14,7 @@ import PostDetail from "@/components/intranet/PostDetail";
 import UserPostForm from "@/components/intranet/UserPostForm";
 import IntranetLayout from "@/components/intranet/IntranetLayout";
 import ModernDashboard from "@/components/intranet/ModernDashboard";
+import UserProfile from "@/components/intranet/UserProfile";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
 import BirthdayList from "@/components/intranet/BirthdayList";
@@ -25,6 +26,7 @@ const Intranet = () => {
   const [showUserPostForm, setShowUserPostForm] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedPost, setSelectedPost] = useState<{ id: string; type: 'announcement' | 'link' | 'event' | 'feed' } | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const { selectedGradient } = useTheme();
 
   useEffect(() => {
@@ -76,6 +78,18 @@ const Intranet = () => {
     setShowPostForm(false);
     setShowUserPostForm(false);
     setSelectedPost(null);
+    setSelectedUser(null);
+  };
+
+  const handleUserClick = (userId: string) => {
+    setSelectedUser(userId);
+    setSelectedPost(null);
+    setShowPostForm(false);
+    setShowUserPostForm(false);
+  };
+
+  const handleCloseProfile = () => {
+    setSelectedUser(null);
   };
 
   const getTabClasses = (tabValue: string) => {
@@ -117,6 +131,7 @@ const Intranet = () => {
       onLogout={handleLogout}
       activeSection={activeTab}
       onTabChange={handleTabChange}
+      onUserClick={handleUserClick}
     >
       {(showPostForm && currentUser?.role === 'admin') ? (
         <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
@@ -134,6 +149,11 @@ const Intranet = () => {
             onClose={handleClosePostDetail} 
           />
         </div>
+      ) : selectedUser ? (
+        <UserProfile 
+          userId={selectedUser} 
+          onClose={handleCloseProfile} 
+        />
       ) : (
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="bg-black/40 backdrop-blur-xl border border-white/20 p-1 rounded-full mb-6">
@@ -163,6 +183,7 @@ const Intranet = () => {
               onTabChange={handleTabChange}
               onAddContent={handleAddContent}
               onAddUserPost={handleAddUserPost}
+              onUserClick={handleUserClick}
             />
           </TabsContent>
           

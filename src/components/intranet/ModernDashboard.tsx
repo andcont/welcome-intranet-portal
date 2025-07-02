@@ -25,6 +25,7 @@ interface ModernDashboardProps {
   onTabChange: (tab: string) => void;
   onAddContent: () => void;
   onAddUserPost: () => void;
+  onUserClick?: (userId: string) => void;
 }
 
 interface Activity {
@@ -42,7 +43,7 @@ interface Stats {
   feedPosts: number;
 }
 
-const ModernDashboard = ({ currentUser, onTabChange, onAddContent, onAddUserPost }: ModernDashboardProps) => {
+const ModernDashboard = ({ currentUser, onTabChange, onAddContent, onAddUserPost, onUserClick }: ModernDashboardProps) => {
   const [stats, setStats] = useState<Stats>({
     announcements: 0,
     links: 0,
