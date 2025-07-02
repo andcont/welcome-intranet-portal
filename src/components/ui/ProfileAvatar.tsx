@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface ProfileAvatarProps {
-  src?: string | null;
+  src?: string | null | any;
   alt: string;
   fallbackText: string;
   className?: string;
@@ -31,7 +31,12 @@ const ProfileAvatar = ({
     xl: "text-lg"
   };
 
-  console.log('ProfileAvatar - src:', src, 'alt:', alt, 'fallbackText:', fallbackText);
+  // Handle the case where src might be an object with _type and value properties
+  const imageUrl = src && typeof src === 'object' && 'value' in src 
+    ? (src as any).value 
+    : src;
+
+  console.log('ProfileAvatar - original src:', src, 'processed imageUrl:', imageUrl, 'alt:', alt, 'fallbackText:', fallbackText);
 
   return (
     <Avatar className={cn(
@@ -39,14 +44,14 @@ const ProfileAvatar = ({
       "border-2 border-white/20 shadow-lg",
       className
     )}>
-      {src && (
+      {imageUrl && (
         <AvatarImage 
-          src={src} 
+          src={imageUrl} 
           alt={alt}
           className="object-cover"
-          onLoad={() => console.log('Image loaded successfully:', src)}
+          onLoad={() => console.log('Image loaded successfully:', imageUrl)}
           onError={(e) => {
-            console.log('Image failed to load:', src);
+            console.log('Image failed to load:', imageUrl);
             // Hide the image element if it fails to load
             (e.target as HTMLImageElement).style.display = 'none';
           }}
