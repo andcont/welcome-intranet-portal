@@ -63,8 +63,9 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
     });
   };
   
-  const openExternalLink = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
-    e.stopPropagation(); // Prevent parent click event from firing
+  const openExternalLink = (e: React.MouseEvent<HTMLButtonElement>, url: string) => {
+    e.preventDefault();
+    e.stopPropagation();
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -84,8 +85,7 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
         links.map(link => (
           <div 
             key={link.id} 
-            className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:border-white/40 cursor-pointer flex flex-col h-full"
-            onClick={() => onSelectPost(link.id)}
+            className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:border-white/40 flex flex-col h-full"
           >
             {link.image && (
               <div className="w-full h-32 relative">
@@ -97,7 +97,10 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
               </div>
             )}
             
-            <div className="p-5 flex-grow">
+            <div 
+              className="p-5 flex-grow cursor-pointer hover:bg-white/5 transition-colors"
+              onClick={() => onSelectPost(link.id)}
+            >
               <div className="flex justify-between items-start">
                 <h3 className="text-lg font-bold text-white flex items-center">
                   <Link size={16} className="mr-2 inline-flex text-white/80" />
@@ -130,14 +133,13 @@ const LinksList = ({ isAdmin, onSelectPost }: LinksListProps) => {
             </div>
             
             <div className="p-4 border-t border-white/20 bg-black/30">
-              <a 
-                href={link.url}
+              <button 
                 onClick={(e) => openExternalLink(e, link.url)}
                 className="inline-flex items-center justify-center w-full py-2 px-3 rounded-md bg-white/15 hover:bg-white/25 text-white transition-colors"
               >
                 <span>Acessar link</span>
                 <ExternalLink size={14} className="ml-2" />
-              </a>
+              </button>
             </div>
           </div>
         ))
