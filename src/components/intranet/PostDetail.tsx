@@ -284,18 +284,19 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
       </div>
 
       {/* Image Preview Modal */}
-      {showImagePreview && post.imageUrl && (
-        <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowImagePreview(false)}
-        >
-          <div className="relative max-w-7xl max-h-full">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowImagePreview(false)}
-              className="absolute -top-12 right-0 text-white hover:text-white hover:bg-white/20 z-10"
-            >
+{showImagePreview && post.imageUrl && (
+  <div 
+    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+    onClick={() => setShowImagePreview(false)}
+  >
+    <img
+      src={post.imageUrl}
+      alt={post.title}
+      className="max-w-full max-h-full object-contain cursor-zoom-out"
+      onClick={(e) => e.stopPropagation()} // impede que o clique na imagem feche o modal
+    />
+  </div>
+)}
               <X className="h-6 w-6" />
             </Button>
             <img
