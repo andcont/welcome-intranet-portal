@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -82,6 +81,8 @@ const Intranet = () => {
   };
 
   const handleUserClick = (userId: string) => {
+    console.log('handleUserClick called with userId:', userId);
+    console.log('Current user id:', user?.id);
     setSelectedUser(userId);
     setSelectedPost(null);
     setShowPostForm(false);

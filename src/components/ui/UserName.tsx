@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 
 interface UserNameProps {
@@ -8,12 +9,18 @@ interface UserNameProps {
 }
 
 const UserName = ({ name, userId, onUserClick, className = "" }: UserNameProps) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('UserName clicked, userId:', userId);
+    onUserClick(userId);
+  };
+
   return (
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => onUserClick(userId)}
-      className={`text-left p-0 h-auto font-normal hover:underline text-white/80 hover:text-white transition-colors ${className}`}
+      onClick={handleClick}
+      className={`text-left p-0 h-auto font-normal hover:underline text-white/80 hover:text-white transition-colors cursor-pointer ${className}`}
     >
       {name}
     </Button>

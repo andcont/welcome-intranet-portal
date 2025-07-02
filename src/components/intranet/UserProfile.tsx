@@ -41,10 +41,18 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
   const isOwnProfile = user?.id === userId;
 
   useEffect(() => {
+    console.log('UserProfile component mounted with userId:', userId);
+    console.log('Current user id:', user?.id);
     loadProfile();
   }, [userId]);
 
   const loadProfile = async () => {
+    if (!userId) {
+      console.error('No userId provided');
+      setLoading(false);
+      return;
+    }
+
     try {
       console.log('Loading profile for userId:', userId);
       const { data, error } = await supabase
@@ -52,6 +60,8 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
         .select('*')
         .eq('id', userId)
         .maybeSingle();
+
+      console.log('Supabase query result:', { data, error });
 
       if (error) {
         console.error('Erro ao carregar perfil:', error);
@@ -182,6 +192,9 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
       <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
         <div className="text-center py-12">
           <p className="text-white/80">Perfil não encontrado</p>
+          <Button onClick={onClose} className="mt-4">
+            Voltar
+          </Button>
         </div>
       </div>
     );
