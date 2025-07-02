@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Edit, Trash, ExternalLink, Calendar, MapPin, Clock } from "lucide-react";
@@ -19,6 +18,7 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
   const [post, setPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showImagePreview, setShowImagePreview] = useState(false);
   const { user, profile } = useAuth();
 
   useEffect(() => {
@@ -267,7 +267,8 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
             <img
               src={post.imageUrl}
               alt={post.title}
-              className="w-full max-h-96 object-cover rounded-lg border border-white/20"
+              className="w-full max-h-96 object-cover rounded-lg border border-white/20 cursor-pointer transition-transform duration-300 hover:scale-105"
+              onClick={() => setShowImagePreview(true)}
             />
           </div>
         )}
@@ -281,6 +282,31 @@ const PostDetail = ({ postId, postType, onClose }: PostDetailProps) => {
           </div>
         )}
       </div>
+
+      {/* Image Preview Modal */}
+      {showImagePreview && post.imageUrl && (
+        <div 
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowImagePreview(false)}
+        >
+          <div className="relative max-w-7xl max-h-full">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowImagePreview(false)}
+              className="absolute -top-12 right-0 text-white hover:text-white hover:bg-white/20 z-10"
+            >
+              <X className="h-6 w-6" />
+            </Button>
+            <img
+              src={post.imageUrl}
+              alt={post.title}
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Reactions */}
       <PostReactions postId={postId} postType={postType} />
